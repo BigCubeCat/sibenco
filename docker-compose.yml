@@ -14,3 +14,15 @@ services:
 
     volumes:
       - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  backend:
+    depends_on:
+      - mongo
+    build: ./sibenco
+    restart: always
+    ports:
+      - ${USER_PORT}:${USER_PORT}
+    environment:
+      - USER_PORT=${USER_PORT}
+      - MONGODB_URL=mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:${MONGO_PORT}
+    stdin_open: true
+    tty: true
