@@ -4,10 +4,14 @@ import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import {config, LoadConfig} from './config';
-
+import { config, LoadConfig } from './config';
 LoadConfig();
 
+import indexRouter from "./routes/index";
+import usersRouter from "./routes/userRouter";
+
+
+console.log(config.MONGO_URL)
 mongoose.connect(config.MONGO_URL);
 
 const app = express();
@@ -15,10 +19,13 @@ app.use(cors());
 
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
+
+app.use("/", indexRouter);
+app.use("/users", usersRouter);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
   next(createError(404));
 });
 
