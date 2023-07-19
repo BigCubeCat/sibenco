@@ -3,6 +3,15 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { config as env } from "../config";
 
+export async function createAdmin() {
+  const query = { email: env.admin.email };
+  const update = { password: env.admin.password };
+  const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+  await UserModel.findOneAndUpdate(query, update, options);
+}
+
+
 
 export async function login(user: { username: string; password: string }) {
   try {

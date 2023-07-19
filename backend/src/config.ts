@@ -2,12 +2,20 @@ interface IConfig {
   PORT: number;
   MONGO_URL: string;
   JWT_SECRET: string;
+  admin: {
+    email: string;
+    password: string
+  }
 }
 
 export const config: IConfig = {
   PORT: 0,
   MONGO_URL: '',
-  JWT_SECRET: "JWT_SECRET"
+  JWT_SECRET: "JWT_SECRET",
+  admin: {
+    email: "admin@mail.ru",
+    password: "123"
+  }
 };
 
 export function LoadConfig() {
