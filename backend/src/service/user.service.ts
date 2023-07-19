@@ -1,11 +1,12 @@
-import UserModel, { userWithoutPass } from "../models/user.model";
+import UserModel, { generatePasswordHash, userWithoutPass } from "../models/user.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { config as env } from "../config";
 
 export async function createAdmin() {
   const query = { email: env.admin.email };
-  const update = { password: env.admin.password };
+  const pass = await generatePasswordHash(env.admin.password);
+  const update = { password: pass, role: "admin" };
   const options = { upsert: true, new: true, setDefaultsOnInsert: true };
 
   await UserModel.findOneAndUpdate(query, update, options);
@@ -13,10 +14,10 @@ export async function createAdmin() {
 
 
 
-export async function login(user: { username: string; password: string }) {
+export async function login(user: { email: string; password: string }) {
   try {
-    const foundUser = await UserModel.findOne({ username: user.username });
-    console.log(foundUser);
+    const foundUser = await UserModel.findOne({ email: user.email });
+    console.log("foundUser = ", foundUser);
     if (!foundUser) {
       throw new Error("Name of user is not correct");
     }

@@ -23,10 +23,14 @@ const UserSchema: mongoose.Schema<I_UserDocument> = new mongoose.Schema({
   password: { type: String, unique: false },
 });
 
+export async function generatePasswordHash(password: string) {
+  return await bcrypt.hash(password, saltRounds);
+}
+
 UserSchema.pre("save", async function(next) {
   const user = this;
   if (user.isModified("password")) {
-    user.password = await bcrypt.hash(user.password, saltRounds);
+    user.password = await generatePasswordHash(user.password);
   }
   next();
 });
