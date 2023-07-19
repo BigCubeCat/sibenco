@@ -2,6 +2,16 @@ import { Request, Response } from "express";
 import { getErrorMessage } from "../utils/error";
 import * as userServices from "../service/user.service";
 import { CustomRequest } from "../middleware/auth";
+import { userWithoutPass } from "../models/user.model";
+
+export const createUser = async (req: Request, res: Response) => {
+  try {
+    const newUser = await userServices.createUser(req.body);
+    res.status(200).send(userWithoutPass(newUser));
+  } catch (error) {
+    return res.status(500).send(getErrorMessage(error));
+  }
+};
 
 export const loginOne = async (req: Request, res: Response) => {
   try {
