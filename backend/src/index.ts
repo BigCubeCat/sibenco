@@ -17,7 +17,7 @@ mongoose.connect(config.MONGO_URL);
 const fetchAdmin = async () => {
   await createAdmin();
 }
-fetchAdmin().catch(console.error)
+fetchAdmin().catch(console.error);
 
 const app = express();
 app.use(cors());
