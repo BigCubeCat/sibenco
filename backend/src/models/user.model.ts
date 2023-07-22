@@ -15,12 +15,44 @@ export interface IUserDoc {
 export interface I_UserDocument extends IUserDoc, mongoose.Document { }
 
 const UserSchema: mongoose.Schema<I_UserDocument> = new mongoose.Schema({
-  email: { type: String, unique: true },
-  name: { type: String, unique: false },
-  surname: { type: String, unique: false },
-  lastname: { type: String, unique: false },
-  role: { type: String, unique: false },
-  password: { type: String, unique: false },
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  name: {
+    type: String,
+    unique: false,
+    required: true,
+    minlength: 2,
+    maxlength: 1500
+  },
+  surname: {
+    type: String,
+    unique: false,
+    required: true,
+    minlength: 2,
+    maxlength: 1500
+  },
+  lastname: {
+    type: String,
+    unique: false,
+    required: true,
+    minLength: 2,
+    maxlength: 1500
+  },
+  role: {
+    type: String,
+    unique: false, //TO_DO role validation
+    required: true
+  },
+  password: {
+    type: String,
+    unique: false,
+    required: true,
+    minlength: 5,
+    maxlength: 50
+  },
 });
 
 export async function generatePasswordHash(password: string) {
