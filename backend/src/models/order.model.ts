@@ -1,7 +1,19 @@
 import mongoose from "mongoose";
-const Schema = mongoose.Schema;
 
-const OrderSchema = new Schema({
+interface TOrder {
+    typeOfTrasportation: String,
+    date: Date,
+    loadigAdress: String,
+    unloadingAdress: String,
+    cargoName: String,
+    distance: String,
+    specialMarks: String,
+    client: String
+}
+
+export interface TOrderDoc extends TOrder, mongoose.Document {}
+
+const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
     typeOfTrasportation: {
         type: String,
         unique: false,
@@ -44,5 +56,5 @@ const OrderSchema = new Schema({
     }
 })
 
-const OrderModel = mongoose.model("OrderModel", OrderSchema);
+const OrderModel = mongoose.model<TOrderDoc>("OrderModel", OrderSchema);
 export default OrderModel;
