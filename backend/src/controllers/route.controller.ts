@@ -24,3 +24,23 @@ export const getRoute = async (req: Request, res: Response) => {
     return res.status(500).send(getErrorMessage(error));
   }
 }
+
+export const patchRoute = async (req: Request, res: Response) => {
+  try {
+    const newRoute = await routeService.patchRoute(req.params.id, req.body);
+    res.status(200).send(newRoute);
+  } catch (error) {
+    return res.status(500).send(getErrorMessage(error));
+  }
+}
+
+export const deleteRoute = async (req: Request, res: Response) => {
+  try {
+    const newRoute = await routeService.deleteRoute(req.params.id);
+    res.status(200).send(newRoute);
+  } catch (error) {
+    return res.status(500).send(getErrorMessage(error));
+  }
+}
+
+
