@@ -4,16 +4,10 @@ import { getProperties, KeyValuePairObject } from 'properties-file'
 
 const properties: KeyValuePairObject = getProperties(readFileSync('./properties/error_messedge_en.properties'))
 
-// types
-
-type TData = String | Date;
-
-// end types
-
 export async function createOrder(order: TOrderDoc): Promise<void> {
     try {
         if (!(await OrderModel.create(order))) {
-            throw new Error(properties.errorOrderCreate);
+            throw new Error(properties.errorCreate);
         }
     } catch(error) {
         console.log(error);
@@ -25,7 +19,7 @@ export async function getOrder(id: string) {
     try {
         const order = await OrderModel.findById(id);
         if (!order) {
-            throw new Error(properties.errorOrderGet);
+            throw new Error(properties.errorGet);
         }
         return order;
     } catch(error) {
@@ -53,7 +47,7 @@ export async function getAllOrders(page: number, pageSize: number) {
 export async function deleteOrder(id: string) {
     try {
         if(!(await OrderModel.findByIdAndDelete(id))) {
-            throw new Error(properties.errorOrderDelete);
+            throw new Error(properties.errorDelete);
         }
     } catch(error) {
         console.log(error);
@@ -61,10 +55,10 @@ export async function deleteOrder(id: string) {
     }
 }
 
-export async function updateOrder(id: string, data: TData) {
+export async function updateOrder(id: string, data: any) {
     try {
         if(!(await OrderModel.findByIdAndUpdate(id, data, {upset: true}))) {
-            throw new Error(properties.errorOrderUpdate);
+            throw new Error(properties.errorUpdate);
         }
     } catch(error) {
         console.log(error);
@@ -72,7 +66,7 @@ export async function updateOrder(id: string, data: TData) {
     }
 }
 
-export async function findOrdersBySomething(data: TData, page: number, pageSize: number) {
+export async function findOrdersBySomething(data: any, page: number, pageSize: number) {
     try {
         const orders = await OrderModel.find({data})
             .sort({_id: -1})
