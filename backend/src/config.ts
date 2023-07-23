@@ -5,19 +5,19 @@ interface IConfig {
   PAGE_SIZE: number;
   admin: {
     email: string;
-    password: string
-  }
+    password: string;
+  };
 }
 
 export const config: IConfig = {
   PORT: 0,
   MONGO_URL: '',
-  JWT_SECRET: "JWT_SECRET",
+  JWT_SECRET: 'JWT_SECRET',
   PAGE_SIZE: 30,
   admin: {
-    email: "admin@mail.ru",
-    password: "123"
-  }
+    email: 'admin@mail.ru',
+    password: '123',
+  },
 };
 
 export function LoadConfig() {
