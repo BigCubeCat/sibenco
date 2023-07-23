@@ -14,7 +14,7 @@ export const createRoute = async (req: Request, res: Response) => {
 
 export const getRoute = async (req: Request, res: Response) => {
   try {
-    const id: string = req.body.id ? req.body.id : "";
+    const id: string = req.params.id ? req.params.id : "";
     if (id == "") {
       return res.status(400).send(getErrorMessage(new Error("Bad id")))
     }

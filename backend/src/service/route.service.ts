@@ -1,8 +1,9 @@
 import RouteModel, { I_RouterDocument } from "../models/route.model";
 
-export async function createRoute(route: I_RouterDocument): Promise<void> {
+export async function createRoute(route: I_RouterDocument) {
   try {
-    await RouteModel.create(route);
+    const newRoute = await RouteModel.create(route);
+    return newRoute
   } catch (error) {
     console.log(error);
     throw error;

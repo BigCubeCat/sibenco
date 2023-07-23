@@ -9,6 +9,7 @@ LoadConfig();
 
 import indexRouter from "./routes/index";
 import usersRouter from "./routes/userRouter";
+import routeRouter from './routes/routeRouter';
 import { createAdmin } from './service/user.service';
 
 
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/", indexRouter);
+app.use("/routes", routeRouter);
 app.use("/users", usersRouter);
 
 // catch 404 and forward to error handler

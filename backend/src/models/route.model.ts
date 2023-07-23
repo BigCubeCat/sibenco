@@ -2,18 +2,20 @@ import mongoose from "mongoose";
 
 export interface IRouteDoc {
   points: Array<string>; // TODO 
-  summaryDistance: string;
-  tsNumber: string;
-  driverName: string;
+  summary_distance: string;
+  ts_number: string;
+  special_marks: string;
+  driver_name: string;
 }
 
 export interface I_RouterDocument extends IRouteDoc, mongoose.Document { }
 
 const RouteShema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
   points: [{ type: String }],
-  summaryDistance: { type: String },
-  tsNumber: { type: String },
-  driverName: { type: String }
+  summary_distance: { type: String },
+  ts_number: { type: String },
+  special_marks: { type: String },
+  driver_name: { type: String }
 });
 
 const RouteModel = mongoose.model<I_RouterDocument>("Route", RouteShema);
