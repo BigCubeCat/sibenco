@@ -5,8 +5,8 @@ interface IConfig {
   PAGE_SIZE: number;
   admin: {
     email: string;
-    password: string
-  }
+    password: string;
+  };
 }
 
 export const config: IConfig = {
@@ -15,9 +15,9 @@ export const config: IConfig = {
   JWT_SECRET: "JWT_SECRET",
   PAGE_SIZE: 30,
   admin: {
-    email: "admin@mail.ru",
-    password: "123"
-  }
+    email: 'admin@mail.ru',
+    password: '123',
+  },
 };
 
 export function LoadConfig() {

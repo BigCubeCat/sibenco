@@ -1,13 +1,17 @@
-import UserModel, { I_UserDocument, generatePasswordHash, userWithoutPass } from "../models/user.model";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { config as env } from "../config";
+import UserModel, {
+  I_UserDocument,
+  generatePasswordHash,
+  userWithoutPass,
+} from '../models/user.model';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import {config as env} from '../config';
 
 export async function createAdmin() {
-  const query = { email: env.admin.email };
+  const query = {email: env.admin.email};
   const pass = await generatePasswordHash(env.admin.password);
-  const update = { password: pass, role: "admin" };
-  const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+  const update = {password: pass, role: 'admin'};
+  const options = {upsert: true, new: true, setDefaultsOnInsert: true};
 
   await UserModel.findOneAndUpdate(query, update, options);
 }
@@ -22,17 +26,17 @@ export async function createUser(user: I_UserDocument) {
   }
 }
 
-export async function login(user: { email: string; password: string }) {
+export async function login(user: {email: string; password: string}) {
   try {
-    const foundUser = await UserModel.findOne({ email: user.email });
+    const foundUser = await UserModel.findOne({email: user.email});
     if (!foundUser) {
-      throw new Error("Name of user is not correct");
+      throw new Error('Name of user is not correct');
     }
     const isMatch = bcrypt.compareSync(user.password, foundUser.password);
     if (isMatch) {
       const token = jwt.sign(
-        { _id: foundUser._id?.toString(), email: foundUser.email },
-        env.JWT_SECRET
+        {_id: foundUser._id?.toString(), email: foundUser.email},
+        env.JWT_SECRET,
       );
 
       return {
@@ -40,19 +44,19 @@ export async function login(user: { email: string; password: string }) {
         token: token,
       };
     } else {
-      throw new Error("Password is not correct");
+      throw new Error('Password is not correct');
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw error;
   }
 }
 
 export async function getUser(_id: string) {
   try {
-    const foundUser = await UserModel.findOne({ _id });
+    const foundUser = await UserModel.findOne({_id});
     if (!foundUser) {
-      throw new Error("User incorrect");
+      throw new Error('User incorrect');
     }
     return foundUser;
   } catch (error) {
@@ -63,9 +67,9 @@ export async function getUser(_id: string) {
 
 export async function getOtherUser(email: string) {
   try {
-    const foundUser = await UserModel.findOne({ email });
+    const foundUser = await UserModel.findOne({email});
     if (!foundUser) {
-      throw new Error("User incorrect");
+      throw new Error('User incorrect');
     }
     return userWithoutPass(foundUser);
   } catch (error) {
@@ -76,11 +80,11 @@ export async function getOtherUser(email: string) {
 
 export async function patchUser(email: string, newData: any) {
   try {
-    const foundUser = await UserModel.findOneAndUpdate({ email }, newData, {
+    const foundUser = await UserModel.findOneAndUpdate({email}, newData, {
       upsert: true,
     });
     if (!foundUser) {
-      throw new Error("Error");
+      throw new Error('Error');
     }
     return userWithoutPass(foundUser);
   } catch (error) {
@@ -96,9 +100,9 @@ export async function searchUsers(
 ) {
   try {
     const users = await UserModel.find({
-      username: { $regex: email },
-      name: { $regex: name },
-      surname: { $regex: surname },
+      username: {$regex: email},
+      name: {$regex: name},
+      surname: {$regex: surname},
     }).limit(20);
     const withoutPasswords = users.map((user) => userWithoutPass(user));
     return withoutPasswords;
