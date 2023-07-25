@@ -12,7 +12,7 @@ interface IConfig {
 export const config: IConfig = {
   PORT: 0,
   MONGO_URL: '',
-  JWT_SECRET: 'JWT_SECRET',
+  JWT_SECRET: "JWT_SECRET",
   PAGE_SIZE: 30,
   admin: {
     email: 'admin@mail.ru',

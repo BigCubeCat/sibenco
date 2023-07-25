@@ -1599,6 +1599,11 @@ prettier@3.0.0:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.0.0.tgz#e7b19f691245a21d618c68bc54dc06122f6105ae"
   integrity sha512-zBf5eHpwHOGPC47h0zrPyNn+eAEIdEzfywMoYn2XPi0P44Zp0tSq64rq0xAREh4auw2cJZHo9QUob+NqCQky4g==
 
+properties-file@^3.2.12:
+  version "3.2.12"
+  resolved "https://registry.yarnpkg.com/properties-file/-/properties-file-3.2.12.tgz#de339e9457a46984d2af42082eae57621e4b07b3"
+  integrity sha512-VkMAE7BDsjIWe6WHi74ikKH6/BXMHljXAMJgKws11/bI66wNXRKsAS5lDZrMtfIoR6544WakPPSbU999mLI19A==
+
 proxy-addr@~2.0.7:
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/proxy-addr/-/proxy-addr-2.0.7.tgz#f19fe69ceab311eeb94b42e70e8c2070f9ba1025"
