@@ -33,6 +33,8 @@
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.3.4",
     "morgan": "^1.10.0",
+    "node-fetch": "^3.3.2",
+    "node-geocoder": "^4.2.0",
     "properties-file": "^3.2.12"
   }
 }
