@@ -13,11 +13,11 @@ import routeRouter from './routes/routeRouter';
 import {createAdmin} from './service/user.service';
 
 console.log(config.MONGO_URL);
-mongoose.connect(config.MONGO_URL);
-const fetchAdmin = async () => {
+const fetchStartup = async () => {
+  await mongoose.connect(config.MONGO_URL);
   await createAdmin();
 };
-fetchAdmin().catch(console.error);
+fetchStartup().catch(console.error);
 
 const app = express();
 app.use(cors());
