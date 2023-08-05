@@ -7,16 +7,28 @@ interface IConfig {
     email: string;
     password: string;
   };
+  mail: {
+    user: string;
+    password: string;
+    port: number;
+    host: string;
+  };
 }
 
 export const config: IConfig = {
   PORT: 0,
   MONGO_URL: '',
-  JWT_SECRET: "JWT_SECRET",
+  JWT_SECRET: 'JWT_SECRET',
   PAGE_SIZE: 30,
   admin: {
     email: 'admin@mail.ru',
     password: '123',
+  },
+  mail: {
+    user: '',
+    password: '',
+    host: '',
+    port: 0,
   },
 };
 
@@ -27,4 +39,10 @@ export function LoadConfig() {
     : 'mongodb://root:toor@127.0.0.1:27017';
   config.PORT = port;
   config.MONGO_URL = url;
+  config.mail = {
+    port: process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 587,
+    host: process.env.MAIL_HOST ? process.env.MAIL_HOST : 'smtp.mail.ru',
+    user: process.env.MAIL_USER ? process.env.MAIL_USER : 'user@mail.ru',
+    password: process.env.MAIL_PASS ? process.env.MAIL_PASS : 'qwerty1234',
+  }
 }
