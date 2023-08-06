@@ -53,3 +53,8 @@ export function LoadConfig() {
     password: process.env.MAIL_PASS ? process.env.MAIL_PASS : 'qwerty1234',
   }
 }
+
+
+
+export const incorrectRouteMachineWork = "The error occurred while routing machine was working";
+export const incorrectGeocoderWork = "The error occurred while geocoder was working";
