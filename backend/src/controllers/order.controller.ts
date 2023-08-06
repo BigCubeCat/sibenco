@@ -5,7 +5,7 @@ import { config } from "../config";
 import { getProperties, KeyValuePairObject } from 'properties-file'
 import { readFileSync } from "fs";
 
-const properties: KeyValuePairObject = getProperties(readFileSync('./properties/messedge_en.properties'))
+const properties: KeyValuePairObject = getProperties(readFileSync("properties/messegas_en.properties"));
 
 export const createOrder = async (req: Request, res: Response) => {
     try {
