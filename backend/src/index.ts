@@ -10,7 +10,7 @@ LoadConfig();
 import indexRouter from './routes/index';
 import usersRouter from './routes/userRouter';
 import routeRouter from './routes/routeRouter';
-import orderRotes from "./routes/orderRotes";
+import orderRotes from "./routes/orderRouter";
 import {createAdmin} from './service/user.service';
 
 console.log(config.MONGO_URL);
