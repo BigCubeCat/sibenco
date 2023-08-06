@@ -16,7 +16,7 @@ export const createOrder = async (req: Request, res: Response) => {
 export const getOrder = async (req: Request, res: Response) => {
   try {
     if (!req.params.id) {
-      return res.status(400).send(getErrorMessage(new Error(config.messages.errorBadId)));
+      return res.status(400).send(getErrorMessage(new Error(config.errors.BadId)));
     }
     const order = await orderService.getOrder(req.params.id);
     res.status(200).send(order);
@@ -44,7 +44,7 @@ export const deleteOrder = async (req: Request, res: Response) => {
   try {
     if (!req.params.id) {
       return res.status(400).send(getErrorMessage(
-        new Error(config.messages.errorBadId))
+        new Error(config.errors.BadId))
       );
     }
     await orderService.deleteOrder(req.params.id);

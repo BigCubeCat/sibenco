@@ -1,15 +1,11 @@
-import UserModel, {
-  I_UserDocument,
-  generatePasswordHash,
-  userWithoutPass,
-} from '../models/user.model';
+import UserModel, {generatePasswordHash, I_UserDocument, userWithoutPass,} from '../models/user.model';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import {config as env} from '../config';
+import {config} from '../config';
 
 export async function createAdmin() {
-  const query = {email: env.admin.email};
-  const pass = await generatePasswordHash(env.admin.password);
+  const query = {email: config.admin.email};
+  const pass = await generatePasswordHash(config.admin.password);
   const update = {password: pass, role: 'admin'};
   const options = {upsert: true, new: true, setDefaultsOnInsert: true};
 
@@ -19,6 +15,9 @@ export async function createAdmin() {
 export async function createUser(user: I_UserDocument) {
   try {
     const newUser = await UserModel.create(user);
+    if (!newUser) {
+      throw Error(config.errors.Create + "user");
+    }
     return userWithoutPass(newUser);
   } catch (error) {
     console.log(error);
@@ -36,7 +35,7 @@ export async function login(user: {email: string; password: string}) {
     if (isMatch) {
       const token = jwt.sign(
         {_id: foundUser._id?.toString(), email: foundUser.email},
-        env.JWT_SECRET,
+        config.JWT_SECRET,
       );
 
       return {
@@ -56,7 +55,7 @@ export async function getUser(_id: string) {
   try {
     const foundUser = await UserModel.findOne({_id});
     if (!foundUser) {
-      throw new Error('User incorrect');
+      throw new Error(config.errors.NotFound + "user");
     }
     return foundUser;
   } catch (error) {
@@ -69,7 +68,7 @@ export async function getOtherUser(email: string) {
   try {
     const foundUser = await UserModel.findOne({email});
     if (!foundUser) {
-      throw new Error('User incorrect');
+      throw new Error(config.errors.NotFound + "user");
     }
     return userWithoutPass(foundUser);
   } catch (error) {
@@ -84,7 +83,7 @@ export async function patchUser(email: string, newData: any) {
       upsert: true,
     });
     if (!foundUser) {
-      throw new Error('Error');
+      throw new Error(config.errors.Update + "user");
     }
     return userWithoutPass(foundUser);
   } catch (error) {
@@ -104,8 +103,7 @@ export async function searchUsers(
       name: {$regex: name},
       surname: {$regex: surname},
     }).limit(20);
-    const withoutPasswords = users.map((user) => userWithoutPass(user));
-    return withoutPasswords;
+    return users.map((user) => userWithoutPass(user));
   } catch (error) {
     console.log(error);
     throw error;

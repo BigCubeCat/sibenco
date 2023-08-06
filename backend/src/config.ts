@@ -1,4 +1,5 @@
 import messages, {TMessages} from "./properties/messages";
+import errors, {TErrors} from "./properties/errors";
 
 interface IConfig {
   PORT: number;
@@ -16,6 +17,7 @@ interface IConfig {
     host: string;
   };
   messages: TMessages;
+  errors: TErrors;
 }
 
 export const config: IConfig = {
@@ -33,7 +35,8 @@ export const config: IConfig = {
     host: '',
     port: 0,
   },
-  messages: messages
+  messages: messages,
+  errors: errors
 };
 
 export function LoadConfig() {
