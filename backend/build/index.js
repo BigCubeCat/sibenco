@@ -23,6 +23,7 @@ const config_1 = require("./config");
 const index_1 = __importDefault(require("./routes/index"));
 const userRouter_1 = __importDefault(require("./routes/userRouter"));
 const routeRouter_1 = __importDefault(require("./routes/routeRouter"));
+const orderRotes_1 = __importDefault(require("./routes/orderRotes"));
 const user_service_1 = require("./service/user.service");
 console.log(config_1.config.MONGO_URL);
 const fetchStartup = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -36,6 +37,7 @@ app.use((0, morgan_1.default)('dev'));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/', index_1.default);
+app.use('/orders', orderRotes_1.default);
 app.use('/routes', routeRouter_1.default);
 app.use('/users', userRouter_1.default);
 // catch 404 and forward to error handler

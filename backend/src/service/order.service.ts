@@ -1,11 +1,9 @@
 import OrderModel, {TOrderDoc} from "../models/order.model";
-
+import {config} from "../config";
 
 export async function createOrder(order: TOrderDoc): Promise<void> {
   try {
-    if (!(await OrderModel.create(order))) {
-      throw new Error("error on create");
-    }
+    await OrderModel.create(order);
   } catch (error) {
     console.log(error);
     throw error;
@@ -14,11 +12,7 @@ export async function createOrder(order: TOrderDoc): Promise<void> {
 
 export async function getOrder(id: string) {
   try {
-    const order = await OrderModel.findById(id);
-    if (!order) {
-      throw new Error("error on get");
-    }
-    return order;
+    return await OrderModel.findById(id);
   } catch (error) {
     console.log(error);
     throw error;
@@ -32,7 +26,7 @@ export async function getAllOrders(page: number, pageSize: number) {
       .skip(page * pageSize)
       .limit(pageSize);
     if (!orders) {
-      throw new Error("error on get all");
+      throw new Error(config.errors.NotFound + "orders");
     }
     return orders;
   } catch (error) {
@@ -43,9 +37,7 @@ export async function getAllOrders(page: number, pageSize: number) {
 
 export async function deleteOrder(id: string) {
   try {
-    if (!(await OrderModel.findByIdAndDelete(id))) {
-      throw new Error("error on delete");
-    }
+    await OrderModel.findByIdAndDelete(id);
   } catch (error) {
     console.log(error);
     throw error;
@@ -54,9 +46,7 @@ export async function deleteOrder(id: string) {
 
 export async function updateOrder(id: string, data: any) {
   try {
-    if (!(await OrderModel.findByIdAndUpdate(id, data, {upset: true}))) {
-      throw new Error("error on update");
-    }
+    await OrderModel.findByIdAndUpdate(id, data, {upset: true});
   } catch (error) {
     console.log(error);
     throw error;
@@ -70,9 +60,8 @@ export async function findOrdersBySomething(data: any, page: number, pageSize: n
       .skip(page * pageSize)
       .limit(pageSize);
     if (!orders) {
-      throw new Error("not found");
+      throw new Error(config.errors.NotFound + "orders");
     }
-    ;
     return orders;
   } catch (error) {
     console.log(error);
@@ -80,6 +69,6 @@ export async function findOrdersBySomething(data: any, page: number, pageSize: n
   }
 }
 
-export async function findSiilarOrders() {
+export async function findSimillarOrders () {
   // TO_DO Create metric
 }
