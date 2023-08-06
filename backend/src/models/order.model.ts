@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 interface TOrder {
     typeOfTrasportation: String,
-    date: Date,
+    date: String, // TODO Date
     loadigAdress: String,
     unloadingAdress: String,
     cargoName: String,
@@ -20,7 +20,7 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
         required: true,
     },
     date: {
-        type: Date,
+        type: String,
         unique: false,
         required: true
     },
