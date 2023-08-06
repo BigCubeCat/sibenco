@@ -28,3 +28,8 @@ export function LoadConfig() {
   config.PORT = port;
   config.MONGO_URL = url;
 }
+
+
+
+export const incorrectRouteMachineWork = "The error occurred while routing machine was working";
+export const incorrectGeocoderWork = "The error occurred while geocoder was working";
