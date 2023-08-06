@@ -10,14 +10,15 @@ LoadConfig();
 import indexRouter from './routes/index';
 import usersRouter from './routes/userRouter';
 import routeRouter from './routes/routeRouter';
+import orderRouter from "./routes/orderRouter";
 import {createAdmin} from './service/user.service';
 
 console.log(config.MONGO_URL);
-mongoose.connect(config.MONGO_URL);
-const fetchAdmin = async () => {
+const fetchStartup = async () => {
+  await mongoose.connect(config.MONGO_URL);
   await createAdmin();
 };
-fetchAdmin().catch(console.error);
+fetchStartup().catch(console.error);
 
 const app = express();
 app.use(cors());
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/', indexRouter);
+app.use('/orders', orderRouter);
 app.use('/routes', routeRouter);
 app.use('/users', usersRouter);
 

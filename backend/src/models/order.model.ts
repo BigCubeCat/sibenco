@@ -1,35 +1,35 @@
 import mongoose from "mongoose";
 
 interface TOrder {
-    typeOfTrasportation: String,
-    date: Date,
-    loadigAdress: String,
-    unloadingAdress: String,
-    cargoName: String,
-    distance: String,
-    specialMarks: String,
-    client: String
+    typeOfTransportation: string,
+    date: string, // TODO Date
+    loadingAddress: string,
+    unloadingAddress: string,
+    cargoName: string,
+    distance: string,
+    specialMarks: string,
+    client: string
 }
 
 export interface TOrderDoc extends TOrder, mongoose.Document {}
 
 const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
-    typeOfTrasportation: {
+    typeOfTransportation: {
         type: String,
         unique: false,
         required: true,
     },
     date: {
-        type: Date,
-        unique: false,
-        required: true
-    },
-    loadigAdress: {
         type: String,
         unique: false,
         required: true
     },
-    unloadingAdress: {
+    loadingAddress: {
+        type: String,
+        unique: false,
+        required: true
+    },
+    unloadingAddress: {
         type: String,
         unique: false,
         required: true

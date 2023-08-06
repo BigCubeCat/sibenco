@@ -3,13 +3,21 @@ import bcrypt from 'bcryptjs';
 
 const saltRounds = 8;
 
+export type TRole = "admin" | "driver" | "employee" | "axo";
+
 export interface IUserDoc {
   email: string;
   name: string;
   surname: string;
   lastname: string;
   password: string;
-  role: string;
+  role: TRole;
+  /*
+   admin - Администратор
+   driver - Представитель транспортной компании
+   axo - специалист АХО
+   employee - ответственный сотрудник
+   */
 }
 
 export interface I_UserDocument extends IUserDoc, mongoose.Document {}
