@@ -1,3 +1,5 @@
+import messages, {TMessages} from "./properties/messages";
+
 interface IConfig {
   PORT: number;
   MONGO_URL: string;
@@ -13,6 +15,7 @@ interface IConfig {
     port: number;
     host: string;
   };
+  messages: TMessages;
 }
 
 export const config: IConfig = {
@@ -30,6 +33,7 @@ export const config: IConfig = {
     host: '',
     port: 0,
   },
+  messages: messages
 };
 
 export function LoadConfig() {
