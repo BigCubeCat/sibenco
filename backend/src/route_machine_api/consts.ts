@@ -1,5 +1,4 @@
 // Сервисы OSRM
-
 export const serverOSRMAddress = 'http://localhost:5000/';
 
 export const osrmServiceRoute = 'route/';
