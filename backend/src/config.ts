@@ -1,5 +1,5 @@
-import messages, {TMessages} from "./properties/messages";
-import errors, {TErrors} from "./properties/errors";
+import messages, {TMessages} from './properties/messages';
+import errors, {TErrors} from './properties/errors';
 
 interface IConfig {
   PORT: number;
@@ -36,7 +36,7 @@ export const config: IConfig = {
     port: 0,
   },
   messages: messages,
-  errors: errors
+  errors: errors,
 };
 
 export function LoadConfig() {
@@ -51,10 +51,10 @@ export function LoadConfig() {
     host: process.env.MAIL_HOST ? process.env.MAIL_HOST : 'smtp.mail.ru',
     user: process.env.MAIL_USER ? process.env.MAIL_USER : 'user@mail.ru',
     password: process.env.MAIL_PASS ? process.env.MAIL_PASS : 'qwerty1234',
-  }
+  };
 }
 
-
-
-export const incorrectRouteMachineWork = "The error occurred while routing machine was working";
-export const incorrectGeocoderWork = "The error occurred while geocoder was working";
+export const incorrectRouteMachineWork =
+  'The error occurred while routing machine was working';
+export const incorrectGeocoderWork =
+  'The error occurred while geocoder was working';

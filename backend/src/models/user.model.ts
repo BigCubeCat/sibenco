@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 
 const saltRounds = 8;
 
-export type TRole = "admin" | "driver" | "employee" | "axo";
+export type TRole = 'admin' | 'driver' | 'employee' | 'axo';
 
 export interface IUserDoc {
   email: string;
@@ -33,33 +33,33 @@ const UserSchema: mongoose.Schema<I_UserDocument> = new mongoose.Schema({
     unique: false,
     required: true,
     minlength: 2,
-    maxlength: 1500
+    maxlength: 1500,
   },
   surname: {
     type: String,
     unique: false,
     required: true,
     minlength: 2,
-    maxlength: 1500
+    maxlength: 1500,
   },
   lastname: {
     type: String,
     unique: false,
     required: true,
     minLength: 2,
-    maxlength: 1500
+    maxlength: 1500,
   },
   role: {
     type: String,
     unique: false, //TO_DO role validation
-    required: true
+    required: true,
   },
   password: {
     type: String,
     unique: false,
     required: true,
     minlength: 5,
-    maxlength: 50
+    maxlength: 50,
   },
 });
 
