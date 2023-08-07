@@ -2,8 +2,7 @@ import RouteModel, {I_RouterDocument} from '../models/route.model';
 
 export async function createRoute(route: I_RouterDocument) {
   try {
-    const newRoute = await RouteModel.create(route);
-    return newRoute;
+    return await RouteModel.create(route);
   } catch (error) {
     console.log(error);
     throw error;
@@ -12,8 +11,7 @@ export async function createRoute(route: I_RouterDocument) {
 
 export async function patchRoute(id: string, route: I_RouterDocument) {
   try {
-    const newRoute = await RouteModel.findOneAndUpdate({_id: id}, route);
-    return newRoute;
+    return await RouteModel.findOneAndUpdate({_id: id}, route);
   } catch (error) {
     console.log(error);
     throw error;
@@ -31,11 +29,7 @@ export async function deleteRoute(id: string) {
 
 export async function getRoute(id: string) {
   try {
-    const route = await RouteModel.findOne({_id: id});
-    if (!route) {
-      throw new Error('not found');
-    }
-    return route;
+    return await RouteModel.findOne({_id: id});
   } catch (error) {
     console.log(error);
     throw error;

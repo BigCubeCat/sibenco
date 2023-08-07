@@ -11,8 +11,8 @@ LoadConfig();
 import indexRouter from './routes/index';
 import usersRouter from './routes/user/userRouter';
 import routeRouter from './routes/route/routeRouter';
-import orderRouter from './routes/order/orderRouter'
-import swDocument from './utils/openapi'
+import orderRouter from './routes/order/orderRouter';
+import swDocument from './utils/openapi';
 import {createAdmin} from './service/user.service';
 
 console.log(config.MONGO_URL);
@@ -30,6 +30,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/', indexRouter);
+app.use('/orders', orderRouter);
 app.use('/routes', routeRouter);
 app.use('/users', usersRouter);
 app.use('/orders', orderRouter);

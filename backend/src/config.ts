@@ -1,3 +1,6 @@
+import messages, {TMessages} from "./properties/messages";
+import errors, {TErrors} from "./properties/errors";
+
 interface IConfig {
   PORT: number;
   MONGO_URL: string;
@@ -13,6 +16,8 @@ interface IConfig {
     port: number;
     host: string;
   };
+  messages: TMessages;
+  errors: TErrors;
 }
 
 export const config: IConfig = {
@@ -30,6 +35,8 @@ export const config: IConfig = {
     host: '',
     port: 0,
   },
+  messages: messages,
+  errors: errors
 };
 
 export function LoadConfig() {
@@ -46,3 +53,8 @@ export function LoadConfig() {
     password: process.env.MAIL_PASS ? process.env.MAIL_PASS : 'qwerty1234',
   }
 }
+
+
+
+export const incorrectRouteMachineWork = "The error occurred while routing machine was working";
+export const incorrectGeocoderWork = "The error occurred while geocoder was working";
