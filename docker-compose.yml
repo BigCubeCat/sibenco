@@ -8,9 +8,15 @@ services:
       - ${MONGO_PORT}:${MONGO_PORT}
     volumes:
       - mongodb_data_container:/data/db
+  pelias:
+    image: pelias/api:latest
+    container_name: pelias
+    ports:
+      - ${PELIAS_PORT}:${PELIAS_PORT}
   # backend:
   #   depends_on:
   #     - mongo
+  #     - pelias
   #   build: ./backend
   #   restart: always
   #   ports:
