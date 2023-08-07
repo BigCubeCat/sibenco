@@ -2,15 +2,11 @@ import { Request, Response } from "express";
 import { getErrorMessage } from "../utils/error";
 import * as orderService from "../service/order.service"
 import { config } from "../config";
-import { getProperties, KeyValuePairObject } from 'properties-file'
-import { readFileSync } from "fs";
-
-const properties: KeyValuePairObject = getProperties(readFileSync('./properties/messedge_en.properties'))
 
 export const createOrder = async (req: Request, res: Response) => {
     try {
         await orderService.createOrder(req.body);
-        res.status(200).send(properties.successOrderCreate);
+        res.status(200).send("User created successfully");
     } catch (error) {
         return res.status(500).send(getErrorMessage(error));
     }
@@ -19,7 +15,7 @@ export const createOrder = async (req: Request, res: Response) => {
 export const getOrder = async (req: Request, res: Response) => {
     try {
         if (!req.params.id) {
-            return res.status(400).send(getErrorMessage(new Error(properties.errorOrderBadId)));
+            return res.status(400).send(getErrorMessage(new Error('Bad id')));
         }
         const order = await orderService.getOrder(req.params.id);
         res.status(200).send(order);
@@ -46,10 +42,10 @@ export const getAllOrders = async (req: Request, res: Response) => {
 export const deleteOrder = async (req: Request, res: Response) => {
     try {
         if (!req.params.id) {
-            return res.status(400).send(getErrorMessage(new Error(properties.errorOrderBadId)));
+            return res.status(400).send(getErrorMessage(new Error('Bad id')));
         }
         await orderService.deleteOrder(req.params.id);
-        res.status(200).send(properties.successOrderDelete);
+        res.status(200).send("Order deleted successfuly");
     } catch (error) {
         return res.status(500).send(getErrorMessage(error));
     }
@@ -58,10 +54,10 @@ export const deleteOrder = async (req: Request, res: Response) => {
 export const updateOrder = async (req: Request, res: Response) => {
     try {
         if (!req.params.id) {
-            return res.status(400).send(getErrorMessage(new Error(properties.errorOrderBadId)));
+            return res.status(400).send(getErrorMessage(new Error('Bad id')));
         }
         await orderService.updateOrder(req.params.id, req.body);
-        res.status(200).send(properties.successOrderUpdtae);
+        res.status(200).send("Order updated successfuly");
     } catch (error) {
         return res.status(500).send(getErrorMessage(error));
     }

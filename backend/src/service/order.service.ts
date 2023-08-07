@@ -1,13 +1,9 @@
-import { readFileSync } from "fs";
 import OrderModel, {TOrderDoc} from "../models/order.model";
-import { getProperties, KeyValuePairObject } from 'properties-file'
-
-const properties: KeyValuePairObject = getProperties(readFileSync('./properties/error_messedge_en.properties'))
 
 export async function createOrder(order: TOrderDoc): Promise<void> {
     try {
         if (!(await OrderModel.create(order))) {
-            throw new Error(properties.errorCreate);
+            throw new Error("Eror writing to the database");
         }
     } catch(error) {
         console.log(error);
@@ -19,7 +15,7 @@ export async function getOrder(id: string) {
     try {
         const order = await OrderModel.findById(id);
         if (!order) {
-            throw new Error(properties.errorGet);
+            throw new Error("Not Found");
         }
         return order;
     } catch(error) {
@@ -35,7 +31,7 @@ export async function getAllOrders(page: number, pageSize: number) {
             .skip(page * pageSize)
             .limit(pageSize);
         if (!orders) {
-            throw new Error(properties.errorNoOrders);
+            throw new Error("There are no more orders");
         }
         return orders;
     } catch(error) {
@@ -47,7 +43,7 @@ export async function getAllOrders(page: number, pageSize: number) {
 export async function deleteOrder(id: string) {
     try {
         if(!(await OrderModel.findByIdAndDelete(id))) {
-            throw new Error(properties.errorDelete);
+            throw new Error("Deletion error from the database: object does not exists");
         }
     } catch(error) {
         console.log(error);
@@ -58,7 +54,7 @@ export async function deleteOrder(id: string) {
 export async function updateOrder(id: string, data: any) {
     try {
         if(!(await OrderModel.findByIdAndUpdate(id, data, {upset: true}))) {
-            throw new Error(properties.errorUpdate);
+            throw new Error("Error updating information in the database");
         }
     } catch(error) {
         console.log(error);
@@ -73,7 +69,7 @@ export async function findOrdersBySomething(data: any, page: number, pageSize: n
             .skip(page * pageSize)
             .limit(pageSize);
         if (!orders) {
-            throw new Error(properties.errorNoOrders);
+            throw new Error("There are no more orders");
         };
         return orders;
     } catch(error) {
