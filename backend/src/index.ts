@@ -4,7 +4,7 @@ import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import swaggerUI = require('swagger-ui-express');
+import swaggerUI from 'swagger-ui-express';
 import {config, LoadConfig} from './config';
 LoadConfig();
 
@@ -30,7 +30,6 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/', indexRouter);
-app.use('/orders', orderRouter);
 app.use('/routes', routeRouter);
 app.use('/users', usersRouter);
 app.use('/orders', orderRouter);

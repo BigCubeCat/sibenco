@@ -1,5 +1,5 @@
-const joi = require('joi');
-const j2s = require('joi-to-swagger')
+import joi from 'joi';
+import j2s from 'joi-to-swagger';
 
 // Joi
 // TO-DO Add validation
