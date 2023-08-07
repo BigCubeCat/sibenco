@@ -1,4 +1,8 @@
-import UserModel, {generatePasswordHash, I_UserDocument, userWithoutPass,} from '../models/user.model';
+import UserModel, {
+  generatePasswordHash,
+  I_UserDocument,
+  userWithoutPass,
+} from '../models/user.model';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {config} from '../config';
@@ -16,7 +20,7 @@ export async function createUser(user: I_UserDocument) {
   try {
     const newUser = await UserModel.create(user);
     if (!newUser) {
-      throw Error(config.errors.Create + "user");
+      throw Error(config.errors.Create + 'user');
     }
     return userWithoutPass(newUser);
   } catch (error) {
@@ -55,7 +59,7 @@ export async function getUser(_id: string) {
   try {
     const foundUser = await UserModel.findOne({_id});
     if (!foundUser) {
-      throw new Error(config.errors.NotFound + "user");
+      throw new Error(config.errors.NotFound + 'user');
     }
     return foundUser;
   } catch (error) {
@@ -68,7 +72,7 @@ export async function getOtherUser(email: string) {
   try {
     const foundUser = await UserModel.findOne({email});
     if (!foundUser) {
-      throw new Error(config.errors.NotFound + "user");
+      throw new Error(config.errors.NotFound + 'user');
     }
     return userWithoutPass(foundUser);
   } catch (error) {
@@ -83,7 +87,7 @@ export async function patchUser(email: string, newData: any) {
       upsert: true,
     });
     if (!foundUser) {
-      throw new Error(config.errors.Update + "user");
+      throw new Error(config.errors.Update + 'user');
     }
     return userWithoutPass(foundUser);
   } catch (error) {

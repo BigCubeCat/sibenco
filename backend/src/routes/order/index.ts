@@ -1,33 +1,41 @@
-import { swCreateOrder, swDeleteOrder, swFindByTags, swFindSimilarOrders, swGetOrder, swPatchOrder, swGetAllOrders } from './docs'
+import {
+  swCreateOrder,
+  swDeleteOrder,
+  swFindByTags,
+  swFindSimilarOrders,
+  swGetOrder,
+  swPatchOrder,
+  swGetAllOrders,
+} from './docs';
 
 export const swOrderRoute = {
-    "/orders/{orderID}": {
-        "get": {
-            ...swGetOrder,
-        },
-        "delete": {
-            ...swDeleteOrder
-        },
-        "patch": {
-            ...swPatchOrder
-        }
+  '/orders/{orderID}': {
+    get: {
+      ...swGetOrder,
     },
-    "/orders": {
-        "get": {
-            ...swGetAllOrders
-        },
-        "post": {
-            ...swCreateOrder
-        }
+    delete: {
+      ...swDeleteOrder,
     },
-    "/orders/orders?{someTag}={someTagValue}": {
-        "get": {
-            ...swFindByTags
-        }
+    patch: {
+      ...swPatchOrder,
     },
-    "/orders/{orderID}/similar": {
-        "get": {
-            ...swFindSimilarOrders
-        }
-    }
-}
+  },
+  '/orders': {
+    get: {
+      ...swGetAllOrders,
+    },
+    post: {
+      ...swCreateOrder,
+    },
+  },
+  '/orders/orders?{someTag}={someTagValue}': {
+    get: {
+      ...swFindByTags,
+    },
+  },
+  '/orders/{orderID}/similar': {
+    get: {
+      ...swFindSimilarOrders,
+    },
+  },
+};

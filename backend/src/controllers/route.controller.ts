@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
-import { getErrorMessage } from '../utils/error';
+import {Request, Response} from 'express';
+import {getErrorMessage} from '../utils/error';
 import * as routeService from '../service/route.service';
-import { config } from '../config';
+import {config} from '../config';
 
 export const createRoute = async (req: Request, res: Response) => {
   try {
@@ -21,7 +21,7 @@ export const getAll = async (req: Request, res: Response) => {
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
     const results = await routeService.getAll(page, pageSize);
-    res.status(200).send({ results });
+    res.status(200).send({results});
   } catch (error) {
     return res.status(500).send(getErrorMessage(error));
   }

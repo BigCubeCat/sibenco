@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import {emailFromToken} from '../utils/auth';
-import * as userService from "../service/user.service";
-import {TRole} from "../models/user.model";
+import * as userService from '../service/user.service';
+import {TRole} from '../models/user.model';
 
 export function roleMiddleware(roles: TRole[]) {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -19,6 +19,6 @@ export function roleMiddleware(roles: TRole[]) {
   };
 }
 
-export const isDriver = roleMiddleware(["driver"]);
-export const isAxo = roleMiddleware(["axo"]);
-export const isEmployee = roleMiddleware(["employee"]);
+export const isDriver = roleMiddleware(['driver']);
+export const isAxo = roleMiddleware(['axo']);
+export const isEmployee = roleMiddleware(['employee']);

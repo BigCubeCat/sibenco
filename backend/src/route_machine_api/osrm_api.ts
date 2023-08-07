@@ -1,5 +1,5 @@
 //функции fetch
-import {fetchApiGet} from "../utils/fetch";
+import {fetchApiGet} from '../utils/fetch';
 //Стандартные оповещения об ошибках
 //Константы используемые в http-запросах
 import * as constants from './consts';
@@ -7,7 +7,6 @@ import * as constants from './consts';
 // Типы для описания ответа osrm
 import {RouteData, RouteResponse, TripResponse} from './types';
 import {incorrectRouteMachineWork} from '../config';
-
 
 //Функция-составитель ссылок для запросов, service - enum, определяющий тип сервиса,
 // coordinates - ключевые точки маршрута, упорядоченные в порядке следования маршрута
@@ -17,7 +16,9 @@ const makeRouteRequestURL = (coordinates: Array<Array<number>>): string => {
     constants.osrmServiceRoute +
     constants.osrmServiceVersion +
     constants.osrmProfileCar;
-  answer += coordinates.map((coordinate: number[]) => `${coordinate[0]},${coordinate[1]}`).join(";");
+  answer += coordinates
+    .map((coordinate: number[]) => `${coordinate[0]},${coordinate[1]}`)
+    .join(';');
   answer += `?` + constants.osrmRouteOptions;
   return answer;
 };
@@ -79,12 +80,13 @@ export const makeOptimalRoute = async (
   }
 };
 
-
 export const makeOptimalTrip = async (
   waypoints: Array<Array<number>>,
 ): Promise<RouteData | undefined> => {
   const url = makeTripRequestURL(waypoints);
-  const optimalTrip: TripResponse | undefined = await fetchApiGet<TripResponse>(url);
+  const optimalTrip: TripResponse | undefined = await fetchApiGet<TripResponse>(
+    url,
+  );
   const resultTrip: RouteData = {waypoints: [], steps: [], distance: 0};
   if (optimalTrip !== undefined) {
     resultTrip.distance = optimalTrip.trips[0]?.distance;

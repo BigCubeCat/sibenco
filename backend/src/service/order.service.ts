@@ -1,5 +1,5 @@
-import OrderModel, {TOrderDoc} from "../models/order.model";
-import {config} from "../config";
+import OrderModel, {TOrderDoc} from '../models/order.model';
+import {config} from '../config';
 
 export async function createOrder(order: TOrderDoc): Promise<void> {
   try {
@@ -26,7 +26,7 @@ export async function getAllOrders(page: number, pageSize: number) {
       .skip(page * pageSize)
       .limit(pageSize);
     if (!orders) {
-      throw new Error(config.errors.NotFound + "orders");
+      throw new Error(config.errors.NotFound + 'orders');
     }
     return orders;
   } catch (error) {
@@ -53,14 +53,18 @@ export async function updateOrder(id: string, data: any) {
   }
 }
 
-export async function findOrdersBySomething(data: any, page: number, pageSize: number) {
+export async function findOrdersBySomething(
+  data: any,
+  page: number,
+  pageSize: number,
+) {
   try {
     const orders = await OrderModel.find({data})
       .sort({_id: -1})
       .skip(page * pageSize)
       .limit(pageSize);
     if (!orders) {
-      throw new Error(config.errors.NotFound + "orders");
+      throw new Error(config.errors.NotFound + 'orders');
     }
     return orders;
   } catch (error) {
@@ -69,6 +73,6 @@ export async function findOrdersBySomething(data: any, page: number, pageSize: n
   }
 }
 
-export async function findSimillarOrders () {
+export async function findSimillarOrders() {
   // TO_DO Create metric
 }

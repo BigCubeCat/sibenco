@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
   secure: false,
   auth: {
     user: config.mail.user,
-    pass: config.mail.password
+    pass: config.mail.password,
   },
 });
 
