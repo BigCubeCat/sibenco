@@ -14,7 +14,7 @@ const swagger = {
     },
     servers: [
       {
-        url: 'http://localhost:5000',
+        url: 'http://teamhub.website:5000',
         description: 'Development server'
       }
     ],
