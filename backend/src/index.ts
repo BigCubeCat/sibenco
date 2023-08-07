@@ -4,13 +4,15 @@ import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import swaggerUI from 'swagger-ui-express';
 import {config, LoadConfig} from './config';
 LoadConfig();
 
 import indexRouter from './routes/index';
-import usersRouter from './routes/userRouter';
-import routeRouter from './routes/routeRouter';
-import orderRouter from "./routes/orderRouter";
+import usersRouter from './routes/user/userRouter';
+import routeRouter from './routes/route/routeRouter';
+import orderRouter from './routes/order/orderRouter';
+import swDocument from './utils/openapi';
 import {createAdmin} from './service/user.service';
 
 console.log(config.MONGO_URL);
@@ -28,9 +30,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/', indexRouter);
-app.use('/orders', orderRouter);
 app.use('/routes', routeRouter);
 app.use('/users', usersRouter);
+app.use('/orders', orderRouter);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swDocument));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -3,7 +3,6 @@ import {getErrorMessage} from "../utils/error";
 import * as orderService from "../service/order.service"
 import {config} from "../config";
 
-
 export const createOrder = async (req: Request, res: Response) => {
   try {
     await orderService.createOrder(req.body);
