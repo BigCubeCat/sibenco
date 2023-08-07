@@ -3,14 +3,19 @@ import { swRouteRoute } from "../routes/route"
 import { swUserRoute } from "../routes/user"
 import { schema as orderSchema } from "../routes/order/schema"
 import { schema as routeSchema } from "../routes/route/schema"
-import { schema as userSchema } from "../routes/user/schema"
+import { schema as userSchema, schemaSignIn as userSignInSchema } from "../routes/user/schema"
 
 const swagger = {
     openapi: '3.0.3',
     info: {
-      title: 'Express API for SGK',
+      title: 'Express API для СГК',
       version: '1.0.0',
-      description: 'The REST API for SGK service'
+      description: 'REST API для сгк. Все операции разбиты по тегам. Вот их описание: \
+      order/route/user - оперции над заказами/маршрутами/пользователями \
+      специалист АХО/ответственный сотрудник/представитель транспортной компании/администратор\
+       - содержат операции, которые могут делать соответствующие пользователи. \
+       Под ними расположены схемы заказов, маршрутов, пользователей.\
+       _Примечание: для пользователей есть две схемы, одна содержит все данные, другая только авторизационные_.'
     },
     servers: [
       {
@@ -40,7 +45,8 @@ const swagger = {
             Users: {
                 type: 'object',
                 properties: {
-                    userSchema
+                    userSchema,
+                    userSignInSchema
                 }
             }
         }
