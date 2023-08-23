@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import { createRoute } from '../service/route.service';
+import {I_RouterDocument} from '../models/route.model';
 
 interface TOrder {
   typeOfTransportation: string;
@@ -54,6 +56,20 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
     unique: false,
     require: true,
   },
+});
+
+OrderSchema.pre("save", async function(next) {
+  const array = [this];
+  const route = {
+    orders: array,
+    summary_distance: this.distance,
+    ts_number: "",
+    special_marks: "",
+    driver_name: "",
+    date: this.date,
+  };
+  await createRoute(<I_RouterDocument>route);
+  next();
 });
 
 const OrderModel = mongoose.model<TOrderDoc>('OrderModel', OrderSchema);
