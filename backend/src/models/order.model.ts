@@ -61,7 +61,7 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
 OrderSchema.pre("save", async function(next) {
   const array = [this];
   const route = {
-    points: array,
+    orders: array,
     summary_distance: this.distance,
     ts_number: "",
     special_marks: "",
