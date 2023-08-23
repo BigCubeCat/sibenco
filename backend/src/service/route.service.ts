@@ -2,6 +2,7 @@ import RouteModel, {I_RouterDocument} from '../models/route.model';
 
 export async function createRoute(route: I_RouterDocument) {
   try {
+    // get boxes
     return await RouteModel.create(route);
   } catch (error) {
     console.log(error);
