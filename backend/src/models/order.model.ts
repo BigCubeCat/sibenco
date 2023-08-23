@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
-import {generatePasswordHash} from './user.model';
 import {todayDate} from '../utils/date';
 
-interface IAddressDto {
+export interface IAddressDto {
   address: string;
   latitude: string;
   longitude: string;
