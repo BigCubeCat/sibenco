@@ -4,14 +4,17 @@ import {getWord} from './goecoder';
 
 
 const convertIntoBoxes = async (route: I_RouterDocument) => {
+  route.orders.forEach(order => {
+
+  });
   const optimalRoute = await makeOptimalRoute([[]]);
   if (optimalRoute === undefined) {
     return [];
   }
-  let words = new Set<string>([]);
+  const words = new Set<string>([]);
   for (let i = 0; i < optimalRoute.steps.length; i++) {
     const step = optimalRoute.steps[i];
-    const word = await getWord('' + step[0], '' + step[1], '');
+    const word = await getWord('' + step[0], '' + step[1]);
     words.add(word);
   }
 

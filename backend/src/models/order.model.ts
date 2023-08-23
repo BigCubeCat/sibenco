@@ -1,60 +1,65 @@
 import mongoose from 'mongoose';
+import {generatePasswordHash} from './user.model';
+import {todayDate} from '../utils/date';
 
-interface TOrder {
-  typeOfTransportation: string;
-  date: string; // TODO Date
-  loadingAddress: string;
-  unloadingAddress: string;
-  cargoName: string;
-  distance: string;
-  specialMarks: string;
-  client: string;
+interface IAddressDto {
+  address: string;
+  latitude: string;
+  longitude: string;
+  word: string;
 }
 
-export interface TOrderDoc extends TOrder, mongoose.Document {}
+interface IOrder {
+  date: {
+    createdAt: string; // Дата создания
+    executionAt: string; // Дата исполнения
+  };
+  route: {
+    loadingAddress: IAddressDto;
+    unloadingAddress: IAddressDto;
+    distance: string;
+  };
+  order: {
+    typeOfTransportation: string;
+    cargoName: string;
+    specialMarks: string;
+    client: string;
+  };
+}
+
+export interface TOrderDoc extends IOrder, mongoose.Document {
+}
 
 const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
-  typeOfTransportation: {
-    type: String,
-    unique: false,
-    required: true,
-  },
   date: {
-    type: String,
-    unique: false,
-    required: true,
+    createdAt: {type: String}, // Создается автоматически
+    executionAt: {type: String, required: true},
   },
-  loadingAddress: {
-    type: String,
-    unique: false,
-    required: true,
+  route: {
+    loadingAddress: {
+      address: {type: String},
+      latitude: {type: String},
+      longitude: {type: String},
+      word: {type: String}
+    },
+    unloadingAddress: {
+      address: {type: String},
+      latitude: {type: String},
+      longitude: {type: String},
+      word: {type: String}
+    },
+    distance: {type: String}, // Считаем на бэке
   },
-  unloadingAddress: {
-    type: String,
-    unique: false,
-    required: true,
-  },
-  cargoName: {
-    type: String,
-    unique: false,
-    required: true,
-  },
-  distance: {
-    type: String,
-    unique: false,
-    required: true,
-  },
-  specialMarks: {
-    type: String,
-    unique: false,
-    required: false,
-  },
-  client: {
-    type: String,
-    unique: false,
-    require: true,
+  order: {
+    typeOfTransportation: {type: String, required: true},
+    cargoName: {type: String, required: true},
+    specialMarks: {type: String, required: true},
+    client: {type: String},
   },
 });
-
+OrderSchema.pre('save', async function (next) {
+  this.date.createdAt = todayDate();
+  next();
+});
 const OrderModel = mongoose.model<TOrderDoc>('OrderModel', OrderSchema);
 export default OrderModel;
