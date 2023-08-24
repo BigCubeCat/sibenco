@@ -1,4 +1,6 @@
 import RouteModel, {I_RouterDocument} from '../models/route.model';
+import errors from "../properties/errors";
+import {getInterval} from "../utils/date";
 
 export async function createRoute(route: I_RouterDocument) {
   try {
@@ -51,3 +53,23 @@ export async function getAll(page: number, page_size: number) {
     throw error;
   }
 }
+
+export async function getNearestInTimeRoutes(id: string) {
+  const sampleRoute = await getRoute(id);
+  if (sampleRoute !== null) {
+    try {
+     const timeInterval = getInterval(sampleRoute.date,1,1);
+     const nearestRoutes = RouteModel.find().where('date').in(timeInterval);
+     if(!nearestRoutes){
+       throw new Error('not found');
+     }
+     return nearestRoutes;
+    } catch (error){
+      console.log(error);
+      throw error;
+    }
+  } else {
+    console.log(errors.NotFound)
+  }
+}
+

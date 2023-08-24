@@ -6,7 +6,7 @@ export interface IRouteDoc {
   ts_number: string;
   special_marks: string;
   driver_name: string;
-  data: string;
+  date: string;
 }
 
 export interface I_RouterDocument extends IRouteDoc, mongoose.Document {}
@@ -17,7 +17,7 @@ const RouteShema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
   ts_number: {type: String},
   special_marks: {type: String},
   driver_name: {type: String},
-  data: {type: String},
+  date: {type: String},
 });
 
 const RouteModel = mongoose.model<I_RouterDocument>('Route', RouteShema);
