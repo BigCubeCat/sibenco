@@ -8,18 +8,28 @@ services:
       - ${MONGO_PORT}:${MONGO_PORT}
     volumes:
       - mongodb_data_container:/data/db
-  # backend:
-  #   depends_on:
-  #     - mongo
-  #   build: ./backend
-  #   restart: always
-  #   ports:
-  #     - ${USER_PORT}:${USER_PORT}
-  #   environment:
-  #     - USER_PORT=${USER_PORT}
-  #     - JWT_KEY=${JWT_KEY}
-  #     - MONGO_URL=mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:${MONGO_PORT}
-  #   stdin_open: true
-  #   tty: true
+  geoword:
+    environment:
+      - PORT=${PORT}
+      - DATABASE=${DATABASE}
+    image: docker.io/bigcubecat/wordgeocode:latest
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - mongodb_data_container:/data/db
+  backend:
+    depends_on:
+      - mongo
+      - geoword
+    build: ./backend
+    restart: always
+    ports:
+      - ${USER_PORT}:${USER_PORT}
+    environment:
+      - USER_PORT=${USER_PORT}
+      - JWT_KEY=${JWT_KEY}
+      - MONGO_URL=mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:${MONGO_PORT}
+    stdin_open: true
+    tty: true
 volumes:
   mongodb_data_container:
