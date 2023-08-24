@@ -9,7 +9,7 @@ export const getWord = async (
     `${config.geocoder.url}encode?latitude=${latitude}&longitude=${longitude}&address=${address}`,
   );
   if (!resp) {
-    return '';
+    return;
   }
   return resp.word;
 };
@@ -19,7 +19,7 @@ export const getAddress = async (word: string) => {
     `${config.geocoder.url}/decode?word=${word}`,
   );
   if (!resp) {
-    return '';
+    return;
   }
   return {
     latitude: resp.latitude,

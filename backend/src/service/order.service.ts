@@ -1,20 +1,25 @@
 import OrderModel, {TOrderDoc} from '../models/order.model';
 import {config} from '../config';
-import { createRoute } from './route.service';
-import { I_RouterDocument } from '../models/route.model';
+import {createRoute} from './route.service';
+import {I_RouterDocument, IRouteDoc} from '../models/route.model';
+import {todayDate} from '../utils/date';
 
 export async function createOrder(order: TOrderDoc): Promise<void> {
   try {
-    await OrderModel.create(order);
-    
-    const array = [order];
-    const route = {
-      orders: array,
-      summary_distance: order.distance,
-      ts_number: "",
-      special_marks: "",
-      driver_name: "",
-      date: order.date,
+    const orderModel = await OrderModel.create(order);
+
+    const route: IRouteDoc = {
+      route: {
+        orders: [orderModel._id],
+        boxes: [],
+        distance: '0',
+      },
+      car: {
+        tsNumber: '',
+        specialMarks: '',
+        driver: 'Ryan Gosling',
+      },
+      date: todayDate(),
     };
     await createRoute(<I_RouterDocument>route);
   } catch (error) {
