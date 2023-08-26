@@ -1,24 +1,36 @@
 import mongoose from 'mongoose';
 
 export interface IRouteDoc {
-  points: Array<string>; // TODO
-  summary_distance: string;
-  ts_number: string;
-  special_marks: string;
-  driver_name: string;
+  route: {
+    orders: Array<string>; // Список id заказов, ибо заказ может обновиться
+    boxes: Array<string>;
+    distance: string;
+  };
+  car: {
+    tsNumber: string;
+    specialMarks: string;
+    driver: string;
+  };
   date: string;
 }
 
-export interface I_RouterDocument extends IRouteDoc, mongoose.Document {}
+export interface I_RouterDocument extends IRouteDoc, mongoose.Document {
+}
 
-const RouteShema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
-  points: [{type: String}],
-  summary_distance: {type: String},
-  ts_number: {type: String},
-  special_marks: {type: String},
-  driver_name: {type: String},
+
+const RouteSchema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
+  route: {
+    orders: [{type: String}],
+    boxes: [{type: String}],
+    distance: String,
+  },
+  car: {
+    tsNumber: {type: String},
+    specialMarks: {type: String},
+    driver: {type: String},
+  },
   date: {type: String},
 });
 
-const RouteModel = mongoose.model<I_RouterDocument>('Route', RouteShema);
+const RouteModel = mongoose.model<I_RouterDocument>('Route', RouteSchema);
 export default RouteModel;

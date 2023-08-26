@@ -1,9 +1,27 @@
 import OrderModel, {TOrderDoc} from '../models/order.model';
 import {config} from '../config';
+import {createRoute} from './route.service';
+import {I_RouterDocument, IRouteDoc} from '../models/route.model';
+import {todayDate} from '../utils/date';
 
 export async function createOrder(order: TOrderDoc): Promise<void> {
   try {
-    await OrderModel.create(order);
+    const orderModel = await OrderModel.create(order);
+
+    const route: IRouteDoc = {
+      route: {
+        orders: [orderModel._id],
+        boxes: [],
+        distance: '0',
+      },
+      car: {
+        tsNumber: '',
+        specialMarks: '',
+        driver: 'Ryan Gosling',
+      },
+      date: todayDate(),
+    };
+    await createRoute(<I_RouterDocument>route);
   } catch (error) {
     console.log(error);
     throw error;

@@ -16,6 +16,11 @@ interface IConfig {
     port: number;
     host: string;
   };
+  geocoder: {
+    url: string;
+  };
+
+  // messages
   messages: TMessages;
   errors: TErrors;
 }
@@ -34,6 +39,9 @@ export const config: IConfig = {
     password: '',
     host: '',
     port: 0,
+  },
+  geocoder: {
+    url: "http://127.0.0.1:3000/",
   },
   messages: messages,
   errors: errors,

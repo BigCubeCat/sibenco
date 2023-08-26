@@ -4,6 +4,7 @@ import {getInterval} from "../utils/date";
 
 export async function createRoute(route: I_RouterDocument) {
   try {
+    // get boxes
     return await RouteModel.create(route);
   } catch (error) {
     console.log(error);
