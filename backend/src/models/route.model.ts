@@ -17,6 +17,7 @@ export interface IRouteDoc {
 export interface I_RouterDocument extends IRouteDoc, mongoose.Document {
 }
 
+
 const RouteSchema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
   route: {
     orders: [{type: String}],
