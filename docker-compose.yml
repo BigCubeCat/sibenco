@@ -17,6 +17,12 @@ services:
       - ${PORT}:${PORT}
     volumes:
       - mongodb_data_container:/data/db
+  osrm:
+    build: ./osrm
+    restart: always
+    ports:
+      - ${OSRM_EXTERNAL_PORT}:${OSRM_INTERNAL_PORT}
+    command: ${OSRM_COMMAND}
   backend:
     depends_on:
       - mongo
