@@ -2,7 +2,6 @@ import {
   swCreateOrder,
   swDeleteOrder,
   swFindByTags,
-  swFindSimilarOrders,
   swGetOrder,
   swPatchOrder,
   swGetAllOrders,
@@ -31,11 +30,6 @@ export const swOrderRoute = {
   '/orders/orders?{someTag}={someTagValue}': {
     get: {
       ...swFindByTags,
-    },
-  },
-  '/orders/{orderID}/similar': {
-    get: {
-      ...swFindSimilarOrders,
     },
   },
 };

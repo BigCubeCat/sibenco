@@ -165,40 +165,6 @@ export const swFindByTags = {
   },
 };
 
-export const swFindSimilarOrders = {
-  summary: 'similar orders',
-  description: 'Find similar orders',
-  tags: ['order', 'специалист АХО'],
-  parameters: [
-    {
-      name: 'orderID',
-      in: 'path',
-      schema: {
-        type: 'integer',
-        format: 'int64',
-      },
-      required: true,
-    },
-  ],
-  operationId: 'findSimilarOrders',
-  responses: {
-    '200': {
-      description: 'Done',
-      content: {
-        'application/json': {
-          schema: {
-            ...schema,
-          },
-        },
-      },
-    },
-    default: {
-      description: 'Something went wrong!',
-      // Add some different errors
-    },
-  },
-};
-
 export const swCreateOrder = {
   summary: 'create order',
   description: 'Add a new order',
