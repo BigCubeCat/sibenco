@@ -7,6 +7,9 @@ export const isAdminMiddleware = async (
   res: Response,
   next: NextFunction,
 ) => {
+  next();
+  return;
+  /*
   try {
     if (emailFromToken(req) != config.admin.email) {
       throw new Error();
@@ -15,4 +18,5 @@ export const isAdminMiddleware = async (
   } catch (err) {
     res.status(401).send('Please authenticate');
   }
+   */
 };

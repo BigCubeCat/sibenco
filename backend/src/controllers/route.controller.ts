@@ -60,3 +60,12 @@ export const deleteRoute = async (req: Request, res: Response) => {
     return res.status(500).send(getErrorMessage(error));
   }
 };
+
+export const mergeRoutes = async (req: Request, res: Response) => {
+  try {
+    const resultRoute = await routeService.merge(req.body.routes);
+    res.status(200).send(resultRoute);
+  } catch (error) {
+    return res.status(500).send(getErrorMessage(error));
+  }
+}

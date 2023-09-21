@@ -12,6 +12,7 @@ export interface IRouteDoc {
     driver: string;
   };
   date: string;
+  status: string;
 }
 
 export interface I_RouterDocument extends IRouteDoc, mongoose.Document {
@@ -30,6 +31,7 @@ const RouteSchema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
     driver: {type: String},
   },
   date: {type: String},
+  status: {type: String}
 });
 
 const RouteModel = mongoose.model<I_RouterDocument>('Route', RouteSchema);

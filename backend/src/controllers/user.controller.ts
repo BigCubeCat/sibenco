@@ -15,6 +15,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const loginOne = async (req: Request, res: Response) => {
   try {
+    console.log("body = ", req.body);
     const foundUser = await userServices.login(req.body);
     res.status(200).send(foundUser);
   } catch (error) {

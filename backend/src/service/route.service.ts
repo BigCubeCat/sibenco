@@ -1,6 +1,7 @@
 import RouteModel, {I_RouterDocument} from '../models/route.model';
 import errors from "../properties/errors";
 import {getInterval} from "../utils/date";
+import {type} from "os";
 
 export async function createRoute(route: I_RouterDocument) {
   try {
@@ -32,7 +33,7 @@ export async function deleteRoute(id: string) {
 
 export async function getRoute(id: string) {
   try {
-    return await RouteModel.findOne({_id: id});
+    return  await RouteModel.findOne({_id: id});
   } catch (error) {
     console.log(error);
     throw error;
@@ -52,6 +53,30 @@ export async function getAll(page: number, page_size: number) {
   } catch (error) {
     console.log(error);
     throw error;
+  }
+}
+
+export async function merge(routeIds: string[]) {
+  console.log(routeIds);
+
+  const resultRoute = await getRoute(routeIds[0]);
+  const newOrders: Set<string> = new Set(resultRoute?.route.orders);
+  const newBoxes: Set<string> = new Set(resultRoute?.route.boxes);
+  for (let i = 1; i < routeIds.length; ++i) {
+    const route = await getRoute(routeIds[i]);
+    if (!route) {
+      continue;
+    }
+    route.route.boxes.forEach(box => newBoxes.add(box));
+    route.route.orders.forEach(order => newOrders.add(order));
+    route.status = 'merged';
+    patchRoute(route._id, route);
+  }
+  if (resultRoute ) {
+    resultRoute.route.orders = Array.from(newOrders);
+    resultRoute.route.boxes = Array.from(newBoxes);
+    resultRoute.status = 'built';
+    patchRoute(resultRoute._id, resultRoute);
   }
 }
 
