@@ -5,6 +5,7 @@ import {
   swGetAllRoutes,
   swGetRoute,
   swPatchRoute,
+  swMergeRoutes
 } from './docs';
 
 export const swRouteRoute = {
@@ -32,4 +33,9 @@ export const swRouteRoute = {
       ...swFindSimilarRoutes,
     },
   },
+  'routes/merge': {
+    post: {
+      ...swMergeRoutes,
+    },
+  }
 };

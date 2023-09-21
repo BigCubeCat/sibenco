@@ -182,3 +182,37 @@ export const swFindSimilarRoutes = {
     },
   },
 };
+
+
+export const swMergeRoutes = {
+  summary: 'merge routes',
+  description: 'merge routes by id. Set status "merged" to deleted routes and status "built" to updated route',
+  tags: ['route', 'специалист АХО'],
+  parameters: [
+    {
+      routes: 'routes',
+      schema: {
+        type: 'routes',
+        format: 'text',
+      },
+      required: true,
+    },
+  ],
+  operationId: 'mergeRoutes',
+  responses: {
+    '200': {
+      description: 'Done',
+      content: {
+        'application/json': {
+          schema: {
+            ...schema,
+          },
+        },
+      },
+    },
+    default: {
+      description: 'Something went wrong!',
+      // Add some different errors
+    },
+  },
+};
