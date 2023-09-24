@@ -7,4 +7,4 @@ export const convertAddressDto = async (coords: IAddressDto) => {
     return [Number(address?.latitude), Number(address?.longitude)];
   }
   return [Number(coords?.latitude), Number(coords?.longitude)];
-}
+};

@@ -6,20 +6,20 @@ import j2s from 'joi-to-swagger';
 export const joiSchema = joi.object().keys({
   date: {
     createdAt: joi.string(), // Создается автоматически
-    executionAt: joi.string()
+    executionAt: joi.string(),
   },
   route: {
     loadingAddress: {
       address: joi.string(),
       latitude: joi.string(),
       longitude: joi.string(),
-      word: joi.string()
+      word: joi.string(),
     },
     unloadingAddress: {
       address: joi.string(),
       latitude: joi.string(),
       longitude: joi.string(),
-      word: joi.string()
+      word: joi.string(),
     },
     distance: joi.string(), // Считаем на бэке
   },
@@ -27,8 +27,8 @@ export const joiSchema = joi.object().keys({
     typeOfTransportation: joi.string(),
     cargoName: joi.string(),
     specialMarks: joi.string(),
-    client: joi.string()
-  }
+    client: joi.string(),
+  },
 });
 // end of Joi
 

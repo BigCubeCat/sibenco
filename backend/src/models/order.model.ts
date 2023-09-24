@@ -26,8 +26,7 @@ interface IOrder {
   };
 }
 
-export interface TOrderDoc extends IOrder, mongoose.Document {
-}
+export interface TOrderDoc extends IOrder, mongoose.Document {}
 
 const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
   date: {
@@ -39,13 +38,13 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
       address: {type: String},
       latitude: {type: String},
       longitude: {type: String},
-      word: {type: String}
+      word: {type: String},
     },
     unloadingAddress: {
       address: {type: String},
       latitude: {type: String},
       longitude: {type: String},
-      word: {type: String}
+      word: {type: String},
     },
     distance: {type: String}, // Считаем на бэке
   },

@@ -3,7 +3,9 @@ import {config} from '../config';
 import {AddressDto, WordDto} from './dto';
 
 export const getWord = async (
-  latitude: string, longitude: string, address = '',
+  latitude: string,
+  longitude: string,
+  address = '',
 ) => {
   const resp = await fetchApiPost<WordDto>(
     `${config.geocoder.url}encode?latitude=${latitude}&longitude=${longitude}&address=${address}`,
