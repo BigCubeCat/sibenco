@@ -3,6 +3,7 @@ import {config} from '../config';
 import {createRoute} from './route.service';
 import {I_RouterDocument, IRouteDoc} from '../models/route.model';
 import {todayDate} from '../utils/date';
+import {convertIntoBoxes} from "../geocoder";
 
 export async function createOrder(order: TOrderDoc): Promise<void> {
   try {
@@ -22,6 +23,7 @@ export async function createOrder(order: TOrderDoc): Promise<void> {
       date: todayDate(),
       status: '',
     };
+    route.route.boxes = await convertIntoBoxes(route);
     await createRoute(<I_RouterDocument>route);
   } catch (error) {
     console.log(error);

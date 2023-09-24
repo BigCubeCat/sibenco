@@ -16,6 +16,9 @@ interface IConfig {
     port: number;
     host: string;
   };
+  osrm: {
+    url: string;
+  };
   geocoder: {
     url: string;
   };
@@ -40,8 +43,11 @@ export const config: IConfig = {
     host: '',
     port: 0,
   },
+  osrm: {
+    url: 'http://127.0.0.1:8080/',
+  },
   geocoder: {
-    url: 'http://127.0.0.1:3000/',
+    url: 'http://127.0.0.1:8000/',
   },
   messages: messages,
   errors: errors,
