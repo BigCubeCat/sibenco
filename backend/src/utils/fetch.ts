@@ -1,7 +1,8 @@
 import fetch from 'node-fetch';
 
 export const fetchApi = async <T>(
-  address: string, method: string,
+  address: string,
+  method: string,
 ): Promise<T | undefined> => {
   try {
     const response = await fetch(address, {

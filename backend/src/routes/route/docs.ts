@@ -183,10 +183,10 @@ export const swFindSimilarRoutes = {
   },
 };
 
-
 export const swMergeRoutes = {
   summary: 'merge routes',
-  description: 'merge routes by id. Set status "merged" to deleted routes and status "built" to updated route',
+  description:
+    'merge routes by id. Set status "merged" to deleted routes and status "built" to updated route',
   tags: ['route', 'специалист АХО'],
   parameters: [
     {

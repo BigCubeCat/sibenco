@@ -20,7 +20,7 @@ export async function createOrder(order: TOrderDoc): Promise<void> {
         driver: 'Ryan Gosling',
       },
       date: todayDate(),
-      status: ""
+      status: '',
     };
     await createRoute(<I_RouterDocument>route);
   } catch (error) {

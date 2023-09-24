@@ -68,4 +68,4 @@ export const mergeRoutes = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).send(getErrorMessage(error));
   }
-}
+};

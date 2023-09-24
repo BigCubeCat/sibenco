@@ -5,7 +5,7 @@ import {
   swGetAllRoutes,
   swGetRoute,
   swPatchRoute,
-  swMergeRoutes
+  swMergeRoutes,
 } from './docs';
 
 export const swRouteRoute = {
@@ -37,5 +37,5 @@ export const swRouteRoute = {
     post: {
       ...swMergeRoutes,
     },
-  }
+  },
 };

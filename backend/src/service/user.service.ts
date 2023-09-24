@@ -31,7 +31,6 @@ export async function createUser(user: I_UserDocument) {
 
 export async function login(user: {email: string; password: string}) {
   try {
-    console.log(user);
     const foundUser = await UserModel.findOne({email: user.email});
     if (!foundUser) {
       throw new Error('Name of user is not correct');

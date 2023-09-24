@@ -14,8 +14,8 @@ export const joiSchema = joi.object().keys({
     specialMarks: joi.string(),
     driver: joi.string(),
   },
-  date: joi.string()
-})
+  date: joi.string(),
+});
 // end of Joi
 
 export const schema = j2s(joiSchema).swagger;
