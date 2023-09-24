@@ -68,7 +68,3 @@ export function LoadConfig() {
   };
 }
 
-export const incorrectRouteMachineWork =
-  'The error occurred while routing machine was working';
-export const incorrectGeocoderWork =
-  'The error occurred while geocoder was working';

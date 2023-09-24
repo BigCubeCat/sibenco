@@ -1,7 +1,6 @@
 import {fetchApiGet} from '../utils/fetch';
-import {makeRouteRequestURL, makeTripRequestURL} from './osrm_api';
-import {RouteData, RouteResponse, TripResponse} from './types';
-import {incorrectRouteMachineWork} from '../config';
+import {makeRouteRequestURL} from './osrm_api';
+import {RouteData, RouteResponse} from './types';
 
 export const makeOptimalRoute = async (
   waypoints: Array<Array<number>>,
@@ -38,7 +37,9 @@ export const makeOptimalRoute = async (
     console.log(resultRoute);
     return resultRoute;
   } else {
-    console.log(incorrectRouteMachineWork);
+    console.log(
+      'The error occurred while routing machine was working'
+    );
   }
 };
 

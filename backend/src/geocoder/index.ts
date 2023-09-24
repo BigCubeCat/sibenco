@@ -5,6 +5,13 @@ import {getOrder} from '../service/order.service';
 import {convertAddressDto} from '../utils/coords';
 import {TOrderDoc} from '../models/order.model';
 
+/*
+convertIntoBoxes
+
+@param{route} route document
+
+@returns list of coded waypoints
+ */
 export const convertIntoBoxes = async (route: IRouteDoc) => {
   const waypoints: number[][] = [];
   for (let i = 0; i < route.route.orders.length; i++) {
