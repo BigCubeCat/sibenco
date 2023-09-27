@@ -1,7 +1,6 @@
 import {fetchApiGet} from '../utils/fetch';
-import {makeRouteRequestURL, makeTripRequestURL} from './osrm_api';
-import {RouteData, RouteResponse, TripResponse} from './types';
-import {incorrectRouteMachineWork} from '../config';
+import {makeRouteRequestURL} from './osrm_api';
+import {RouteData, RouteResponse} from './types';
 
 export const makeOptimalRoute = async (
   waypoints: Array<Array<number>>,
@@ -35,48 +34,12 @@ export const makeOptimalRoute = async (
     resultRoute.waypoints = resultRoute.waypoints.sort(
       (objA, objB) => objA.index - objB.index,
     );
+    console.log(resultRoute);
     return resultRoute;
   } else {
-    console.log(incorrectRouteMachineWork);
-  }
-};
-
-export const makeOptimalTrip = async (
-  waypoints: Array<Array<number>>,
-): Promise<RouteData | undefined> => {
-  const url = makeTripRequestURL(waypoints);
-  const optimalTrip: TripResponse | undefined = await fetchApiGet<TripResponse>(
-    url,
-  );
-  const resultTrip: RouteData = {waypoints: [], steps: [], distance: 0};
-  if (optimalTrip !== undefined) {
-    resultTrip.distance = optimalTrip.trips[0]?.distance;
-    const countResultWaypoints = optimalTrip.waypoints.length;
-
-    for (let i = 0; i < countResultWaypoints; i++) {
-      resultTrip.waypoints.push({
-        index: optimalTrip.waypoints[i].waypoint_index,
-        location: optimalTrip.waypoints[i].location,
-      });
-    }
-
-    const countResultLegs = optimalTrip.trips[0].legs.length;
-
-    for (let i = 0; i < countResultLegs; i++) {
-      const countResultSteps = optimalTrip.trips[0].legs[i].steps.length;
-
-      for (let j = 0; j < countResultSteps; j++) {
-        resultTrip.steps.push(
-          optimalTrip.trips[0].legs[i].steps[j].maneuver.location,
-        );
-      }
-    }
-    resultTrip.waypoints = resultTrip?.waypoints.sort(
-      (objA, objB) => objA.index - objB.index,
+    console.log(
+      'The error occurred while routing machine was working'
     );
-    return resultTrip;
-  } else {
-    console.log(incorrectRouteMachineWork);
   }
 };
 

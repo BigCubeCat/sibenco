@@ -16,6 +16,9 @@ interface IConfig {
     port: number;
     host: string;
   };
+  osrm: {
+    url: string;
+  };
   geocoder: {
     url: string;
   };
@@ -40,29 +43,28 @@ export const config: IConfig = {
     host: '',
     port: 0,
   },
+  osrm: {
+    url: 'http://127.0.0.1:8080/',
+  },
   geocoder: {
-    url: 'http://127.0.0.1:3000/',
+    url: 'http://127.0.0.1:8000/',
   },
   messages: messages,
   errors: errors,
 };
 
 export function LoadConfig() {
+  const changeConf = (value: string | undefined, defaultValue: string) => value ? value : defaultValue;
   const port = process.env.PORT ? Number(process.env.PORT) : 5000;
-  const url = process.env.MONGO_URL
-    ? process.env.MONGO_URL
-    : 'mongodb://root:toor@127.0.0.1:27017';
+  const url = changeConf(process.env.MONGO_URL, 'mongodb://root:toor@127.0.0.1:27017');
   config.PORT = port;
   config.MONGO_URL = url;
+  config.geocoder.url = changeConf(process.env.GEOWORD_URL, config.geocoder.url);
   config.mail = {
     port: process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 587,
-    host: process.env.MAIL_HOST ? process.env.MAIL_HOST : 'smtp.mail.ru',
-    user: process.env.MAIL_USER ? process.env.MAIL_USER : 'user@mail.ru',
-    password: process.env.MAIL_PASS ? process.env.MAIL_PASS : 'qwerty1234',
+    host: changeConf(process.env.MAIL_HOST, 'smtp.mail.ru'),
+    user: changeConf(process.env.MAIL_USER, 'user@mail.ru'),
+    password: changeConf(process.env.MAIL_PASS, 'qwerty1234')
   };
 }
 
-export const incorrectRouteMachineWork =
-  'The error occurred while routing machine was working';
-export const incorrectGeocoderWork =
-  'The error occurred while geocoder was working';

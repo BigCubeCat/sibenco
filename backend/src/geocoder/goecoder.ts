@@ -2,6 +2,10 @@ import {fetchApiGet, fetchApiPost} from '../utils/fetch';
 import {config} from '../config';
 import {AddressDto, WordDto} from './dto';
 
+/*
+getWord(latitude, longitude, address)
+request to geocoder and returns encode latitude and longitude
+ */
 export const getWord = async (
   latitude: string,
   longitude: string,
@@ -16,6 +20,10 @@ export const getWord = async (
   return resp.word;
 };
 
+/*
+getAddress(word)
+request to geocoder and return decoded word
+ */
 export const getAddress = async (word: string) => {
   const resp = await fetchApiGet<AddressDto>(
     `${config.geocoder.url}/decode?word=${word}`,
