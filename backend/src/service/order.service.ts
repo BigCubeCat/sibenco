@@ -3,7 +3,6 @@ import {config} from '../config';
 import {createRoute} from './route.service';
 import {I_RouterDocument, IRouteDoc} from '../models/route.model';
 import {todayDate} from '../utils/date';
-import {convertIntoBoxes} from "../geocoder";
 
 export async function createOrder(order: TOrderDoc): Promise<void> {
   const orderModel = await OrderModel.create(order);
@@ -17,12 +16,11 @@ export async function createOrder(order: TOrderDoc): Promise<void> {
     car: {
       tsNumber: '',
       specialMarks: '',
-      driver: 'Ryan Gosling',
+      driver: 'Amogus',
     },
     date: todayDate(),
     status: '',
   };
-  route.route.boxes = await convertIntoBoxes(route);
   await createRoute(<I_RouterDocument>route);
 }
 

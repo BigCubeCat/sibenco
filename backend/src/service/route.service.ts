@@ -1,8 +1,10 @@
+import { convertIntoBoxes } from '../geocoder';
 import RouteModel, {I_RouterDocument} from '../models/route.model';
 import errors from '../properties/errors';
 import {getInterval} from '../utils/date';
 
 export async function createRoute(route: I_RouterDocument) {
+  route.route.boxes = await convertIntoBoxes(route);
   return await RouteModel.create(route);
 }
 
