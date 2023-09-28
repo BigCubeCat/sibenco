@@ -1,6 +1,5 @@
 import { convertIntoBoxes } from '../geocoder';
-import RouteModel, {I_RouterDocument} from '../models/route.model';
-import errors from '../properties/errors';
+import RouteModel, {IRouteDoc, I_RouterDocument} from '../models/route.model';
 import { getNearestInBoxesRoutes } from '../utils/routes_filter/routes_by_boxes';
 import { getNearestInTimeRoutes } from '../utils/routes_filter/routes_by_time';
 
@@ -58,7 +57,7 @@ export async function merge(routeIds: string[]) {
   }
   newRoute.route.boxes = Array.from(newBoxes);
   newRoute.route.orders = Array.from(newOrders);
-  return await createRoute(newRoute);
+  return await createRoute(<I_RouterDocument>newRoute);
 }
 
 export async function findSimilarRoutes(id: string) {
