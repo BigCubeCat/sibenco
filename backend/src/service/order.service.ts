@@ -18,7 +18,7 @@ export async function createOrder(order: TOrderDoc): Promise<void> {
       specialMarks: '',
       driver: 'Amogus',
     },
-    date: todayDate(),
+    date: orderModel.date.executionAt,
     status: '',
   };
   await createRoute(<I_RouterDocument>route);
@@ -62,6 +62,3 @@ export async function findOrdersBySomething(
   return orders;
 }
 
-export async function findSimillarOrders() {
-  // TO_DO Create metric
-}

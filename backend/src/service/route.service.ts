@@ -1,7 +1,8 @@
 import { convertIntoBoxes } from '../geocoder';
 import RouteModel, {I_RouterDocument} from '../models/route.model';
 import errors from '../properties/errors';
-import {getInterval} from '../utils/date';
+import { getNearestInBoxesRoutes } from '../utils/routes_filter/routes_by_boxes';
+import { getNearestInTimeRoutes } from '../utils/routes_filter/routes_by_time';
 
 export async function createRoute(route: I_RouterDocument) {
   route.route.boxes = await convertIntoBoxes(route);
@@ -53,16 +54,15 @@ export async function merge(routeIds: string[]) {
   }
 }
 
-export async function getNearestInTimeRoutes(id: string) {
-  const sampleRoute = await getRoute(id);
-  if (sampleRoute !== null) {
-    const timeInterval = getInterval(sampleRoute.date, 1, 1);
-    const nearestRoutes = RouteModel.find().where('date').in(timeInterval);
-    if (!nearestRoutes) {
-      throw new Error('not found');
+export async function findSimilarRoutes(id: string) {
+  const route = await getRoute(id);
+  if (route !== null) {
+    let similarRoutes = await getNearestInTimeRoutes(route);
+    if (similarRoutes === null) {
+      return [];
     }
-    return nearestRoutes;
-  } else {
-    console.log(errors.NotFound);
+    similarRoutes = await getNearestInBoxesRoutes(similarRoutes);
+    return similarRoutes;
   }
+  return [];
 }

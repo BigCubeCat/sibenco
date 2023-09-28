@@ -35,6 +35,8 @@ export const swUserRoute = {
     get: {
       ...swGetAllUsers,
     },
+  },
+  '/users/add': {
     post: {
       ...swCreateUser,
     },

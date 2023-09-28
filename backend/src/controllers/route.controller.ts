@@ -69,3 +69,12 @@ export const mergeRoutes = async (req: Request, res: Response) => {
     return res.status(500).send(getErrorMessage(error));
   }
 };
+
+export const findSimilarRoutes = async (req: Request, res: Response) => {
+  try {
+    const resultRoutes = await routeService.findSimilarRoutes(req.params.id);
+    res.status(200).send(resultRoutes);
+  } catch (error) {
+    return res.status(500).send(getErrorMessage(error));
+  }
+}

@@ -60,6 +60,7 @@ export function LoadConfig() {
   config.PORT = port;
   config.MONGO_URL = url;
   config.geocoder.url = changeConf(process.env.GEOWORD_URL, config.geocoder.url);
+  config.osrm.url = changeConf(process.env.OSRM_URL, config.osrm.url);
   config.mail = {
     port: process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 587,
     host: changeConf(process.env.MAIL_HOST, 'smtp.mail.ru'),

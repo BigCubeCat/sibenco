@@ -12,7 +12,7 @@ export const getWord = async (
   address = '',
 ) => {
   const resp = await fetchApiPost<WordDto>(
-    `${config.geocoder.url}encode?latitude=${latitude}&longitude=${longitude}&address=${address}`,
+    `${config.geocoder.url}/encode?latitude=${latitude}&longitude=${longitude}&address=${address}`,
   );
   if (!resp) {
     return;

@@ -4,7 +4,7 @@ import * as constants from './consts';
 // coordinates - ключевые точки маршрута, упорядоченные в порядке следования маршрута
 export const makeRouteRequestURL = (coordinates: Array<Array<number>>): string => {
   let answer: string =
-    constants.serverOSRMAddress +
+    constants.serverOSRMAddress + '/' + 
     constants.osrmServiceRoute +
     constants.osrmServiceVersion +
     constants.osrmProfileCar;
