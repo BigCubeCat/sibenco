@@ -17,7 +17,7 @@ export async function deleteRoute(id: string) {
   await RouteModel.findByIdAndRemove(id);
 }
 
-export async function getRoute(id: string) {
+export async function getRoute(id: string): Promise<I_RouterDocument | null | undefined> {
   return await RouteModel.findOne({_id: id});
 }
 
@@ -33,9 +33,19 @@ export async function getAll(page: number, page_size: number) {
 }
 
 export async function merge(routeIds: string[]) {
-  const resultRoute = await getRoute(routeIds[0]);
-  const newOrders: Set<string> = new Set(resultRoute?.route.orders);
-  const newBoxes: Set<string> = new Set(resultRoute?.route.boxes);
+  const firstRoute = await getRoute(routeIds[0]);
+  if (!firstRoute) {
+    throw new Error("Bad route Id");
+  }
+  const newRoute: IRouteDoc = {
+    car: firstRoute.car,
+    date: firstRoute.date,
+    status: "built",
+    route: firstRoute.route,
+  };
+
+  const newOrders: Set<string> = new Set(firstRoute?.route.orders);
+  const newBoxes: Set<string> = new Set(firstRoute?.route.boxes);
   for (let i = 1; i < routeIds.length; ++i) {
     const route = await getRoute(routeIds[i]);
     if (!route) {
@@ -44,14 +54,11 @@ export async function merge(routeIds: string[]) {
     route.route.boxes.forEach((box) => newBoxes.add(box));
     route.route.orders.forEach((order) => newOrders.add(order));
     route.status = 'merged';
-    patchRoute(route._id, route);
+    await patchRoute(route._id, route);
   }
-  if (resultRoute) {
-    resultRoute.route.orders = Array.from(newOrders);
-    resultRoute.route.boxes = Array.from(newBoxes);
-    resultRoute.status = 'built';
-    patchRoute(resultRoute._id, resultRoute);
-  }
+  newRoute.route.boxes = Array.from(newBoxes);
+  newRoute.route.orders = Array.from(newOrders);
+  return await createRoute(newRoute);
 }
 
 export async function findSimilarRoutes(id: string) {
