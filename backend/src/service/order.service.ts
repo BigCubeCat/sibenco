@@ -2,7 +2,6 @@ import OrderModel, {TOrderDoc} from '../models/order.model';
 import {config} from '../config';
 import {createRoute} from './route.service';
 import {I_RouterDocument, IRouteDoc} from '../models/route.model';
-import {todayDate} from '../utils/date';
 
 export async function createOrder(order: TOrderDoc): Promise<void> {
   const orderModel = await OrderModel.create(order);

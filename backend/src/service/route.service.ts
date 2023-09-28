@@ -67,7 +67,7 @@ export async function findSimilarRoutes(id: string) {
     if (similarRoutes === null) {
       return [];
     }
-    similarRoutes = await getNearestInBoxesRoutes(similarRoutes);
+    similarRoutes = await getNearestInBoxesRoutes(similarRoutes, route);
     return similarRoutes;
   }
   return [];
