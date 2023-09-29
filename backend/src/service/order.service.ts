@@ -1,7 +1,7 @@
 import OrderModel, {TOrderDoc} from '../models/order.model';
 import {config} from '../config';
 import {createRoute} from './route.service';
-import {I_RouterDocument, IRouteDoc} from '../models/route.model';
+import {IRouteDoc} from '../models/route.model';
 
 export async function createOrder(order: TOrderDoc): Promise<void> {
   const orderModel = await OrderModel.create(order);
@@ -20,7 +20,7 @@ export async function createOrder(order: TOrderDoc): Promise<void> {
     date: orderModel.date.executionAt,
     status: '',
   };
-  await createRoute(<I_RouterDocument>route);
+  await createRoute(<IRouteDoc>route);
 }
 
 export async function getOrder(id: string) {

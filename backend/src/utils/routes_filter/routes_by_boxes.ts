@@ -1,4 +1,6 @@
-export async function getNearestInBoxesRoutes(routes: any[], route: any) {
+import { I_RouterDocument } from "../../models/route.model";
+
+export async function getNearestInBoxesRoutes(routes: I_RouterDocument[], route: I_RouterDocument) {
     let simialarRoutesByBoxes = [];
     for(let i = 0; i < routes.length; ++i) {
         let countEquals: number = 0;
@@ -10,18 +12,11 @@ export async function getNearestInBoxesRoutes(routes: any[], route: any) {
             }
         }
             
-        const minLength = min(routes[i].route.boxes.length, route.route.boxes.length);
+        
+        const minLength = Math.min(routes[i].route.boxes.length, route.route.boxes.length);
         if(countEquals * 100 / minLength >= 60) {
             simialarRoutesByBoxes.push(routes[i]);
         }
     }
     return simialarRoutesByBoxes;
-}
-
-
-function min(a: number, b: number) {
-    if (a < b) {
-        return a;
-    }
-    return b;
 }

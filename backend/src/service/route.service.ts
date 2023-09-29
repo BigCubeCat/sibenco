@@ -3,7 +3,7 @@ import RouteModel, {IRouteDoc, I_RouterDocument} from '../models/route.model';
 import { getNearestInBoxesRoutes } from '../utils/routes_filter/routes_by_boxes';
 import { getNearestInTimeRoutes } from '../utils/routes_filter/routes_by_time';
 
-export async function createRoute(route: I_RouterDocument) {
+export async function createRoute(route: IRouteDoc) {
   route.route.boxes = await convertIntoBoxes(route);
   return await RouteModel.create(route);
 }
@@ -57,14 +57,14 @@ export async function merge(routeIds: string[]) {
   }
   newRoute.route.boxes = Array.from(newBoxes);
   newRoute.route.orders = Array.from(newOrders);
-  return await createRoute(<I_RouterDocument>newRoute);
+  return await createRoute(newRoute);
 }
 
-export async function findSimilarRoutes(id: string) {
-  const route = await getRoute(id);
-  if (route !== null) {
-    let similarRoutes = await getNearestInTimeRoutes(route);
-    if (similarRoutes === null) {
+export async function findSimilarRoutes(id: string): Promise<I_RouterDocument[]> {
+  const route: I_RouterDocument | null | undefined = await getRoute(id);
+  if (route !== null && route !== undefined) {
+    let similarRoutes: I_RouterDocument[] | null | undefined = await getNearestInTimeRoutes(route);
+    if (similarRoutes === null || similarRoutes === undefined) {
       return [];
     }
     similarRoutes = await getNearestInBoxesRoutes(similarRoutes, route);
