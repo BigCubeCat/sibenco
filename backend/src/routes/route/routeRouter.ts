@@ -11,5 +11,6 @@ router.get('/', auth, routeController.getAll);
 router.get('/:id', auth, routeController.getRoute);
 router.patch('/:id', auth, routeController.patchRoute);
 router.delete('/:id', auth, routeController.deleteRoute);
+router.get('/:id/similar', auth, routeController.findSimilarRoutes);
 
 export default router;
