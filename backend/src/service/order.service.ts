@@ -3,10 +3,10 @@ import {config} from '../config';
 import {createRoute} from './route.service';
 import {IRouteDoc} from '../models/route.model';
 
-export async function createOrder(order: TOrderDoc): Promise<void> {
+export async function createOrder(order: TOrderDoc)  {
   const orderModel = await OrderModel.create(order);
 
-  const route: IRouteDoc = {
+  /*const route: IRouteDoc = {
     route: {
       orders: [orderModel._id],
       boxes: [],
@@ -16,11 +16,19 @@ export async function createOrder(order: TOrderDoc): Promise<void> {
       tsNumber: '',
       specialMarks: '',
       driver: 'Amogus',
+      loadCapacity: 0,
+      numberOfSeats: 0
     },
-    date: orderModel.date.executionAt,
-    status: '',
+    date: orderModel.date.loadingTime,
+    status: "built",
+    isPrivate: false,
+    isSingle: false,
+    cargoInRoute: 0,
+    passengersInRoute: 0,
+    comment: ''
   };
-  await createRoute(<IRouteDoc>route);
+  await createRoute(<IRouteDoc>route);*/ // for Anton. Everybody else delete this comment))
+  return orderModel;
 }
 
 export async function getOrder(id: string) {
@@ -43,7 +51,7 @@ export async function deleteOrder(id: string) {
 }
 
 export async function updateOrder(id: string, data: any) {
-  await OrderModel.findByIdAndUpdate(id, data, {upset: true});
+  return await OrderModel.findByIdAndUpdate({ _id: id }, data, {upsert: true});
 }
 
 export async function findOrdersBySomething(

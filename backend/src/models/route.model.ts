@@ -10,26 +10,40 @@ export interface IRouteDoc {
     tsNumber: string;
     specialMarks: string;
     driver: string;
+    loadCapacity: number;
+    numberOfSeats: number;
   };
-  date: string;
+  date: number;
   status: string;
+  isPrivate: boolean;
+  isSingle: boolean;
+  cargoInRoute: number;
+  passengersInRoute: number;
+  comment: string;
 }
 
-export interface I_RouterDocument extends IRouteDoc, mongoose.Document {}
+export interface I_RouterDocument extends IRouteDoc, mongoose.Document { }
 
 const RouteSchema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
   route: {
-    orders: [{type: String}],
-    boxes: [{type: String}],
+    orders: [{ type: String }],
+    boxes: [{ type: String }],
     distance: String,
   },
   car: {
-    tsNumber: {type: String},
-    specialMarks: {type: String},
-    driver: {type: String},
+    tsNumber: { type: String },
+    specialMarks: { type: String },
+    driver: { type: String },
+    loadCapacity: { type: Number },
+    numberOfSeats: { type: Number }
   },
-  date: {type: String},
-  status: {type: String},
+  date: { type: Number },
+  status: { type: String },
+  isPrivate: { type: Boolean },
+  isSingle: { type: Boolean },
+  cargoInRoute: { type: Number },
+  passengersInRoute: { type: Number },
+  comment: { type: String }
 });
 
 const RouteModel = mongoose.model<I_RouterDocument>('Route', RouteSchema);
