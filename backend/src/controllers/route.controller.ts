@@ -131,12 +131,11 @@ export const getAllComplexes = async (req: Request, res: Response) => {
 
 export const patchComplex = async (req: Request, res: Response) => {
   try {
-    const id: string = req.body.route._id ? req.body.route._id : '';
-    if (id == '') {
+    if (!req.params.id) {
       return res.status(400).send(getErrorMessage(new Error('Bad id')));
     }
   
-    const newRoute = await routeService.patchRoute(req.body.route._id, req.body.route);
+    const newRoute = await routeService.patchRoute(req.params.id, req.body.route);
     if (!newRoute) {
       return res.status(400).send(getErrorMessage(new Error('No routes exist with that id')));
     }
