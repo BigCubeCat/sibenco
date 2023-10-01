@@ -6,7 +6,7 @@ import {IRouteDoc} from '../models/route.model';
 export async function createOrder(order: TOrderDoc)  {
   const orderModel = await OrderModel.create(order);
 
-  /*const route: IRouteDoc = {
+  const route: IRouteDoc = {
     route: {
       orders: [orderModel._id],
       boxes: [],
@@ -27,7 +27,7 @@ export async function createOrder(order: TOrderDoc)  {
     passengersInRoute: 0,
     comment: ''
   };
-  await createRoute(<IRouteDoc>route);*/ // for Anton. Everybody else delete this comment))
+  await createRoute(<IRouteDoc>route);
   return orderModel;
 }
 

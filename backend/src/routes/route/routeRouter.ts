@@ -16,7 +16,7 @@ router.get('/std/:id/similar', auth, routeController.findSimilarRoutes);
 router.post('/complex/', auth, routeController.createComplex);
 router.get('/complex/', auth, routeController.getAllComplexes);
 router.patch('/complex/', auth, routeController.patchComplex);
-router.get('/complex/:id', auth, routeController.getComplex);
+router.get('/complex/:id', auth, routeController.getComplex); // необходим id именно маршрута, а не комплексного объекта
 router.post('/complex/merge', auth, routeController.mergeComplexes);
 
 export default router;

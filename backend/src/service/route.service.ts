@@ -4,7 +4,7 @@ import { getNearestInBoxesRoutes } from '../utils/routes_filter/routes_by_boxes'
 import { getNearestInTimeRoutes } from '../utils/routes_filter/routes_by_time';
 
 export async function createRoute(route: IRouteDoc) {
-  route.route.boxes = await convertIntoBoxes(route);
+  //route.route.boxes = await convertIntoBoxes(route); //for Anton anybody else delete this comment )
   return await RouteModel.create(route);
 }
 

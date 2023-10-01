@@ -84,10 +84,10 @@ export const findSimilarRoutes = async (req: Request, res: Response) => {
 
 export const createComplex = async (req: Request, res: Response) => {
   try {
-    var newRoute = await routeService.createRoute(req.body.route);
+    let newRoute = await routeService.createRoute(req.body.route);
     const orders: TOrderDoc[] = [];
 
-    for (var i = 0; i < req.body.orders.length; i++) {
+    for (let i = 0; i < req.body.orders.length; i++) {
       const newOrder = await orderService.createOrder(req.body.orders[i]);
       orders.push(newOrder);
       newRoute.route.orders.push(newOrder._id);
@@ -111,9 +111,9 @@ export const getAllComplexes = async (req: Request, res: Response) => {
         : config.PAGE_SIZE;
     const results = await routeService.getAll(page, pageSize);
     const responseArray = [];
-    for (var i = 0; i < pageSize; i++) {
+    for (let i = 0; i < pageSize; i++) {
       const orders: TOrderDoc[] = [];
-      for (var j = 0; j < results[i].route.orders.length; i++) {
+      for (let j = 0; j < results[i].route.orders.length; i++) {
         const currentOrder = await orderService.getOrder(results[i].route.orders[j]);
         if (currentOrder) {
           orders.push(currentOrder);
@@ -142,10 +142,10 @@ export const patchComplex = async (req: Request, res: Response) => {
     }
     newRoute?.route.orders.splice(0, newRoute?.route.orders.length);
     if (req.body.orders[0] != null) {
-      var orderId: string = req.body.orders[0]._id ? req.body.orders[0]._id : '';
+      let orderId: string = req.body.orders[0]._id ? req.body.orders[0]._id : '';
       const orders: TOrderDoc[] = [];
-      for (var i = 0; i < req.body.orders.length; i++) {
-        var orderId: string = req.body.orders[i]._id ? req.body.orders[i]._id : '';
+      for (let i = 0; i < req.body.orders.length; i++) {
+        let orderId: string = req.body.orders[i]._id ? req.body.orders[i]._id : '';
         if (orderId == '') {
           const newOrder = await orderService.createOrder(req.body.orders[i]);
           newRoute?.route.orders.push(newOrder._id);
@@ -181,11 +181,11 @@ export const getComplex = async (req: Request, res: Response) => {
     resultRoutes.push(foundRoute);
     resultRoutes.concat(results);
     const responseArray = [];
-    for (var i = 0; i < resultRoutes.length; i++) {
+    for (let i = 0; i < resultRoutes.length; i++) {
       if (resultRoutes[i].route.orders.length != 0) {
         const firstOrder = await orderService.getOrder(resultRoutes[i].route.orders[0]);
-        var objectJson = { "route": resultRoutes[i], "orders": [firstOrder] };
-        for (var j = 1; j < resultRoutes[i].route.orders.length; i++) {
+        let objectJson = { "route": resultRoutes[i], "orders": [firstOrder] };
+        for (let j = 1; j < resultRoutes[i].route.orders.length; i++) {
           const currentOrder = await orderService.getOrder(resultRoutes[i].route.orders[j]);
           objectJson.orders.push(currentOrder);
         }
@@ -205,7 +205,7 @@ export const mergeComplexes = async (req: Request, res: Response) => {
     const resultRoute = await routeService.merge(req.body.routes);
     const orders: TOrderDoc[] = [];
 
-    for (var i = 0; i < req.body.orders.length; i++) {
+    for (let i = 0; i < req.body.orders.length; i++) {
       const newOrder = await orderService.createOrder(req.body.orders[i]);
       orders.push(newOrder);
       resultRoute.route.orders.push(newOrder._id);

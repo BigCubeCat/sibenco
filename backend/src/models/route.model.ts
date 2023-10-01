@@ -28,7 +28,7 @@ const RouteSchema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
   route: {
     orders: [{ type: String }],
     boxes: [{ type: String }],
-    distance: String,
+    distance: { type: String }
   },
   car: {
     tsNumber: { type: String },
