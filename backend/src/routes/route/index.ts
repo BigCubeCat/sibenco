@@ -6,10 +6,15 @@ import {
   swGetRoute,
   swPatchRoute,
   swMergeRoutes,
+  swCreateComplex,
+  swGetAllComplexes,
+  swGetComplex,
+  swPatchComplex,
+  swMergeComplexes
 } from './docs';
 
 export const swRouteRoute = {
-  '/routes': {
+  '/routes/std': {
     post: {
       ...swCreateRoute,
     },
@@ -17,7 +22,7 @@ export const swRouteRoute = {
       ...swGetAllRoutes,
     },
   },
-  '/routes/{routeID}': {
+  '/routes/std/{routeID}': {
     get: {
       ...swGetRoute,
     },
@@ -28,14 +33,37 @@ export const swRouteRoute = {
       ...swDeleteRoute,
     },
   },
-  '/routes/{routeID}/similar': {
+  '/routes/std/{routeID}/similar': {
     get: {
       ...swFindSimilarRoutes,
     },
   },
-  'routes/merge': {
+  'routes/std/merge': {
     post: {
       ...swMergeRoutes,
     },
   },
+  '/routes/complex': {
+    post: {
+      ...swCreateComplex
+    },
+    get: {
+      ...swGetAllComplexes
+    }
+  },
+  '/routes/complex/{routeID}': {
+    patch: {
+      ...swPatchComplex
+    },
+    get: {
+      ...swGetComplex
+    }
+  },
+  'routes/complex/merge': {
+    post: {
+      ...swMergeComplexes
+    }
+  }
+
+  
 };

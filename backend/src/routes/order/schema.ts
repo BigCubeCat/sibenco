@@ -3,10 +3,14 @@ import j2s from 'joi-to-swagger';
 
 // Joi
 // TO-DO Add validation
+
 export const joiSchema = joi.object().keys({
   date: {
     createdAt: joi.string(), // Создается автоматически
-    executionAt: joi.string(),
+    loadingTime: joi.number(), // Дата исполнения
+    unloadingTime: joi.number(),
+    loadingWaiting: joi.number(),
+    unloadingWaiting: joi.number(),
   },
   route: {
     loadingAddress: {
@@ -25,9 +29,9 @@ export const joiSchema = joi.object().keys({
   },
   order: {
     typeOfTransportation: joi.string(),
-    cargoName: joi.string(),
-    specialMarks: joi.string(),
+    devisionName: joi.string(),
     client: joi.string(),
+    passengers: joi.array().items({fullName: joi.string(), phoneNumber: joi.string()})
   },
 });
 // end of Joi

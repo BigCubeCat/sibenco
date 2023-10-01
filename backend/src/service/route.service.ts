@@ -41,6 +41,11 @@ export async function merge(routeIds: string[]) {
     date: firstRoute.date,
     status: "built",
     route: firstRoute.route,
+    isPrivate: false,
+    isSingle: false,
+    cargoInRoute: firstRoute.cargoInRoute,
+    passengersInRoute: firstRoute.passengersInRoute,
+    comment: firstRoute.comment
   };
 
   const newOrders: Set<string> = new Set(firstRoute?.route.orders);
