@@ -1,8 +1,8 @@
-import {Request, Response} from 'express';
-import {getErrorMessage} from '../utils/error';
+import { Request, Response } from 'express';
+import { getErrorMessage } from '../utils/error';
 import * as routeService from '../service/route.service';
 import * as orderService from '../service/order.service';
-import {config} from '../config';
+import { config } from '../config';
 import { TOrderDoc } from '../models/order.model';
 import { I_RouterDocument } from '../models/route.model';
 
@@ -24,7 +24,7 @@ export const getAll = async (req: Request, res: Response) => {
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
     const results = await routeService.getAll(page, pageSize);
-    res.status(200).send({results});
+    res.status(200).send({ results });
   } catch (error) {
     return res.status(500).send(getErrorMessage(error));
   }
@@ -84,17 +84,19 @@ export const findSimilarRoutes = async (req: Request, res: Response) => {
 
 export const createComplex = async (req: Request, res: Response) => {
   try {
-    let newRoute = await routeService.createRoute(req.body.route);
-    const orders: TOrderDoc[] = [];
+    const ordersObjects: TOrderDoc[] = [];
+    const ordersIds: string[] = [];
 
     for (let i = 0; i < req.body.orders.length; i++) {
-      const newOrder = await orderService.createOrder(req.body.orders[i]);
-      orders.push(newOrder);
-      newRoute.route.orders.push(newOrder._id);
-      await routeService.patchRoute(newRoute._id, newRoute);
+      const newOrder = await orderService.createSingleOrder(req.body.orders[i]);
+      console.log("newOrder = ", newOrder);
+      ordersIds.push("" + newOrder._id);
     }
-    res.status(200).send({ "route": newRoute, "orders": orders });
-    
+    console.log(ordersIds);
+    req.body.route.orders = ordersIds;
+    const newRoute = await routeService.createRoute(req.body.route);
+    res.status(200).send({ "route": newRoute, "orders": ordersObjects });
+
   } catch (error) {
     return res.status(500).send(getErrorMessage(error));
   }
@@ -119,8 +121,8 @@ export const getAllComplexes = async (req: Request, res: Response) => {
           orders.push(currentOrder);
         }
       }
-      responseArray.push({ "route": results[i], "orders": orders});
-      
+      responseArray.push({ "route": results[i], "orders": orders });
+
     }
     res.status(200).send(responseArray);
   } catch (error) {
@@ -134,7 +136,7 @@ export const patchComplex = async (req: Request, res: Response) => {
     if (!req.params.id) {
       return res.status(400).send(getErrorMessage(new Error('Bad id')));
     }
-  
+
     const newRoute = await routeService.patchRoute(req.params.id, req.body.route);
     if (!newRoute) {
       return res.status(400).send(getErrorMessage(new Error('No routes exist with that id')));

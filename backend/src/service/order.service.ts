@@ -1,9 +1,18 @@
-import OrderModel, {TOrderDoc} from '../models/order.model';
-import {config} from '../config';
-import {createRoute} from './route.service';
-import {IRouteDoc} from '../models/route.model';
+import OrderModel, { TOrderDoc } from '../models/order.model';
+import { config } from '../config';
+import { createRoute } from './route.service';
+import { IRouteDoc } from '../models/route.model';
 
-export async function createOrder(order: TOrderDoc)  {
+
+/*
+ * createSingleOrder(order, TOrderDoc)
+ * create order WITHOUT route
+ */
+export async function createSingleOrder(order: TOrderDoc) {
+  return await OrderModel.create(order);
+}
+
+export async function createOrder(order: TOrderDoc) {
   const orderModel = await OrderModel.create(order);
 
   const route: IRouteDoc = {
@@ -37,7 +46,7 @@ export async function getOrder(id: string) {
 
 export async function getAllOrders(page: number, pageSize: number) {
   const orders = await OrderModel.find({})
-    .sort({_id: -1})
+    .sort({ _id: -1 })
     .skip(page * pageSize)
     .limit(pageSize);
   if (!orders) {
@@ -51,7 +60,7 @@ export async function deleteOrder(id: string) {
 }
 
 export async function updateOrder(id: string, data: any) {
-  return await OrderModel.findByIdAndUpdate({ _id: id }, data, {upsert: true});
+  return await OrderModel.findByIdAndUpdate({ _id: id }, data, { upsert: true });
 }
 
 export async function findOrdersBySomething(
@@ -59,8 +68,8 @@ export async function findOrdersBySomething(
   page: number,
   pageSize: number,
 ) {
-  const orders = await OrderModel.find({data})
-    .sort({_id: -1})
+  const orders = await OrderModel.find({ data })
+    .sort({ _id: -1 })
     .skip(page * pageSize)
     .limit(pageSize);
   if (!orders) {
