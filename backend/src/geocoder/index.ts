@@ -20,10 +20,12 @@ export const convertIntoBoxes = async (route: IRouteDoc) => {
   for (let i = 0; i < route.route.orders.length; i++) {
     const orderId = route.route.orders[i];
     const order: TOrderDoc | null = await getOrder(orderId);
+    console.log("order = ", order);
     if (!order) continue;
     waypoints.push(await convertAddressDto(order.route.loadingAddress));
     waypoints.push(await convertAddressDto(order.route.unloadingAddress));
   }
+  console.log(waypoints);
   console.log("here\n");
   const optimalRoute = await makeOptimalRoute(waypoints);
   console.log(optimalRoute);

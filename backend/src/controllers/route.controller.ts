@@ -4,7 +4,7 @@ import * as routeService from '../service/route.service';
 import * as orderService from '../service/order.service';
 import { config } from '../config';
 import { TOrderDoc } from '../models/order.model';
-import { I_RouterDocument } from '../models/route.model';
+import {I_RouterDocument, IRouteDoc} from '../models/route.model';
 
 export const createRoute = async (req: Request, res: Response) => {
   try {
@@ -93,8 +93,10 @@ export const createComplex = async (req: Request, res: Response) => {
       ordersIds.push("" + newOrder._id);
     }
     console.log(ordersIds);
-    req.body.route.orders = ordersIds;
-    const newRoute = await routeService.createRoute(req.body.route);
+    const newRouteDTO: IRouteDoc = req.body.route;
+    newRouteDTO.route.orders = ordersIds;
+    console.log(newRouteDTO);
+    const newRoute = await routeService.createRoute(newRouteDTO);
     res.status(200).send({ "route": newRoute, "orders": ordersObjects });
 
   } catch (error) {
@@ -185,7 +187,7 @@ export const getComplex = async (req: Request, res: Response) => {
     for (let i = 0; i < resultRoutes.length; i++) {
       if (resultRoutes[i].route.orders.length != 0) {
         const firstOrder = await orderService.getOrder(resultRoutes[i].route.orders[0]);
-        let objectJson = { "route": resultRoutes[i], "orders": [firstOrder] };
+        const objectJson = { "route": resultRoutes[i], "orders": [firstOrder] };
         for (let j = 1; j < resultRoutes[i].route.orders.length; i++) {
           const currentOrder = await orderService.getOrder(resultRoutes[i].route.orders[j]);
           objectJson.orders.push(currentOrder);
