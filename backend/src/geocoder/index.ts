@@ -1,9 +1,9 @@
-import {IRouteDoc} from '../models/route.model';
-import {makeOptimalRoute} from '../route_machine_api';
-import {getWord} from './goecoder';
-import {getOrder} from '../service/order.service';
-import {convertAddressDto} from '../utils/coords';
-import {TOrderDoc} from '../models/order.model';
+import { IRouteDoc } from '../models/route.model';
+import { makeOptimalRoute } from '../route_machine_api';
+import { getWord } from './goecoder';
+import { getOrder } from '../service/order.service';
+import { convertAddressDto } from '../utils/coords';
+import { TOrderDoc } from '../models/order.model';
 
 /*
 convertIntoBoxes
@@ -14,14 +14,21 @@ convertIntoBoxes
  */
 export const convertIntoBoxes = async (route: IRouteDoc) => {
   const waypoints: number[][] = [];
+
+  console.log("orders = ", route.route.orders);
+
   for (let i = 0; i < route.route.orders.length; i++) {
     const orderId = route.route.orders[i];
     const order: TOrderDoc | null = await getOrder(orderId);
+    console.log("order = ", order);
     if (!order) continue;
     waypoints.push(await convertAddressDto(order.route.loadingAddress));
     waypoints.push(await convertAddressDto(order.route.unloadingAddress));
   }
+  console.log(waypoints);
+  console.log("here\n");
   const optimalRoute = await makeOptimalRoute(waypoints);
+  console.log(optimalRoute);
   if (optimalRoute === undefined) {
     return [];
   }

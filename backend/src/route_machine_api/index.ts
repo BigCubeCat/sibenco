@@ -6,9 +6,12 @@ export const makeOptimalRoute = async (
   waypoints: Array<Array<number>>,
 ): Promise<RouteData | undefined> => {
   const url = makeRouteRequestURL(waypoints);
+  console.log("url ", url);
   const optimalRoute: RouteResponse | undefined =
     await fetchApiGet<RouteResponse>(url);
+  console.log("fetchAPIGet");
   const resultRoute: RouteData = {waypoints: [], steps: [], distance: 0};
+  console.log(resultRoute);
   if (optimalRoute !== undefined) {
     resultRoute.distance = optimalRoute.routes[0].distance;
     const countResultWaypoints = optimalRoute.waypoints.length;
