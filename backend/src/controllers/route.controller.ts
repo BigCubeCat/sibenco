@@ -115,7 +115,7 @@ export const getAllComplexes = async (req: Request, res: Response) => {
         : config.PAGE_SIZE;
     const results = await routeService.getAll(page, pageSize);
     const responseArray = [];
-    for (let i = 0; i < pageSize; i++) {
+    for (let i = 0; i < results.length; i++) {
       const orders: TOrderDoc[] = [];
       for (let j = 0; j < results[i].route.orders.length; i++) {
         const currentOrder = await orderService.getOrder(results[i].route.orders[j]);
