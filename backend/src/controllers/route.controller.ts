@@ -117,7 +117,7 @@ export const getAllComplexes = async (req: Request, res: Response) => {
     const responseArray = [];
     for (let i = 0; i < results.length; i++) {
       const orders: TOrderDoc[] = [];
-      for (let j = 0; j < results[i].route.orders.length; i++) {
+      for (let j = 0; j < results[i].route.orders.length; j++) {
         const currentOrder = await orderService.getOrder(results[i].route.orders[j]);
         if (currentOrder) {
           orders.push(currentOrder);
@@ -180,15 +180,17 @@ export const getComplex = async (req: Request, res: Response) => {
       return res.status(400).send(getErrorMessage(new Error('No routes exist with that id')));
     }
     const results = await routeService.findSimilarRoutes(req.params.id);
+    console.log("results = ", results);
     const resultRoutes: I_RouterDocument[] = [];
     resultRoutes.push(foundRoute);
-    resultRoutes.concat(results);
+    resultRoutes.push(...results);
     const responseArray = [];
+    console.log("resultRoutes = ", resultRoutes);
     for (let i = 0; i < resultRoutes.length; i++) {
       if (resultRoutes[i].route.orders.length != 0) {
         const firstOrder = await orderService.getOrder(resultRoutes[i].route.orders[0]);
         const objectJson = { "route": resultRoutes[i], "orders": [firstOrder] };
-        for (let j = 1; j < resultRoutes[i].route.orders.length; i++) {
+        for (let j = 1; j < resultRoutes[i].route.orders.length; j++) {
           const currentOrder = await orderService.getOrder(resultRoutes[i].route.orders[j]);
           objectJson.orders.push(currentOrder);
         }
