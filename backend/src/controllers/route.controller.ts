@@ -179,13 +179,11 @@ export const getComplex = async (req: Request, res: Response) => {
     if (!foundRoute) {
       return res.status(400).send(getErrorMessage(new Error('No routes exist with that id')));
     }
-    const results = await routeService.findSimilarRoutes(req.params.id);
-    console.log("results = ", results);
-    const resultRoutes: I_RouterDocument[] = [];
-    resultRoutes.push(foundRoute);
-    resultRoutes.push(...results);
+    const resultRoutes = await routeService.findSimilarRoutes(req.params.id);
+    const deleteIndex = resultRoutes.indexOf(foundRoute);
+    resultRoutes.splice(deleteIndex, 1);
+    resultRoutes.splice(0, 0, foundRoute);    
     const responseArray = [];
-    console.log("resultRoutes = ", resultRoutes);
     for (let i = 0; i < resultRoutes.length; i++) {
       if (resultRoutes[i].route.orders.length != 0) {
         const firstOrder = await orderService.getOrder(resultRoutes[i].route.orders[0]);
