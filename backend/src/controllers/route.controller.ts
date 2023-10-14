@@ -180,9 +180,14 @@ export const getComplex = async (req: Request, res: Response) => {
       return res.status(400).send(getErrorMessage(new Error('No routes exist with that id')));
     }
     const resultRoutes = await routeService.findSimilarRoutes(req.params.id);
-    const deleteIndex = resultRoutes.indexOf(foundRoute);
-    resultRoutes.splice(deleteIndex, 1);
-    resultRoutes.splice(0, 0, foundRoute);    
+    for(let i = 0; i < resultRoutes.length; i++) {
+      if (resultRoutes[i] == foundRoute){
+        let temporalRoute = resultRoutes[i];
+        resultRoutes[i] = resultRoutes[0];
+        resultRoutes[0] = temporalRoute;
+        break;
+      }
+    }
     const responseArray = [];
     for (let i = 0; i < resultRoutes.length; i++) {
       if (resultRoutes[i].route.orders.length != 0) {
