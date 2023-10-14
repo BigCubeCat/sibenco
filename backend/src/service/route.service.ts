@@ -74,7 +74,7 @@ export async function findSimilarRoutes(id: string): Promise<I_RouterDocument[]>
     }
     let similarRoutesWithBoxes = await getNearestInBoxesRoutes(similarRoutes, route);
     if (similarRoutesWithBoxes.length == 1) {
-      return similarRotes;
+      return similarRoutes;
     }
     return similarRoutesWithBoxes;
   }
