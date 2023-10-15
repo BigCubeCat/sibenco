@@ -1,0 +1,9 @@
+export fuction filterByStatus(routes: I_RouterDocument[]){
+  routesWithGoodStatus = [];
+  for (let i = 0; i < routes.length; i++) {
+    if (!(routes[i].status == "merged" || routes[i].isSingle == true || routes[i].isPrivate == false)){
+      routesWithGoodStatus.push(routes[i]);
+    }
+  }
+  return routesWithGoodStatus;
+}
