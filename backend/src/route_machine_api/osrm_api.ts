@@ -4,7 +4,7 @@ import * as constants from './consts';
 // coordinates - ключевые точки маршрута, упорядоченные в порядке следования маршрута
 export const makeRouteRequestURL = (coordinates: Array<Array<number>>): string => {
   let answer: string =
-    constants.serverOSRMAddress + '/' + 
+    constants.serverOSRMAddress + '/' +
     constants.osrmServiceRoute +
     constants.osrmServiceVersion +
     constants.osrmProfileCar;
@@ -12,6 +12,23 @@ export const makeRouteRequestURL = (coordinates: Array<Array<number>>): string =
     .map((coordinate: number[]) => `${coordinate[0]},${coordinate[1]}`)
     .join(';');
   answer += `?` + constants.osrmRouteOptions;
-  console.log("route URL", answer);
+  //console.log("route URL", answer);
   return answer;
 };
+
+
+export const makeTripRequestURL = (coordinates: Array<Array<number>>): string => {
+  let answer: string =
+    constants.serverOSRMAddress + '/' +
+    constants.osrmServiceTrip +
+    constants.osrmServiceVersion +
+    constants.osrmProfileCar;
+  answer += coordinates
+    .map((coordinate: number[]) => `${coordinate[0]},${coordinate[1]}`)
+    .join(';');
+  answer += `?` + constants.osrmTripOptions;
+  //console.log("route URL", answer);
+  return answer;
+}
+
+

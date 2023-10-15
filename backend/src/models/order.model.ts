@@ -13,7 +13,7 @@ export interface IPassanger {
   phoneNumber: string;
 }
 
-interface IOrder {
+export interface IOrder {
   date: {
     createdAt: number; // Дата создания unix-time
     loadingTime: number; // Дата исполнения

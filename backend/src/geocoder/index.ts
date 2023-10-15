@@ -1,9 +1,10 @@
 import { IRouteDoc } from '../models/route.model';
-import { makeOptimalRoute } from '../route_machine_api';
+import { makeOptimalRoute, makeOptimalTrip } from '../route_machine_api';
 import { getWord } from './goecoder';
 import { getOrder } from '../service/order.service';
 import { convertAddressDto } from '../utils/coords';
-import { TOrderDoc } from '../models/order.model';
+import { IAddressDto, TOrderDoc } from '../models/order.model';
+import { ResultWaypoint } from '../route_machine_api/types';
 
 /*
 convertIntoBoxes
@@ -12,7 +13,13 @@ convertIntoBoxes
 
 @returns list of coded waypoints
  */
-export const convertIntoBoxes = async (route: IRouteDoc) => {
+
+export type AnswerType = {
+  waypoints: IAddressDto[];
+  words: string[];
+};
+
+export const convertIntoBoxes = async (route: IRouteDoc, mode: number): Promise<AnswerType | undefined> => {
   const waypoints: number[][] = [];
 
   console.log("orders = ", route.route.orders);
@@ -27,10 +34,16 @@ export const convertIntoBoxes = async (route: IRouteDoc) => {
   }
   console.log(waypoints);
   console.log("here\n");
-  const optimalRoute = await makeOptimalRoute(waypoints);
+
+  let optimalRoute = await makeOptimalRoute(waypoints);
+
+  if (mode == 1) {          // сделать по-нормальному 
+    optimalRoute = await makeOptimalTrip(waypoints);
+  }
+
   console.log(optimalRoute);
   if (optimalRoute === undefined) {
-    return [];
+    return;
   }
   const words = new Set<string>([]);
   for (let i = 0; i < optimalRoute.steps.length; i++) {
@@ -41,5 +54,21 @@ export const convertIntoBoxes = async (route: IRouteDoc) => {
     }
   }
 
-  return Array.from(words);
+  const addresses: IAddressDto[] = [];
+
+  for (let i = 0; i < waypoints.length - 1; i++) {
+    const orderId = route.route.orders[Math.floor(optimalRoute.waypoints[i].inputIndex / 2)];
+    const order: TOrderDoc | null = await getOrder(orderId);
+    console.log("order = ", order);
+    if (!order) continue;
+    if (optimalRoute.waypoints[i].inputIndex % 2 == 0) {
+      addresses.push(order.route.loadingAddress);
+    } else {
+      addresses.push(order.route.unloadingAddress);
+    }
+  }
+
+  const answer: AnswerType = { waypoints: addresses, words: Array.from(words) };
+
+  return answer;
 };

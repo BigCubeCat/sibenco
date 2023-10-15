@@ -1,4 +1,4 @@
-import OrderModel, { TOrderDoc } from '../models/order.model';
+import OrderModel, { IOrder, TOrderDoc } from '../models/order.model';
 import { config } from '../config';
 import { createRoute } from './route.service';
 import { IRouteDoc } from '../models/route.model';
@@ -8,7 +8,7 @@ import { IRouteDoc } from '../models/route.model';
  * createSingleOrder(order, TOrderDoc)
  * create order WITHOUT route
  */
-export async function createSingleOrder(order: TOrderDoc) {
+export async function createSingleOrder(order: IOrder) {
   return await OrderModel.create(order);
 }
 

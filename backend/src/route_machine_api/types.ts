@@ -81,6 +81,7 @@ export type TripResponse = {
 export type ResultWaypoint = {
   index: number;
   location: Array<number>;
+  inputIndex: number;
 };
 
 export type RouteData = {
