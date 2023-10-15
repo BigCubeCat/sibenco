@@ -6,14 +6,14 @@ export async function getNearestInBoxesRoutes(routes: I_RouterDocument[], route:
         let countEquals: number = 0;
         for (let k = 0; k < route.route.boxes.length; ++k) {
             for (let m = 0; m < routes[i].route.boxes.length; ++m) {
-                if (routes[i].route.boxes[k] == route.route.boxes[m]) {
+                if (routes[i].route.boxes[m] == route.route.boxes[k]) {
                     ++countEquals;
                 }
             }
         }
         const minLength = Math.min(routes[i].route.boxes.length, route.route.boxes.length);
-        console.log(routes[i]._id, countEquals, minLength);
-        if (countEquals * 100 / minLength >= 20) {
+        console.log("Hello", routes[i]._id, countEquals, minLength);
+        if (countEquals * 100 / minLength >= 25) {
             simialarRoutesByBoxes.push(routes[i]);
         }
     }

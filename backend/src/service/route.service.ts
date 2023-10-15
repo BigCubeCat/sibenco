@@ -46,6 +46,7 @@ export async function merge(routeIds: string[]) {
     throw new Error("Bad route Id");
   }
   firstRoute.status = 'merged';
+  await patchRoute(firstRoute._id, firstRoute);
   const newRoute: IRouteDoc = {
     car: firstRoute.car,
     date: firstRoute.date,
