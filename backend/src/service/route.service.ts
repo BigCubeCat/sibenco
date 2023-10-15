@@ -2,6 +2,7 @@ import { convertIntoBoxes } from '../geocoder';
 import RouteModel, {IRouteDoc, I_RouterDocument} from '../models/route.model';
 import { getNearestInBoxesRoutes } from '../utils/routes_filter/routes_by_boxes';
 import { getNearestInTimeRoutes } from '../utils/routes_filter/routes_by_time';
+import { filterRoutesWithStatus } from '../utils/routes_filter/routes_by_status';
 
 export async function createRoute(route: IRouteDoc) {
   route.route.boxes = await convertIntoBoxes(route);
@@ -72,7 +73,9 @@ export async function findSimilarRoutes(id: string): Promise<I_RouterDocument[]>
     if (similarRoutes === null || similarRoutes === undefined) {
       return [];
     }
+    similarRoutes = filterRoutesWithStatus(similarRoutes);
     let similarRoutesWithBoxes = await getNearestInBoxesRoutes(similarRoutes, route);
+    similarRoutesWithBoxes = filterRoutesWithStatus(similarRoutesWithBoxes);
     if (similarRoutesWithBoxes.length == 1) {
       return similarRoutes;
     }
