@@ -56,7 +56,7 @@ export const convertIntoBoxes = async (route: IRouteDoc, mode: number): Promise<
 
   const addresses: IAddressDto[] = [];
 
-  for (let i = 0; i < waypoints.length - 1; i++) {
+  for (let i = 0; i < waypoints.length; i++) {
     const orderId = route.route.orders[Math.floor(optimalRoute.waypoints[i].inputIndex / 2)];
     const order: TOrderDoc | null = await getOrder(orderId);
     console.log("order = ", order);
