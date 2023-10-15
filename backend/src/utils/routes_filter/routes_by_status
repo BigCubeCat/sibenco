@@ -1,3 +1,4 @@
+import { I_RouterDocument } from "../../models/route.model";
 export function filterRoutesWithStatus (routes: I_RouterDocument[]) {
   routesWithGoodStatus = [];
   for (let i = 0; i < routes.length; i++) {
