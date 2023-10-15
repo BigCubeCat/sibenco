@@ -45,6 +45,7 @@ export async function merge(routeIds: string[]) {
   if (!firstRoute) {
     throw new Error("Bad route Id");
   }
+  firstRoute.status = 'merged';
   const newRoute: IRouteDoc = {
     car: firstRoute.car,
     date: firstRoute.date,
@@ -95,7 +96,7 @@ export async function merge(routeIds: string[]) {
       },
       order: {
         typeOfTransportation: "people",
-        devisionName: "Подразделение 1",
+        devisionName: "Структура 1",
         client: "Группа компаний СГК",
         passengers: [
           {
