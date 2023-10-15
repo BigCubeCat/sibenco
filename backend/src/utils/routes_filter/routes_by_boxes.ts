@@ -11,9 +11,8 @@ export async function getNearestInBoxesRoutes(routes: I_RouterDocument[], route:
                 }
             }
         }
-
-
         const minLength = Math.min(routes[i].route.boxes.length, route.route.boxes.length);
+        console.log(routes[i]._id, countEquals, minLength);
         if (countEquals * 100 / minLength >= 20) {
             simialarRoutesByBoxes.push(routes[i]);
         }
