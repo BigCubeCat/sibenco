@@ -1,5 +1,5 @@
 import {Request} from 'express';
-import {CustomRequest} from '../middleware/auth';
+import {CustomRequest} from '../../web/middleware/auth';
 
 /*
 emailFromToken(req: Request)

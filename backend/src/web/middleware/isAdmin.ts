@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from 'express';
-import {emailFromToken} from '../utils/auth';
-import {config} from '../config';
+import {emailFromToken} from '../../sdk/utils/auth';
+import {config} from '../../config';
 
 export const isAdminMiddleware = async (
   req: Request,

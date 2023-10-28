@@ -1,4 +1,4 @@
-import RouteModel, { I_RouterDocument } from "../../models/route.model";
+import RouteModel, { I_RouterDocument } from "../../../web/models/route.model";
 import { getInterval } from "../date";
 
 export async function getNearestInTimeRoutes(route: I_RouterDocument): Promise<I_RouterDocument[] | null | undefined> {

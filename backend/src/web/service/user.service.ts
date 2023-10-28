@@ -5,7 +5,7 @@ import UserModel, {
 } from '../models/user.model';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import {config} from '../config';
+import {config} from '../../config';
 
 /*
 createAdmin()

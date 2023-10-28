@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-import {getErrorMessage} from '../utils/error';
+import {getErrorMessage} from '../../sdk/utils/error';
 import * as userServices from '../service/user.service';
 import {CustomRequest} from '../middleware/auth';
 import {userWithoutPass} from '../models/user.model';

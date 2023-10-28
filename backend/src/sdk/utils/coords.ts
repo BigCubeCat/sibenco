@@ -1,4 +1,4 @@
-import {IAddressDto} from '../models/order.model';
+import {IAddressDto} from '../../web/models/order.model';
 import {getAddress} from '../geocoder/goecoder';
 
 /*

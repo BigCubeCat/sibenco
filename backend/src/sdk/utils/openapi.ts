@@ -1,12 +1,12 @@
-import {swOrderRoute} from '../routes/order';
-import {swRouteRoute} from '../routes/route';
-import {swUserRoute} from '../routes/user';
-import {schema as orderSchema} from '../routes/order/schema';
-import {schema as routeSchema} from '../routes/route/schema';
+import {swOrderRoute} from '../../web/routes/order';
+import {swRouteRoute} from '../../web/routes/route';
+import {swUserRoute} from '../../web/routes/user';
+import {schema as orderSchema} from '../../web/routes/order/schema';
+import {schema as routeSchema} from '../../web/routes/route/schema';
 import {
   schema as userSchema,
   schemaSignIn as userSignInSchema,
-} from '../routes/user/schema';
+} from '../../web/routes/user/schema';
 
 const swagger = {
   openapi: '3.0.3',

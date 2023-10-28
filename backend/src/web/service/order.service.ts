@@ -1,5 +1,5 @@
 import OrderModel, { TOrderDoc } from '../models/order.model';
-import { config } from '../config';
+import { config } from '../../config';
 import { createRoute } from './route.service';
 import { IRouteDoc } from '../models/route.model';
 

@@ -1,5 +1,5 @@
 // Сервисы OSRM
-import {config} from "../config";
+import {config} from "../../config";
 
 // TODO config
 export const serverOSRMAddress = config.osrm.url;

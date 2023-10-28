@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { getErrorMessage } from '../utils/error';
+import { getErrorMessage } from '../../sdk/utils/error';
 import * as routeService from '../service/route.service';
 import * as orderService from '../service/order.service';
-import { config } from '../config';
+import { config } from '../../config';
 import { TOrderDoc } from '../models/order.model';
 import {I_RouterDocument, IRouteDoc} from '../models/route.model';
 

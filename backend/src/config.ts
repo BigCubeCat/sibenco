@@ -1,5 +1,5 @@
-import messages, {TMessages} from './properties/messages';
-import errors, {TErrors} from './properties/errors';
+import messages, {TMessages} from './web/properties/messages';
+import errors, {TErrors} from './web/properties/errors';
 
 interface IConfig {
   PORT: number;

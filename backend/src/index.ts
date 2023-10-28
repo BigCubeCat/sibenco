@@ -8,12 +8,12 @@ import swaggerUI from 'swagger-ui-express';
 import {config, LoadConfig} from './config';
 LoadConfig();
 
-import indexRouter from './routes/index';
-import usersRouter from './routes/user/userRouter';
-import routeRouter from './routes/route/routeRouter';
-import orderRouter from './routes/order/orderRouter';
-import swDocument from './utils/openapi';
-import {createAdmin} from './service/user.service';
+import indexRouter from './web/routes/index';
+import usersRouter from './web/routes/user/userRouter';
+import routeRouter from './web/routes/route/routeRouter';
+import orderRouter from './web/routes/order/orderRouter';
+import swDocument from './sdk/utils/openapi';
+import {createAdmin} from './web/service/user.service';
 
 console.log(config.MONGO_URL);
 const fetchStartup = async () => {

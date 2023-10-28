@@ -1,4 +1,4 @@
-import { I_RouterDocument } from "../../models/route.model";
+import { I_RouterDocument } from "../../../web/models/route.model";
 
 export async function getNearestInBoxesRoutes(routes: I_RouterDocument[], route: I_RouterDocument) {
     let simialarRoutesByBoxes = [];

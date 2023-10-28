@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { todayDate } from '../utils/date';
+import { todayDate } from '../../sdk/utils/date';
 
 export interface IAddressDto {
   address: string;

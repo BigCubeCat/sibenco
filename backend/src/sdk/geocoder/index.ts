@@ -1,9 +1,9 @@
-import { IRouteDoc } from '../models/route.model';
+import { IRouteDoc } from '../../web/models/route.model';
 import { makeOptimalRoute } from '../route_machine_api';
 import { getWord } from './goecoder';
-import { getOrder } from '../service/order.service';
+import { getOrder } from '../../web/service/order.service';
 import { convertAddressDto } from '../utils/coords';
-import { TOrderDoc } from '../models/order.model';
+import { TOrderDoc } from '../../web/models/order.model';
 
 /*
 convertIntoBoxes

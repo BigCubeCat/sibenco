@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
-import {getErrorMessage} from '../utils/error';
+import {getErrorMessage} from '../../sdk/utils/error';
 import * as orderService from '../service/order.service';
-import {config} from '../config';
+import {config} from '../../config';
 
 export const createOrder = async (req: Request, res: Response) => {
   try {

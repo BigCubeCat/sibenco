@@ -1,5 +1,5 @@
 import {fetchApiGet, fetchApiPost} from '../utils/fetch';
-import {config} from '../config';
+import {config} from '../../config';
 import {AddressDto, WordDto} from './dto';
 
 /*
