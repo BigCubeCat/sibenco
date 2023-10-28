@@ -1,72 +1,70 @@
-import {Request, Response} from 'express';
-import {getErrorMessage} from '../../sdk/utils/error';
+import {Request} from 'express';
 import * as userServices from '../service/user.service';
 import {CustomRequest} from '../middleware/auth';
 import {userWithoutPass} from '../models/user.model';
+import {createAbstractController} from "./abstract.controller";
 
-export const createUser = async (req: Request, res: Response) => {
-  try {
+export const createUser = createAbstractController(
+  async (req: Request) => {
     const newUser = await userServices.createUser(req.body);
-    res.status(200).send(userWithoutPass(newUser));
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    return {code: 200, body: userWithoutPass(newUser)};
   }
-};
+)
 
-export const loginOne = async (req: Request, res: Response) => {
-  try {
-    const foundUser = await userServices.login(req.body);
-    res.status(200).send(foundUser);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+export const loginOne = createAbstractController(
+  async (req: Request) => {
+    return {
+      body: await userServices.login(req.body),
+      code: 200
+    }
   }
-};
+);
 
-export const getMe = async (req: Request, res: Response) => {
-  try {
+export const getMe = createAbstractController(
+  async (req: Request) => {
     const token = (req as CustomRequest).token;
-    const tokenStirng = typeof token === 'string' ? token : token?.email;
-    const foundUser = await userServices.getUser(tokenStirng);
-    res.status(200).send(foundUser);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    const tokenString = typeof token === 'string' ? token : token?.email;
+    return {
+      body: await userServices.getUser(tokenString),
+      code: 200
+    };
   }
-};
+);
 
-export const getUser = async (req: Request, res: Response) => {
-  try {
-    const foundUser = await userServices.getOtherUser(req.params.email);
-    res.status(200).send(foundUser);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+export const getUser = createAbstractController(
+  async (req: Request) => {
+    return {
+      body: await userServices.getOtherUser(req.params.email),
+      code: 200
+    };
   }
-};
+)
 
-export const patchMe = async (req: Request, res: Response) => {
-  try {
+export const patchMe = createAbstractController(
+  async (req: Request) => {
     const token = (req as CustomRequest).token;
-    const tokenStirng = typeof token === 'string' ? token : token?._id;
-    const foundUser = await userServices.patchUser(tokenStirng, req.body);
-    res.status(200).send(foundUser);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    const tokenString = typeof token === 'string' ? token : token?._id;
+    return {
+      body: await userServices.patchUser(tokenString, req.body),
+      code: 200
+    };
   }
-};
+);
 
-export const search = async (req: Request, res: Response) => {
-  try {
-    const stringUsername =
-      typeof req.query.username === 'string' ? req.query.username : '';
-    const stringName = typeof req.query.name === 'string' ? req.query.name : '';
-    const stringSurname =
-      typeof req.query.surname === 'string' ? req.query.surname : '';
-    const foundUsers = await userServices.searchUsers(
-      stringUsername,
-      stringName,
-      stringSurname,
-    );
-    res.status(200).send({users: foundUsers});
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
-  }
-};
+export const search = createAbstractController(
+    async (req: Request) => {
+      const stringUsername =
+        typeof req.query.username === 'string' ? req.query.username : '';
+      const stringName = typeof req.query.name === 'string' ? req.query.name : '';
+      const stringSurname =
+        typeof req.query.surname === 'string' ? req.query.surname : '';
+      return {
+        body: await userServices.searchUsers(
+          stringUsername,
+          stringName,
+          stringSurname,
+        ), code: 200
+      }
+    }
+  )
+;

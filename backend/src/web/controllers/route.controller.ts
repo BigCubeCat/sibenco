@@ -1,59 +1,49 @@
-import { Request, Response } from 'express';
-import { getErrorMessage } from '../../sdk/utils/error';
+import {Request, Response} from 'express';
+import {getErrorMessage} from '../../sdk/utils/error';
 import * as routeService from '../service/route.service';
 import * as orderService from '../service/order.service';
-import { config } from '../../config';
-import { TOrderDoc } from '../models/order.model';
+import {config} from '../../config';
+import {TOrderDoc} from '../models/order.model';
 import {I_RouterDocument, IRouteDoc} from '../models/route.model';
+import {createAbstractController} from "./abstract.controller";
 
-export const createRoute = async (req: Request, res: Response) => {
-  try {
-    const newRoute = await routeService.createRoute(req.body);
-    res.status(200).send(newRoute);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+export const createRoute = createAbstractController(
+  async (req: Request) => {
+    return {code: 200, body: await routeService.createRoute(req.body)}
   }
-};
+);
 
-export const getAll = async (req: Request, res: Response) => {
-  try {
+export const getAll = createAbstractController(
+  async (req: Request) => {
     const page: number =
       typeof req.query.page == 'string' ? Number(req.query.page) : 0;
     const pageSize: number =
       typeof req.query.page_size == 'string'
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
-    const results = await routeService.getAll(page, pageSize);
-    res.status(200).send({ results });
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    const results = routeService.getAll(page, pageSize);
+    return {code: 200, body: {results}};
   }
-};
+)
 
-export const getRoute = async (req: Request, res: Response) => {
-  try {
+export const getRoute = createAbstractController(
+  async (req: Request) => {
     if (!req.params.id) {
-      return res.status(400).send(getErrorMessage(new Error('Bad id')));
+      return {code: 400, body: getErrorMessage(new Error('Bad id'))};
     }
-    const foundRoute = await routeService.getRoute(req.params.id);
-    res.status(200).send(foundRoute);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    return {code: 200, body: await routeService.getRoute(req.params.id)};
   }
-};
+);
 
-export const patchRoute = async (req: Request, res: Response) => {
-  try {
+export const patchRoute = createAbstractController(
+  async (req: Request) => {
     const id: string = req.params.id ? req.params.id : '';
     if (id == '') {
-      return res.status(400).send(getErrorMessage(new Error('Bad id')));
+      return {code: 400, body: getErrorMessage(new Error('Bad id'))};
     }
-    const newRoute = await routeService.patchRoute(req.params.id, req.body);
-    res.status(200).send(newRoute);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    return {code: 200, body: await routeService.patchRoute(req.params.id, req.body)};
   }
-};
+);
 
 export const deleteRoute = async (req: Request, res: Response) => {
   try {
@@ -97,7 +87,7 @@ export const createComplex = async (req: Request, res: Response) => {
     newRouteDTO.route.orders = ordersIds;
     console.log(newRouteDTO);
     const newRoute = await routeService.createRoute(newRouteDTO);
-    res.status(200).send({ "route": newRoute, "orders": ordersObjects });
+    res.status(200).send({"route": newRoute, "orders": ordersObjects});
 
   } catch (error) {
     return res.status(500).send(getErrorMessage(error));
@@ -123,7 +113,7 @@ export const getAllComplexes = async (req: Request, res: Response) => {
           orders.push(currentOrder);
         }
       }
-      responseArray.push({ "route": results[i], "orders": orders });
+      responseArray.push({"route": results[i], "orders": orders});
 
     }
     res.status(200).send(responseArray);
@@ -160,9 +150,9 @@ export const patchComplex = async (req: Request, res: Response) => {
         }
       }
       routeService.patchRoute(newRoute?._id, newRoute!!);
-      res.status(200).send({ "route": newRoute, "orders": orders });
+      res.status(200).send({"route": newRoute, "orders": orders});
     } else {
-      res.status(200).send({ "route": newRoute, "orders": [] });
+      res.status(200).send({"route": newRoute, "orders": []});
     }
   } catch (error) {
     return res.status(500).send(getErrorMessage(error));
@@ -189,14 +179,14 @@ export const getComplex = async (req: Request, res: Response) => {
     for (let i = 0; i < resultRoutes.length; i++) {
       if (resultRoutes[i].route.orders.length != 0) {
         const firstOrder = await orderService.getOrder(resultRoutes[i].route.orders[0]);
-        const objectJson = { "route": resultRoutes[i], "orders": [firstOrder] };
+        const objectJson = {"route": resultRoutes[i], "orders": [firstOrder]};
         for (let j = 1; j < resultRoutes[i].route.orders.length; j++) {
           const currentOrder = await orderService.getOrder(resultRoutes[i].route.orders[j]);
           objectJson.orders.push(currentOrder);
         }
         responseArray.push(objectJson);
       } else {
-        responseArray.push({ "route": resultRoutes[i], "orders": [] });
+        responseArray.push({"route": resultRoutes[i], "orders": []});
       }
     }
     res.status(200).send(responseArray);
@@ -216,7 +206,7 @@ export const mergeComplexes = async (req: Request, res: Response) => {
       resultRoute.route.orders.push(newOrder._id);
       await routeService.patchRoute(resultRoute._id, resultRoute);
     }
-    res.status(200).send({ "route": resultRoute, "orders": orders });
+    res.status(200).send({"route": resultRoute, "orders": orders});
   } catch (error) {
     return res.status(500).send(getErrorMessage(error));
   }
