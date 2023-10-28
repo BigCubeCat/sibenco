@@ -5,7 +5,7 @@ import * as orderService from '../service/order.service';
 import {config} from '../../config';
 import {TOrderDoc} from '../models/order.model';
 import {I_RouterDocument, IRouteDoc} from '../models/route.model';
-import {createAbstractController} from "./abstract.controller";
+import {createAbstractController, createSimpleAbstractController} from "./abstract.controller";
 
 export const createRoute = createAbstractController(
   async (req: Request) => {
@@ -45,58 +45,39 @@ export const patchRoute = createAbstractController(
   }
 );
 
-export const deleteRoute = async (req: Request, res: Response) => {
-  try {
-    const newRoute = await routeService.deleteRoute(req.params.id);
-    res.status(200).send(newRoute);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+export const deleteRoute = createAbstractController(
+  async (req: Request) => {
+    return {code: 200, body: await routeService.deleteRoute(req.params.id)};
   }
-};
+);
 
-export const mergeRoutes = async (req: Request, res: Response) => {
-  try {
-    const resultRoute = await routeService.merge(req.body.routes);
-    res.status(200).send(resultRoute);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
-  }
-};
+export const mergeRoutes = createSimpleAbstractController(
+  async (req: Request) => await routeService.merge(req.body.routes)
+);
 
-export const findSimilarRoutes = async (req: Request, res: Response) => {
-  try {
-    const resultRoutes = await routeService.findSimilarRoutes(req.params.id);
-    res.status(200).send(resultRoutes);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
-  }
-}
+export const findSimilarRoutes = createSimpleAbstractController(
+  async (req: Request) => await routeService.findSimilarRoutes(req.params.id)
+);
 
-export const createComplex = async (req: Request, res: Response) => {
-  try {
+export const createComplex = createAbstractController(
+  // Вынести в сервис
+  async (req: Request) => {
     const ordersObjects: TOrderDoc[] = [];
     const ordersIds: string[] = [];
 
     for (let i = 0; i < req.body.orders.length; i++) {
       const newOrder = await orderService.createSingleOrder(req.body.orders[i]);
-      console.log("newOrder = ", newOrder);
       ordersIds.push("" + newOrder._id);
     }
-    console.log(ordersIds);
     const newRouteDTO: IRouteDoc = req.body.route;
     newRouteDTO.route.orders = ordersIds;
-    console.log(newRouteDTO);
     const newRoute = await routeService.createRoute(newRouteDTO);
-    res.status(200).send({"route": newRoute, "orders": ordersObjects});
-
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    return {code: 200, body: {"route": newRoute, "orders": ordersObjects}};
   }
-};
+);
 
-
-export const getAllComplexes = async (req: Request, res: Response) => {
-  try {
+export const getAllComplexes = createSimpleAbstractController(
+  async (req: Request) => {
     const page: number =
       typeof req.query.page == 'string' ? Number(req.query.page) : 0;
     const pageSize: number =
@@ -114,24 +95,21 @@ export const getAllComplexes = async (req: Request, res: Response) => {
         }
       }
       responseArray.push({"route": results[i], "orders": orders});
-
     }
-    res.status(200).send(responseArray);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    return responseArray;
   }
-};
+);
 
 
-export const patchComplex = async (req: Request, res: Response) => {
-  try {
+export const patchComplex = createAbstractController(
+  async (req: Request) => {
     if (!req.params.id) {
-      return res.status(400).send(getErrorMessage(new Error('Bad id')));
+      return {code: 400, body: getErrorMessage(new Error('Bad id'))};
     }
 
     const newRoute = await routeService.patchRoute(req.params.id, req.body.route);
     if (!newRoute) {
-      return res.status(400).send(getErrorMessage(new Error('No routes exist with that id')));
+      return {code: 400, body: getErrorMessage(new Error('No routes exist with that id'))};
     }
     newRoute?.route.orders.splice(0, newRoute?.route.orders.length);
     if (req.body.orders[0] != null) {
@@ -150,14 +128,14 @@ export const patchComplex = async (req: Request, res: Response) => {
         }
       }
       routeService.patchRoute(newRoute?._id, newRoute!!);
-      res.status(200).send({"route": newRoute, "orders": orders});
+      return {code: 200, body: {"route": newRoute, "orders": orders}};
     } else {
-      res.status(200).send({"route": newRoute, "orders": []});
+      return {
+        code: 200, body: {"route": newRoute, "orders": []}
+      };
     }
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
   }
-};
+)
 
 
 export const getComplex = async (req: Request, res: Response) => {

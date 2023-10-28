@@ -24,3 +24,16 @@ export function createAbstractController(
     }
   };
 }
+
+export function createSimpleAbstractController(
+  controller: (req: Request, res: Response) => Promise<any>
+) {
+  return async (req: Request, res: Response) => {
+    try {
+      const result = await controller(req, res);
+      res.status(200).send(result);
+    } catch (error) {
+      return res.status(500).send(getErrorMessage(error));
+    }
+  };
+}

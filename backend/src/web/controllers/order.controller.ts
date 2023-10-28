@@ -1,89 +1,62 @@
-import {Request, Response} from 'express';
+import {Request} from 'express';
 import {getErrorMessage} from '../../sdk/utils/error';
 import * as orderService from '../service/order.service';
 import {config} from '../../config';
+import {createAbstractController, createSimpleAbstractController} from "./abstract.controller";
 
-export const createOrder = async (req: Request, res: Response) => {
-  try {
-    await orderService.createOrder(req.body);
-    res.status(200).send(config.messages.successCreate);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
-  }
-};
+export const createOrder = createSimpleAbstractController(
+  async (req: Request) => await orderService.createOrder(req.body)
+);
 
-export const getOrder = async (req: Request, res: Response) => {
-  try {
+export const getOrder = createAbstractController(
+  async (req: Request) => {
     if (!req.params.id) {
-      return res
-        .status(400)
-        .send(getErrorMessage(new Error(config.errors.BadId)));
+      return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))}
     }
-    const order = await orderService.getOrder(req.params.id);
-    res.status(200).send(order);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    return {code: 200, body: await orderService.getOrder(req.params.id)}
   }
-};
+);
 
-export const getAllOrders = async (req: Request, res: Response) => {
-  try {
+export const getAllOrders = createSimpleAbstractController(
+  async (req: Request) => {
     const page: number =
       typeof req.query.page == 'string' ? Number(req.query.page) : 0;
     const pageSize: number =
       typeof req.query.page_size == 'string'
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
-    const orders = await orderService.getAllOrders(page, pageSize);
-    res.status(200).send({orders});
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    return await orderService.getAllOrders(page, pageSize);
   }
-};
+);
 
-export const deleteOrder = async (req: Request, res: Response) => {
-  try {
+export const deleteOrder = createAbstractController(
+  async (req: Request) => {
     if (!req.params.id) {
-      return res
-        .status(400)
-        .send(getErrorMessage(new Error(config.errors.BadId)));
+      return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))}
     }
     await orderService.deleteOrder(req.params.id);
-    res.status(200).send(config.messages.successDelete);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    return {code: 200, body: config.messages.successDelete};
   }
-};
+);
 
-export const updateOrder = async (req: Request, res: Response) => {
-  try {
+export const updateOrder = createAbstractController(
+  async (req: Request) => {
     if (!req.params.id) {
-      return res
-        .status(400)
-        .send(getErrorMessage(new Error(config.messages.successUpdate)));
+      return {code: 400, body: getErrorMessage(new Error(config.messages.successUpdate))}
     }
     await orderService.updateOrder(req.params.id, req.body);
-    res.status(200).send(config.messages.successUpdate);
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
-  }
-};
+    return {code: 200, body: config.messages.successUpdate};
+  });
 
-export const findOrdersBySomething = async (req: Request, res: Response) => {
-  try {
+export const findOrdersBySomething = createSimpleAbstractController(
+  async (req: Request) => {
     const page: number =
       typeof req.query.page == 'string' ? Number(req.query.page) : 0;
     const pageSize: number =
       typeof req.query.page_size == 'string'
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
-    const orders = await orderService.findOrdersBySomething(
-      req.body,
-      page,
-      pageSize,
-    );
-    res.status(200).send({orders});
-  } catch (error) {
-    return res.status(500).send(getErrorMessage(error));
+    const orders = await orderService.findOrdersBySomething(req.body, page, pageSize);
+    return {orders};
   }
-};
+);
