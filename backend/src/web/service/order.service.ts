@@ -1,7 +1,7 @@
-import OrderModel, { TOrderDoc } from '../models/order.model';
+import OrderDb, { TOrderDoc } from '../db/order.db';
 import { config } from '../../config';
 import { createRoute } from './route.service';
-import { IRouteDoc } from '../models/route.model';
+import { IRouteDoc } from '../db/route.db';
 
 
 /*
@@ -9,11 +9,11 @@ import { IRouteDoc } from '../models/route.model';
  * create order WITHOUT route
  */
 export async function createSingleOrder(order: TOrderDoc) {
-  return await OrderModel.create(order);
+  return await OrderDb.create(order);
 }
 
 export async function createOrder(order: TOrderDoc) {
-  const orderModel = await OrderModel.create(order);
+  const orderModel = await OrderDb.create(order);
 
   const route: IRouteDoc = {
     route: {
@@ -41,11 +41,11 @@ export async function createOrder(order: TOrderDoc) {
 }
 
 export async function getOrder(id: string) {
-  return await OrderModel.findById(id);
+  return await OrderDb.findById(id);
 }
 
 export async function getAllOrders(page: number, pageSize: number) {
-  const orders = await OrderModel.find({})
+  const orders = await OrderDb.find({})
     .sort({ _id: -1 })
     .skip(page * pageSize)
     .limit(pageSize);
@@ -56,11 +56,11 @@ export async function getAllOrders(page: number, pageSize: number) {
 }
 
 export async function deleteOrder(id: string) {
-  await OrderModel.findByIdAndDelete(id);
+  await OrderDb.findByIdAndDelete(id);
 }
 
 export async function updateOrder(id: string, data: any) {
-  return await OrderModel.findByIdAndUpdate({ _id: id }, data, { upsert: true });
+  return await OrderDb.findByIdAndUpdate({ _id: id }, data, { upsert: true });
 }
 
 export async function findOrdersBySomething(
@@ -68,7 +68,7 @@ export async function findOrdersBySomething(
   page: number,
   pageSize: number,
 ) {
-  const orders = await OrderModel.find({ data })
+  const orders = await OrderDb.find({ data })
     .sort({ _id: -1 })
     .skip(page * pageSize)
     .limit(pageSize);

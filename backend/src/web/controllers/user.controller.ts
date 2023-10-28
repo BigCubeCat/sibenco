@@ -1,7 +1,7 @@
 import {Request} from 'express';
 import * as userServices from '../service/user.service';
 import {CustomRequest} from '../middleware/auth';
-import {userWithoutPass} from '../models/user.model';
+import {userWithoutPass} from '../db/user.db';
 import {createSimpleAbstractController} from "./abstract.controller";
 
 export const createUser = createSimpleAbstractController(

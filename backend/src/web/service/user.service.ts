@@ -1,8 +1,8 @@
-import UserModel, {
+import UserDb, {
   generatePasswordHash,
   I_UserDocument,
   userWithoutPass,
-} from '../models/user.model';
+} from '../db/user.db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {config} from '../../config';
@@ -17,7 +17,7 @@ export async function createAdmin() {
   const update = {password: pass, role: 'admin'};
   const options = {upsert: true, new: true, setDefaultsOnInsert: true};
 
-  await UserModel.findOneAndUpdate(query, update, options);
+  await UserDb.findOneAndUpdate(query, update, options);
 }
 
 /*
@@ -25,7 +25,7 @@ createUser(user: IUserDocument)
 register new user
  */
 export async function createUser(user: I_UserDocument) {
-  const newUser = await UserModel.create(user);
+  const newUser = await UserDb.create(user);
   if (!newUser) {
     throw Error(config.errors.Create + 'user');
   }
@@ -33,7 +33,7 @@ export async function createUser(user: I_UserDocument) {
 }
 
 export async function login(user: { email: string; password: string }) {
-  const foundUser = await UserModel.findOne({email: user.email});
+  const foundUser = await UserDb.findOne({email: user.email});
   if (!foundUser) {
     throw new Error('Name of user is not correct');
   }
@@ -54,7 +54,7 @@ export async function login(user: { email: string; password: string }) {
 }
 
 export async function getUser(_id: string) {
-  const foundUser = await UserModel.findOne({_id});
+  const foundUser = await UserDb.findOne({_id});
   if (!foundUser) {
     throw new Error(config.errors.NotFound + 'user');
   }
@@ -62,7 +62,7 @@ export async function getUser(_id: string) {
 }
 
 export async function getOtherUser(email: string) {
-  const foundUser = await UserModel.findOne({email});
+  const foundUser = await UserDb.findOne({email});
   if (!foundUser) {
     throw new Error(config.errors.NotFound + 'user');
   }
@@ -70,7 +70,7 @@ export async function getOtherUser(email: string) {
 }
 
 export async function patchUser(email: string, newData: any) {
-  const foundUser = await UserModel.findOneAndUpdate({email}, newData, {
+  const foundUser = await UserDb.findOneAndUpdate({email}, newData, {
     upsert: true,
   });
   if (!foundUser) {
@@ -84,7 +84,7 @@ export async function searchUsers(
   name: string,
   surname: string,
 ) {
-  const users = await UserModel.find({
+  const users = await UserDb.find({
     username: {$regex: email},
     name: {$regex: name},
     surname: {$regex: surname},

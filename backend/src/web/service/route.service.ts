@@ -1,27 +1,27 @@
 import { convertIntoBoxes } from '../../sdk/geocoder';
-import RouteModel, {IRouteDoc, I_RouterDocument} from '../models/route.model';
+import RouteDb, {IRouteDoc, I_RouterDocument} from '../db/route.db';
 import { getNearestInBoxesRoutes } from '../../sdk/utils/routes_filter/routes_by_boxes';
 import { getNearestInTimeRoutes } from '../../sdk/utils/routes_filter/routes_by_time';
 
 export async function createRoute(route: IRouteDoc) {
   route.route.boxes = await convertIntoBoxes(route);
-  return await RouteModel.create(route);
+  return await RouteDb.create(route);
 }
 
 export async function patchRoute(id: string, route: I_RouterDocument) {
-  return await RouteModel.findOneAndUpdate({_id: id}, route);
+  return await RouteDb.findOneAndUpdate({_id: id}, route);
 }
 
 export async function deleteRoute(id: string) {
-  await RouteModel.findByIdAndRemove(id);
+  await RouteDb.findByIdAndRemove(id);
 }
 
 export async function getRoute(id: string): Promise<I_RouterDocument | null | undefined> {
-  return await RouteModel.findOne({_id: id});
+  return await RouteDb.findOne({_id: id});
 }
 
 export async function getAll(page: number, page_size: number) {
-  const allRoutes = await RouteModel.find()
+  const allRoutes = await RouteDb.find()
     .sort({_id: -1})
     .skip(page * page_size)
     .limit(page_size);

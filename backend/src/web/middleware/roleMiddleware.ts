@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 // import {emailFromToken} from '../utils/auth';
 // import * as userService from '../service/user.service';
-import {TRole} from '../models/user.model';
+import {TRole} from '../db/user.db';
 
 export function roleMiddleware(roles: TRole[]) {
   return async (req: Request, res: Response, next: NextFunction) => {

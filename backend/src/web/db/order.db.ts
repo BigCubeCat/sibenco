@@ -70,5 +70,5 @@ OrderSchema.pre('save', async function (next) {
   this.date.createdAt = todayDate();
   next();
 });
-const OrderModel = mongoose.model<TOrderDoc>('OrderModel', OrderSchema);
-export default OrderModel;
+const OrderDb = mongoose.model<TOrderDoc>('OrderDb', OrderSchema);
+export default OrderDb;

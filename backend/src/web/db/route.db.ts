@@ -46,5 +46,5 @@ const RouteSchema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
   comment: { type: String }
 });
 
-const RouteModel = mongoose.model<I_RouterDocument>('Route', RouteSchema);
-export default RouteModel;
+const RouteDb = mongoose.model<I_RouterDocument>('Route', RouteSchema);
+export default RouteDb;

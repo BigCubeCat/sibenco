@@ -3,8 +3,8 @@ import {getErrorMessage} from '../../sdk/utils/error';
 import * as routeService from '../service/route.service';
 import * as orderService from '../service/order.service';
 import {config} from '../../config';
-import {TOrderDoc} from '../models/order.model';
-import {I_RouterDocument, IRouteDoc} from '../models/route.model';
+import {TOrderDoc} from '../db/order.db';
+import {I_RouterDocument, IRouteDoc} from '../db/route.db';
 import {createAbstractController, createSimpleAbstractController} from "./abstract.controller";
 
 export const createRoute = createAbstractController(

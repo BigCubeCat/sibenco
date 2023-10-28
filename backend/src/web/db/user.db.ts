@@ -88,5 +88,5 @@ export function userWithoutPass(user: any) {
   };
 }
 
-const UserModel = mongoose.model<I_UserDocument>('User', UserSchema);
-export default UserModel;
+const UserDb = mongoose.model<I_UserDocument>('User', UserSchema);
+export default UserDb;
