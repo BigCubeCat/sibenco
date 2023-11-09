@@ -9,7 +9,7 @@ export const osrmServiceTrip = 'trip/';
 export const osrmServiceVersion = 'v1/';
 export const osrmProfileCar = 'driving/';
 
-export const osrmRouteOptions = 'steps=true';
+export const osrmRouteOptions = 'steps=false&annotations=true';
 
 export const osrmTripOptions =
-  'roundtrip=false&source=first&destination=last&steps=true';
+  'roundtrip=false&source=first&destination=last&steps=false';

@@ -52,6 +52,7 @@ export type RouteStep = {
 
 export type Leg = {
   steps: RouteStep[];
+  annotation: object;
   distance: number;
   duration: number;
   summary: string;

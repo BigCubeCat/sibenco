@@ -9,7 +9,10 @@ export const makeOptimalRoute = async (
   console.log("url ", url);
   const optimalRoute: RouteResponse | undefined =
     await fetchApiGet<RouteResponse>(url);
-  console.log("fetchAPIGet");
+  console.log(optimalRoute);
+  const leg = optimalRoute?.routes[0].legs;
+  const annot = leg ? leg[0].annotation : null;
+  console.log("fetchAPIGet", annot);
   const resultRoute: RouteData = {waypoints: [], steps: [], distance: 0};
   console.log(resultRoute);
   if (optimalRoute !== undefined) {
