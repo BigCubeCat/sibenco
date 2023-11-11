@@ -45,3 +45,14 @@ export const recoverAddress = (address: TAddressDTO): TAddressDTO => {
   }
   return TAddressFromAddress(address.address ? address.address : '');
 };
+
+export const convertToOSM = (address: TAddressDTO) => {
+  if (address.latitude && address.longitude) {
+    return [Number(address.longitude), Number(address.latitude)];
+  }
+  address = recoverAddress(address);
+  if (address.latitude && address.longitude) {
+    return [Number(address.longitude), Number(address.latitude)];
+  }
+  return [0, 0];
+}

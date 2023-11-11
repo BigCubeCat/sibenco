@@ -2,6 +2,8 @@ import OrderDb, { TOrderDoc } from '../db/order.db';
 import { config } from '../../config';
 import { createRoute } from './route.service';
 import { IRouteDoc } from '../db/route.db';
+import {TOrderDTO} from '../dto/order.dto';
+import OrderModel from '../model/order.model';
 
 
 /*
@@ -12,31 +14,11 @@ export async function createSingleOrder(order: TOrderDoc) {
   return await OrderDb.create(order);
 }
 
-export async function createOrder(order: TOrderDoc) {
-  const orderModel = await OrderDb.create(order);
+export async function createOrder(orderDto: TOrderDTO) {
+  const orderModel = new OrderModel();
+  orderModel.fromDTO(orderDto);
+  orderModel.dump();
 
-  const route: IRouteDoc = {
-    route: {
-      orders: [orderModel._id],
-      boxes: [],
-      distance: '0',
-    },
-    car: {
-      tsNumber: '',
-      specialMarks: '',
-      driver: 'Amogus',
-      loadCapacity: 0,
-      numberOfSeats: 0
-    },
-    date: orderModel.date.loadingTime,
-    status: "built",
-    isPrivate: false,
-    isSingle: false,
-    cargoInRoute: 0,
-    passengersInRoute: 0,
-    comment: ''
-  };
-  await createRoute(<IRouteDoc>route);
   return orderModel;
 }
 

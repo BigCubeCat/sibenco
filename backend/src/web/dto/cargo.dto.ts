@@ -4,3 +4,10 @@ export type TCargoDTO = {
   description: string;
   price: number;
 };
+
+export const defaultCargo: TCargoDTO = {
+  unit: 'good',
+  count: 0,
+  description: '',
+  price: 0,
+};

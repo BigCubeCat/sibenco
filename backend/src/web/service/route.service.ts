@@ -1,10 +1,8 @@
-import { convertIntoBoxes } from '../../sdk/geocoder';
 import RouteDb, {IRouteDoc, I_RouterDocument} from '../db/route.db';
 import { getNearestInBoxesRoutes } from '../../sdk/utils/routes_filter/routes_by_boxes';
 import { getNearestInTimeRoutes } from '../../sdk/utils/routes_filter/routes_by_time';
 
 export async function createRoute(route: IRouteDoc) {
-  route.route.boxes = await convertIntoBoxes(route);
   return await RouteDb.create(route);
 }
 

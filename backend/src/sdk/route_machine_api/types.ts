@@ -51,20 +51,17 @@ export type RouteStep = {
 };
 
 export type Leg = {
-  steps: RouteStep[];
-  annotation: object;
+  annotation: {
+    nodes: number[];
+  };
   distance: number;
   duration: number;
-  summary: string;
-  weight: number;
 };
 
 export type Route = {
   legs: Leg[];
   distance: number;
   duration: number;
-  weightName: string;
-  weight: number;
 };
 
 export type RouteResponse = {
@@ -73,19 +70,8 @@ export type RouteResponse = {
   waypoints: Waypoint[];
 };
 
-export type TripResponse = {
-  code: string;
-  waypoints: Waypoint[];
-  trips: Route[];
-};
-
-export type ResultWaypoint = {
-  index: number;
-  location: Array<number>;
-};
-
 export type RouteData = {
-  waypoints: Array<ResultWaypoint>;
-  steps: Array<Array<number>>;
+  nodes: Array<number>;
   distance: number;
+  duration: number;
 };

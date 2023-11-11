@@ -1,73 +1,46 @@
 import mongoose from 'mongoose';
-import { todayDate } from '../../sdk/utils/date';
+import {todayDate} from '../../sdk/utils/date';
+import {TDeadline} from '../dto/deadline.dto';
+import {TCargoDTO} from '../dto/cargo.dto';
+import {TWaypointsDTO} from '../dto/waypoints.dto';
 
-export interface IAddressDto {
-  address: string;
-  latitude: string;
-  longitude: string;
-  word: string;
-}
-
-export interface IPassanger {
-  fullName: string;
-  phoneNumber: string;
-}
-
-interface IOrder {
-  date: {
-    createdAt: number; // Дата создания unix-time
-    loadingTime: number; // Дата исполнения
-    unloadingTime: number;
-    loadingWaiting: number;
-    unloadingWaiting: number;
-  };
+// Database model;
+export interface IOrder {
+  createdAt?: number;
+  time: TDeadline;
   route: {
-    loadingAddress: IAddressDto;
-    unloadingAddress: IAddressDto;
-    distance: string;
+    waypoints: TWaypointsDTO;
+    distance: number;
+    duration: number;
   };
   order: {
-    typeOfTransportation: string;
-    devisionName: string;
     client: string;
-    passengers: Array<IPassanger>;
+    cargo: TCargoDTO;
   };
 }
 
-export interface TOrderDoc extends IOrder, mongoose.Document { }
+export interface TOrderDoc extends IOrder, mongoose.Document {
+}
 
 const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
-  date: {
-    createdAt: { type: Number }, // Создается автоматически
-    loadingTime: { type: Number },
-    unloadingTime: { type: Number },
-    loadingWaiting: { type: Number },
-    unloadingWaiting: { type: Number }
-  },
-  route: {
-    loadingAddress: {
-      address: { type: String },
-      latitude: { type: String },
-      longitude: { type: String },
-      word: { type: String },
-    },
-    unloadingAddress: {
-      address: { type: String },
-      latitude: { type: String },
-      longitude: { type: String },
-      word: { type: String },
-    },
-    distance: { type: String }, // Считаем на бэке
+  createdAt: {type: Number},
+  time: {
+    noDeadline: {type: Boolean},
+    beginDate: {type: Number},
+    endDate: {type: Number},
   },
   order: {
-    typeOfTransportation: { type: String },
-    devisionName: { type: String },
-    client: { type: String },
-    passengers: [{ fullName: { type: String }, phoneNumber: { type: String } }]
+    client: {type: String},
+    cargo: {
+      unit: {type: String},
+      count: {type: Number},
+      description: {type: String},
+      price: {type: Number},
+    },
   },
 });
-OrderSchema.pre('save', async function (next) {
-  this.date.createdAt = todayDate();
+OrderSchema.pre('save', async function(next) {
+  this.createdAt = todayDate();
   next();
 });
 const OrderDb = mongoose.model<TOrderDoc>('OrderDb', OrderSchema);
