@@ -32,13 +32,13 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
   },
   route: {
     waypoints: {
-      points: {
+      points: [{
         latitude: {type: String},
         longitude: {type: String},
         address: {type: String},
         OSRMNode: {type: String},
         confirmed: {type: Boolean},
-      },
+      }],
     },
     nodes: [{type: Number}],
     distance: {type: Number},
