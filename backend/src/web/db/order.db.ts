@@ -10,6 +10,7 @@ export interface IOrder {
   time: TDeadline;
   route: {
     waypoints: TWaypointsDTO;
+    nodes: Array<number>;
     distance: number;
     duration: number;
   };
@@ -28,6 +29,20 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
     noDeadline: {type: Boolean},
     beginDate: {type: Number},
     endDate: {type: Number},
+  },
+  route: {
+    waypoints: {
+      points: {
+        latitude: {type: String},
+        longitude: {type: String},
+        address: {type: String},
+        OSRMNode: {type: String},
+        confirmed: {type: Boolean},
+      },
+    },
+    nodes: [{type: Number}],
+    distance: {type: Number},
+    duration: {type: Number},
   },
   order: {
     client: {type: String},

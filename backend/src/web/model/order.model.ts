@@ -50,16 +50,17 @@ class Order {
       duration: this.optimalRoute?.duration || 0,
     };
     this.id = '';
-    this.saved = false;
+    this._saved = false;
   }
 
   getIOrderDoc(): IOrder {
     return {
       time: this.data?.deadline || {noDeadline: true},
       route: {
-        waypoints: this.data?.waypoints || {points: []},
+        waypoints: {points: this.data?.waypoints.points || []},
         distance: this.data?.distance || 0,
         duration: this.data?.duration || 0,
+        nodes: this.data?.waypoints.nodes || [],
       },
       order: {
         client: this.data?.clientId || '',
@@ -79,7 +80,17 @@ class Order {
   }
 
   fromDoc(doc: IOrder) {
-
+    this.data = {
+      clientId: doc.order.client,
+      cargo: doc.order.cargo,
+      deadline: doc.time,
+      waypoints: {
+        points: doc.route.waypoints.points,
+        nodes: doc.route.nodes,
+      },
+      distance: doc.route.distance,
+      duration: doc.route.duration,
+    };
   }
 
   fromId(id: string) {
@@ -94,7 +105,7 @@ class Order {
     };
     fetchDb().catch();
   }
-
+  
   get saved(): boolean {
     return this._saved;
   }
