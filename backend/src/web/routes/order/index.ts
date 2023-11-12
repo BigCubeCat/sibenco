@@ -4,7 +4,7 @@ import {
   swFindByTags,
   swGetOrder,
   swPatchOrder,
-  swGetAllOrders,
+  swGetAllOrders, swGetSimOrder,
 } from './docs';
 
 export const swOrderRoute = {
@@ -31,5 +31,11 @@ export const swOrderRoute = {
     get: {
       ...swFindByTags,
     },
+  },
+  '/orders/similar/{orderID}': {
+    get: {
+      ...swGetSimOrder
+    }
+
   },
 };

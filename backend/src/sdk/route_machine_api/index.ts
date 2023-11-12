@@ -23,8 +23,6 @@ export const makeOptimalRoute = async (
     resultRoute.nodes.push(...leg.annotation.nodes);
   });
 
-  console.log("resultRoute = ", resultRoute);
-
   return resultRoute;
 };
 

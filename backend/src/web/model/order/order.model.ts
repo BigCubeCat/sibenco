@@ -1,12 +1,13 @@
-import {recoverOrderDTO, TOrderDTO} from '../dto/order.dto';
-import {defaultCargo, TCargoDTO} from '../dto/cargo.dto';
-import {sameDeadline, TDeadline} from '../dto/deadline.dto';
-import {convertToOSM, TAddressDTO} from '../dto/address.dto';
-import {RouteData} from '../../sdk/route_machine_api/types';
-import {makeOptimalRoute} from '../../sdk/route_machine_api';
-import OrderDb, {IOrder} from '../db/order.db';
+import {recoverOrderDTO, TOrderDTO} from '../../dto/order.dto';
+import {defaultCargo, TCargoDTO} from '../../dto/cargo.dto';
+import {sameDeadline, TDeadline} from '../../dto/deadline.dto';
+import {convertToOSM, TAddressDTO} from '../../dto/address.dto';
+import {RouteData} from '../../../sdk/route_machine_api/types';
+import {makeOptimalRoute} from '../../../sdk/route_machine_api';
+import OrderDb, {IOrder} from '../../db/order.db';
+import orderDb from '../../db/order.db';
 
-interface IOrderData {
+export interface IOrderData {
   clientId: string;
   cargo: TCargoDTO;
   deadline: TDeadline;
@@ -25,19 +26,28 @@ class Order {
   private _invalid: boolean = false;
   private optimalRoute: RouteData | undefined;
 
-  constructor() {
+  constructor(id: string) {
+    if (id) {
+      this.fromId(id);
+    }
   }
 
   fromDTO(dto: TOrderDTO) {
     // Восстанавливаем адреса.
     const recoveredDto = recoverOrderDTO(dto);
-    const fetchMakeOptimalRoute = async () => {
-      return await makeOptimalRoute(recoveredDto.waypoints.points.map(
+    console.log('dto = ', recoveredDto);
+    // Вот тут this.data остается null
+    const optimalRoutePromise = makeOptimalRoute(
+      recoveredDto.waypoints.points.map(
         point => convertToOSM(point),
-      ));
-    };
-    fetchMakeOptimalRoute().then(res => this.optimalRoute = res);
+      ),
+    );
 
+    optimalRoutePromise.then(value => {
+      console.log(value)
+    })
+
+    console.log('optimalRoute from async = ', this.optimalRoute);
     this.data = {
       clientId: dto.clientId,
       cargo: dto.cargo,
@@ -51,6 +61,12 @@ class Order {
     };
     this.id = '';
     this._saved = false;
+    console.log('data from async ', this.data);
+    console.log('end');
+  }
+
+  fromIOrderData(order: IOrderData) {
+    this.data = order;
   }
 
   getIOrderDoc(): IOrder {
@@ -75,7 +91,7 @@ class Order {
       const m = await OrderDb.create(model);
       this.id = m._id;
     };
-    fetchDb().catch();
+    fetchDb().catch(console.error);
     this._saved = true;
   }
 
@@ -93,6 +109,15 @@ class Order {
     };
   }
 
+  update() {
+    (async () =>
+      OrderDb.findByIdAndUpdate(
+        {_id: this.ID},
+        this.getIOrderDoc(),
+        {upsert: true},
+      ))().catch(console.error);
+  }
+
   fromId(id: string) {
     this.id = id;
     const fetchDb = async () => {
@@ -103,7 +128,11 @@ class Order {
         this._invalid = true;
       }
     };
-    fetchDb().catch();
+    fetchDb().catch(console.error);
+  }
+
+  delete() {
+    (async () => await orderDb.findByIdAndDelete(this.ID))().catch(console.error);
   }
 
   /*
@@ -135,6 +164,15 @@ class Order {
   get invalid(): boolean {
     return this._invalid;
   }
+
+  get ID(): string {
+    return this.id;
+  }
+
+  get outDTO(): IOrderData | null {
+    return this.data;
+  }
+
 }
 
 export default Order;

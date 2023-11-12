@@ -35,6 +35,41 @@ export const swGetOrder = {
   },
 };
 
+export const swGetSimOrder = {
+  summary: 'Поиск похожих заказов',
+  description: 'Getting info about order',
+  tags: ['order', 'специалист АХО'],
+  parameters: [
+    {
+      name: 'orderId',
+      in: 'path',
+      description: 'ID of order to return',
+      required: true,
+      schema: {
+        type: 'string',
+      },
+    },
+  ],
+  operationId: 'getSimilarOrder',
+  responses: {
+    '200': {
+      description: 'Done',
+      content: {
+        'application/json': {
+          schema: {
+            ...schema,
+          },
+        },
+      },
+    },
+    default: {
+      description: 'Something went wrong!',
+      // Add some different errors
+    },
+  },
+};
+
+
 export const swGetAllOrders = {
   summary: 'orders info',
   description: 'Getting info about all orders',
@@ -124,7 +159,7 @@ export const swPatchOrder = {
 };
 
 export const swFindByTags = {
-  summary: 'orders by different tags',
+  summary: 'orders',
   description: 'Getting orders by some tag',
   tags: ['order', 'специалист АХО'],
   parameters: [

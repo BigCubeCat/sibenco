@@ -7,10 +7,14 @@ import {auth} from '../../middleware/auth';
 const router = express.Router();
 
 router.post('/', auth, routeController.createOrder);
+
 router.get('/', auth, routeController.getAllOrders);
 router.get('/:id', auth, routeController.getOrder);
-router.patch('/:id', auth, routeController.updateOrder);
-router.delete('/:id', auth, routeController.deleteOrder);
-router.delete('/:client', auth, routeController.findOrdersBySomething); // TO_DO Сделать возможным поиск не только по клиентам
+router.get('/similar/:id', auth, routeController.getSimilar);
 
+router.patch('/:id', auth, routeController.updateOrder);
+
+router.delete('/:id', auth, routeController.deleteOrder);
+
+router.post('/search', auth, routeController.findOrdersBySomething);
 export default router;

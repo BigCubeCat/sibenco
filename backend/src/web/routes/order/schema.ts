@@ -5,33 +5,26 @@ import j2s from 'joi-to-swagger';
 // TO-DO Add validation
 
 export const joiSchema = joi.object().keys({
-  date: {
-    createdAt: joi.string(), // Создается автоматически
-    loadingTime: joi.number(), // Дата исполнения
-    unloadingTime: joi.number(),
-    loadingWaiting: joi.number(),
-    unloadingWaiting: joi.number(),
+  clientId: joi.string(),
+  cargo: {
+    unit: joi.string(),
+    count: joi.number(),
+    description: joi.string(),
+    price: joi.number(),
   },
-  route: {
-    loadingAddress: {
-      address: joi.string(),
-      latitude: joi.string(),
-      longitude: joi.string(),
-      word: joi.string(),
-    },
-    unloadingAddress: {
-      address: joi.string(),
-      latitude: joi.string(),
-      longitude: joi.string(),
-      word: joi.string(),
-    },
-    distance: joi.string(), // Считаем на бэке
+  deadline: {
+    noDeadline: joi.boolean(),
+    beginDate: joi.number(),
+    endDate: joi.number(),
   },
-  order: {
-    typeOfTransportation: joi.string(),
-    devisionName: joi.string(),
-    client: joi.string(),
-    passengers: joi.array().items({fullName: joi.string(), phoneNumber: joi.string()})
+  waypoints: {
+    point: joi.array().items(
+      {
+        address: joi.string(),
+        latitude: joi.string(),
+        longitude: joi.string(),
+      },
+    ),
   },
 });
 // end of Joi
