@@ -66,7 +66,6 @@ class Order {
 
   async dump() {
     const model = this.getIOrderDoc();
-    console.log("model = ", model.route.waypoints);
     const m = await OrderDb.create(model);
     this.id = m._id;
     this._saved = true;
@@ -84,7 +83,6 @@ class Order {
       distance: doc.route.distance,
       duration: doc.route.duration,
     };
-    console.log(this.data.waypoints.points)
   }
 
   async update() {
