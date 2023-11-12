@@ -1,7 +1,7 @@
 import {recoverOrderDTO, TOrderDTO} from '../dto/order.dto';
 import {defaultCargo, TCargoDTO} from '../dto/cargo.dto';
-import {TDeadline} from '../dto/deadline.dto';
-import {TAddressDTO, convertToOSM} from '../dto/address.dto';
+import {sameDeadline, TDeadline} from '../dto/deadline.dto';
+import {convertToOSM, TAddressDTO} from '../dto/address.dto';
 import {RouteData} from '../../sdk/route_machine_api/types';
 import {makeOptimalRoute} from '../../sdk/route_machine_api';
 import OrderDb, {IOrder} from '../db/order.db';
@@ -105,7 +105,29 @@ class Order {
     };
     fetchDb().catch();
   }
-  
+
+  /*
+  matchOrder
+  returns: процент совпадения двух маршрутов
+   */
+  matchOrder(order: Order): number {
+    if (sameDeadline(this.deadline, order.deadline)) {
+      const intersectionSize = (
+        new Set([...this.nodes, ...order.nodes])
+      ).size;
+      return intersectionSize / this.nodes.length;
+    }
+    return 0;
+  }
+
+  get deadline(): TDeadline {
+    return this.data?.deadline || {noDeadline: true};
+  }
+
+  get nodes(): Array<number> {
+    return this.data?.waypoints.nodes || [];
+  }
+
   get saved(): boolean {
     return this._saved;
   }
