@@ -1,23 +1,13 @@
 import {recoverOrderDTO, TOrderDTO} from '../../dto/order.dto';
-import {defaultCargo, TCargoDTO} from '../../dto/cargo.dto';
+import {defaultCargo} from '../../dto/cargo.dto';
 import {sameDeadline, TDeadline} from '../../dto/deadline.dto';
-import {convertToOSM, TAddressDTO} from '../../dto/address.dto';
+import {convertToOSM} from '../../dto/address.dto';
 import {RouteData} from '../../../sdk/route_machine_api/types';
 import {makeOptimalRoute} from '../../../sdk/route_machine_api';
 import OrderDb, {IOrder} from '../../db/order.db';
 import orderDb from '../../db/order.db';
+import {dataToView, IOrderData, IOrderView} from './order.interface';
 
-export interface IOrderData {
-  clientId: string;
-  cargo: TCargoDTO;
-  deadline: TDeadline;
-  waypoints: {
-    points: TAddressDTO[];
-    nodes: number[];
-  };
-  duration: number;
-  distance: number;
-}
 
 class Order {
   private id: string = ''; // MongoID
@@ -26,26 +16,18 @@ class Order {
   private _invalid: boolean = false;
   private optimalRoute: RouteData | undefined;
 
-  constructor(id: string) {
-    if (id) {
-      this.fromId(id);
-    }
+  constructor() {
   }
 
-  fromDTO(dto: TOrderDTO) {
+  async fromDTO(dto: TOrderDTO) {
     // Восстанавливаем адреса.
     const recoveredDto = recoverOrderDTO(dto);
-    console.log('dto = ', recoveredDto);
     // Вот тут this.data остается null
-    const optimalRoutePromise = makeOptimalRoute(
+    this.optimalRoute = await makeOptimalRoute(
       recoveredDto.waypoints.points.map(
         point => convertToOSM(point),
       ),
     );
-
-    optimalRoutePromise.then(value => {
-      console.log(value)
-    })
 
     console.log('optimalRoute from async = ', this.optimalRoute);
     this.data = {
@@ -85,13 +67,10 @@ class Order {
     };
   }
 
-  dump() {
+  async dump() {
     const model = this.getIOrderDoc();
-    const fetchDb = async () => {
-      const m = await OrderDb.create(model);
-      this.id = m._id;
-    };
-    fetchDb().catch(console.error);
+    const m = await OrderDb.create(model);
+    this.id = m._id;
     this._saved = true;
   }
 
@@ -109,30 +88,35 @@ class Order {
     };
   }
 
-  update() {
-    (async () =>
-      OrderDb.findByIdAndUpdate(
-        {_id: this.ID},
-        this.getIOrderDoc(),
-        {upsert: true},
-      ))().catch(console.error);
+  async update() {
+    await OrderDb.findByIdAndUpdate(
+      {_id: this.ID},
+      this.getIOrderDoc(),
+      {upsert: true},
+    );
   }
 
-  fromId(id: string) {
+  async fromId(id: string) {
     this.id = id;
-    const fetchDb = async () => {
-      const doc: IOrder | null | undefined = await OrderDb.findById(id);
-      if (doc) {
-        this.fromDoc(doc);
-      } else {
-        this._invalid = true;
-      }
-    };
-    fetchDb().catch(console.error);
+    const doc: IOrder | null | undefined = await OrderDb.findById(id);
+    if (doc) {
+      this.fromDoc(doc);
+    } else {
+      this._invalid = true;
+    }
   }
 
-  delete() {
-    (async () => await orderDb.findByIdAndDelete(this.ID))().catch(console.error);
+  /*
+  async delete()
+  @returns: true, if success
+   */
+  async delete() {
+    try {
+      await orderDb.findByIdAndDelete(this.ID);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   /*
@@ -169,10 +153,9 @@ class Order {
     return this.id;
   }
 
-  get outDTO(): IOrderData | null {
-    return this.data;
+  get outDTO(): IOrderView | null {
+    return dataToView(this.data);
   }
-
 }
 
 export default Order;

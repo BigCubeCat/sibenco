@@ -6,19 +6,27 @@ export const getAllOrders = async (page: number, pageSize: number) => {
     .sort({_id: -1})
     .skip(page * pageSize)
     .limit(pageSize).select({_id: 1});
-  return orders.map(o => new Order(o._id));
+  const results = [];
+  for (let i = 0; i < orders.length; ++i) {
+    const o = new Order();
+    await o.fromId(orders[i]._id);
+    results.push(o.outDTO);
+  }
+  return results;
 };
 
 export const getSimilarOrders = async (id: string) => {
-  const order = new Order(id);
+  const order = new Order();
+  await order.fromId(id);
   if (order.invalid) return [];
   const allOrders = await OrderDb.find({}).select({_id: 1});
   const results = [];
   for (let i = 0; i < allOrders.length; ++i) {
-    const other = new Order(allOrders[i]._id);
+    const other = new Order();
+    await other.fromId(allOrders[i]._id);
     const percent = order.matchOrder(other);
     if (order.matchOrder(other) > 0) {
-      results.push({order: other, match: percent});
+      results.push({order: other.outDTO, match: percent});
     }
   }
   return [];
@@ -29,5 +37,11 @@ export const findOrders = async (page: number, pageSize: number, request: object
     .sort({_id: -1})
     .skip(page * pageSize)
     .limit(pageSize).select({_id: 1});
-  return orders.map(o => new Order(o._id));
+  const results = [];
+  for (let i = 0; i < orders.length; ++i) {
+    const o = new Order();
+    await o.fromId(orders[i]._id);
+    results.push(o.outDTO);
+  }
+  return results;
 };
