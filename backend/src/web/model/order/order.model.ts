@@ -5,11 +5,10 @@ import {convertToOSM} from '../../dto/address.dto';
 import {RouteData} from '../../../sdk/route_machine_api/types';
 import {makeOptimalRoute} from '../../../sdk/route_machine_api';
 import OrderDb, {IOrder} from '../../db/order.db';
-import orderDb from '../../db/order.db';
 import {dataToView, IOrderData, IOrderView} from './order.interface';
 
 
-class Order {
+class OrderModel {
   private id: string = ''; // MongoID
   private data: IOrderData | null = null;
   private _saved: boolean = false;
@@ -109,7 +108,7 @@ class Order {
    */
   async delete() {
     try {
-      await orderDb.findByIdAndDelete(this.ID);
+      await OrderDb.findByIdAndDelete(this.ID);
       return true;
     } catch (e) {
       return false;
@@ -120,7 +119,8 @@ class Order {
   matchOrder
   returns: процент совпадения двух маршрутов
    */
-  matchOrder(order: Order): number {
+  matchOrder(order: OrderModel): number {
+    // TODO create cool function
     if (sameDeadline(this.deadline, order.deadline)) {
       const intersectionSize = (
         new Set([...this.nodes, ...order.nodes])
@@ -150,9 +150,13 @@ class Order {
     return this.id;
   }
 
+  get orderData(): IOrderData | null {
+    return this.data;
+  }
+
   get outDTO(): IOrderView | null {
     return dataToView(this.data);
   }
 }
 
-export default Order;
+export default OrderModel;

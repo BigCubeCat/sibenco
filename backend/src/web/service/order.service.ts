@@ -1,6 +1,6 @@
 import {config} from '../../config';
 import {TOrderDTO} from '../dto/order.dto';
-import Order from '../model/order/order.model';
+import OrderModel from '../model/order/order.model';
 import {findOrders, getAllOrders, getSimilarOrders} from '../model/order/order.functions';
 import {IOrderData} from '../model/order/order.interface';
 
@@ -8,14 +8,14 @@ import {IOrderData} from '../model/order/order.interface';
  * createSingleOrder(order, TOrderDoc)
  */
 export const create = async (orderDto: TOrderDTO) => {
-  const order = new Order();
+  const order = new OrderModel();
   await order.fromDTO(orderDto);
   await order.dump();
   return order.ID;
 };
 
 export const get = async (id: string) => {
-  const order = new Order();
+  const order = new OrderModel();
   await order.fromId(id);
   if (order.invalid) {
     throw new Error(config.errors.NotFound);
@@ -32,7 +32,7 @@ export const getSimilar = async (id: string) => {
 };
 
 export const deleteOrder = async (id: string) => {
-  const order = new Order();
+  const order = new OrderModel();
   await order.fromId(id);
   if (order.invalid) {
     throw new Error(config.errors.NotFound);
@@ -42,7 +42,7 @@ export const deleteOrder = async (id: string) => {
 
 export const updateOrder = async (id: string, data: IOrderData) => {
   // Тут именно IOrderData, потому что пользователь может обновить список остановок. TODO кстати
-  const order = new Order();
+  const order = new OrderModel();
   await order.fromId(id);
   if (order.invalid) {
     throw new Error(config.errors.NotFound);

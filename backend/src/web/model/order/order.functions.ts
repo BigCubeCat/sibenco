@@ -1,5 +1,5 @@
 import OrderDb from '../../db/order.db';
-import Order from './order.model';
+import OrderModel from './order.model';
 
 export const getAllOrders = async (page: number, pageSize: number) => {
   const orders = await OrderDb.find({})
@@ -8,7 +8,7 @@ export const getAllOrders = async (page: number, pageSize: number) => {
     .limit(pageSize).select({_id: 1});
   const results = [];
   for (let i = 0; i < orders.length; ++i) {
-    const o = new Order();
+    const o = new OrderModel();
     await o.fromId(orders[i]._id);
     results.push(o.outDTO);
   }
@@ -16,16 +16,16 @@ export const getAllOrders = async (page: number, pageSize: number) => {
 };
 
 export const getSimilarOrders = async (id: string) => {
-  const order = new Order();
+  const order = new OrderModel();
   await order.fromId(id);
   if (order.invalid) return [];
   const allOrders = await OrderDb.find({}).select({_id: 1});
   const results = [];
   for (let i = 0; i < allOrders.length; ++i) {
-    const other = new Order();
+    const other = new OrderModel();
     await other.fromId(allOrders[i]._id);
     const percent = order.matchOrder(other);
-    if (order.matchOrder(other) > 0) {
+    if (percent > 0) {
       results.push({order: other.outDTO, match: percent});
     }
   }
@@ -39,7 +39,7 @@ export const findOrders = async (page: number, pageSize: number, request: object
     .limit(pageSize).select({_id: 1});
   const results = [];
   for (let i = 0; i < orders.length; ++i) {
-    const o = new Order();
+    const o = new OrderModel();
     await o.fromId(orders[i]._id);
     results.push(o.outDTO);
   }
