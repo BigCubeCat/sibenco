@@ -1,77 +1,35 @@
-import RouteDb, {IRouteDoc, I_RouterDocument} from '../db/route.db';
-import { getNearestInBoxesRoutes } from '../../sdk/utils/routes_filter/routes_by_boxes';
-import { getNearestInTimeRoutes } from '../../sdk/utils/routes_filter/routes_by_time';
+import RouteModel from '../model/route/route.model';
+import {TRouteDTO} from '../dto/route.dto';
+import {config} from '../../config';
+import {getAllRoutes} from '../model/route/route.function';
 
-export async function createRoute(route: IRouteDoc) {
-  return await RouteDb.create(route);
-}
+export const create = async (dto: TRouteDTO) => {
+  const route = new RouteModel();
+  await route.createFromDTO(dto);
+  await route.dump();
+  return route.ID;
+};
 
-export async function patchRoute(id: string, route: I_RouterDocument) {
-  return await RouteDb.findOneAndUpdate({_id: id}, route);
-}
-
-export async function deleteRoute(id: string) {
-  await RouteDb.findByIdAndRemove(id);
-}
-
-export async function getRoute(id: string): Promise<I_RouterDocument | null | undefined> {
-  return await RouteDb.findOne({_id: id});
-}
-
-export async function getAll(page: number, page_size: number) {
-  const allRoutes = await RouteDb.find()
-    .sort({_id: -1})
-    .skip(page * page_size)
-    .limit(page_size);
-  if (!allRoutes) {
-    throw new Error('not found');
+export const get = async (id: string) => {
+  const route = new RouteModel();
+  await route.fromId(id);
+  if (route.invalid) {
+    throw new Error(config.errors.NotFound);
   }
-  return allRoutes;
-}
+  return route.outDTO;
+};
 
-export async function merge(routeIds: string[]) {
-  const firstRoute = await getRoute(routeIds[0]);
-  if (!firstRoute) {
-    throw new Error("Bad route Id");
-  }
-  const newRoute: IRouteDoc = {
-    car: firstRoute.car,
-    date: firstRoute.date,
-    status: "built",
-    route: firstRoute.route,
-    isPrivate: false,
-    isSingle: false,
-    cargoInRoute: firstRoute.cargoInRoute,
-    passengersInRoute: firstRoute.passengersInRoute,
-    comment: firstRoute.comment
-  };
+export const getAll = async (page: number, pageSize: number) => {
+  return await getAllRoutes(page, pageSize);
+};
 
-  const newOrders: Set<string> = new Set(firstRoute?.route.orders);
-  const newBoxes: Set<string> = new Set(firstRoute?.route.boxes);
-  for (let i = 1; i < routeIds.length; ++i) {
-    const route = await getRoute(routeIds[i]);
-    if (!route) {
-      continue;
-    }
-    route.route.boxes.forEach((box) => newBoxes.add(box));
-    route.route.orders.forEach((order) => newOrders.add(order));
-    route.status = 'merged';
-    await patchRoute(route._id, route);
-  }
-  newRoute.route.boxes = Array.from(newBoxes);
-  newRoute.route.orders = Array.from(newOrders);
-  return await createRoute(newRoute);
-}
-
-export async function findSimilarRoutes(id: string): Promise<I_RouterDocument[]> {
-  const route: I_RouterDocument | null | undefined = await getRoute(id);
-  if (route !== null && route !== undefined) {
-    let similarRoutes: I_RouterDocument[] | null | undefined = await getNearestInTimeRoutes(route);
-    if (similarRoutes === null || similarRoutes === undefined) {
-      return [];
-    }
-    similarRoutes = await getNearestInBoxesRoutes(similarRoutes, route);
-    return similarRoutes;
-  }
-  return [];
-}
+export const del = async (id: string) => {
+  const route = new RouteModel();
+  await route.fromId(id);
+  return await route.delete();
+};
+export const patch = async (id: string, data: object) => {
+  const route = new RouteModel();
+  await route.fromId(id);
+  return await route.delete();
+};
