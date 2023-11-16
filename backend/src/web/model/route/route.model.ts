@@ -53,6 +53,10 @@ class RouteModel {
     };
   }
 
+  fromIRouteData(data: IRouteData) {
+    this.data = data;
+  }
+
   async dump() {
     const model = this.getIRouteDoc();
     const m = await RouteDb.create(model);
@@ -124,6 +128,13 @@ returns: процент совпадения двух маршрутов
     }
   }
 
+  async update() {
+    await RouteDb.findByIdAndUpdate(
+      {_id: this.ID},
+      this.getIRouteDoc(),
+      {upsert: true},
+    );
+  }
 
   get deadline(): TDeadline {
     return this.data?.time || {noDeadline: true};

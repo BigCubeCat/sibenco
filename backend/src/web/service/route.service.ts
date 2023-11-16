@@ -2,6 +2,7 @@ import RouteModel from '../model/route/route.model';
 import {TRouteDTO} from '../dto/route.dto';
 import {config} from '../../config';
 import {getAllRoutes} from '../model/route/route.function';
+import {IRouteData} from '../model/route/route.interface';
 
 export const create = async (dto: TRouteDTO) => {
   const route = new RouteModel();
@@ -28,8 +29,12 @@ export const del = async (id: string) => {
   await route.fromId(id);
   return await route.delete();
 };
-export const patch = async (id: string, data: object) => {
+export const patch = async (id: string, data: IRouteData) => {
   const route = new RouteModel();
   await route.fromId(id);
-  return await route.delete();
+  if (route.invalid) {
+    throw new Error(config.errors.NotFound);
+  }
+  route.fromIRouteData(data);
+  return await route.update();
 };
