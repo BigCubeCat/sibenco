@@ -3,6 +3,7 @@ import {TDeadline} from '../../dto/deadline.dto';
 import {TAddressDTO} from '../../dto/address.dto';
 
 export interface IOrderData {
+  id: string;
   clientId: string;
   cargo: TCargoDTO;
   deadline: TDeadline;
@@ -15,6 +16,7 @@ export interface IOrderData {
 }
 
 export interface IOrderView {
+  id: string;
   clientId: string;
   cargo: TCargoDTO;
   deadline: TDeadline;

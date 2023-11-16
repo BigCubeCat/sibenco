@@ -29,6 +29,7 @@ class OrderModel {
     );
 
     this.data = {
+      id: '',
       clientId: dto.clientId,
       cargo: dto.cargo,
       deadline: dto.deadline,
@@ -39,7 +40,7 @@ class OrderModel {
       distance: this.optimalRoute?.distance || 0,
       duration: this.optimalRoute?.duration || 0,
     };
-    this.id = '';
+    this.ID = '';
     this._saved = false;
   }
 
@@ -66,12 +67,13 @@ class OrderModel {
   async dump() {
     const model = this.getIOrderDoc();
     const m = await OrderDb.create(model);
-    this.id = m._id;
+    this.ID = m._id;
     this._saved = true;
   }
 
   fromDoc(doc: IOrder) {
     this.data = {
+      id: '',
       clientId: doc.order.client,
       cargo: doc.order.cargo,
       deadline: doc.time,
@@ -93,13 +95,13 @@ class OrderModel {
   }
 
   async fromId(id: string) {
-    this.id = id;
     const doc: IOrder | null | undefined = await OrderDb.findById(id);
     if (doc) {
       this.fromDoc(doc);
     } else {
       this._invalid = true;
     }
+    this.ID = id;
   }
 
   /*
@@ -148,6 +150,12 @@ class OrderModel {
 
   get ID(): string {
     return this.id;
+  }
+
+  set ID(_id: string) {
+    this.id = _id;
+    if (this.data)
+      this.data.id = _id;
   }
 
   get orderData(): IOrderData | null {
