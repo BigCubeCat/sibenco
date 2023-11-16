@@ -1,20 +1,19 @@
 import express from 'express';
 import * as routeController from '../../controllers/order.controller';
-import {auth} from '../../middleware/auth';
 
 //joiSchema.validateAsync(request.body); - задел на валидацию
 
 const router = express.Router();
 
-router.post('/', auth, routeController.createOrder);
+router.post('/', routeController.createOrder);
 
-router.get('/', auth, routeController.getAllOrders);
-router.get('/:id', auth, routeController.getOrder);
-router.get('/similar/:id', auth, routeController.getSimilar);
+router.get('/', routeController.getAllOrders);
+router.get('/:id', routeController.getOrder);
+router.get('/similar/:id', routeController.getSimilar);
 
-router.patch('/:id', auth, routeController.updateOrder);
+router.patch('/:id', routeController.updateOrder);
 
-router.delete('/:id', auth, routeController.deleteOrder);
+router.delete('/:id', routeController.deleteOrder);
 
-router.post('/search', auth, routeController.findOrdersBySomething);
+router.post('/search', routeController.findOrdersBySomething);
 export default router;

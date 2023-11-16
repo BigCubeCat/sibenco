@@ -4,10 +4,8 @@ import {redirectedUrl} from "../utils/redirect";
 
 export const get = async (req: Request, res: Response) => {
   const url = redirectedUrl(req.url);
-  console.log(url);
   try {
     const result = await axios.get(url, req.body);
-    console.log(result);
     res.status(result.status).send(result.data);
   } catch (error) {
     return res.status(400).send(error);

@@ -9,16 +9,13 @@ import {config, LoadConfig} from './config';
 LoadConfig();
 
 import indexRouter from './web/routes/index';
-import usersRouter from './web/routes/user/userRouter';
 import routeRouter from './web/routes/route/routeRouter';
 import orderRouter from './web/routes/order/orderRouter';
 import swDocument from './sdk/utils/openapi';
-import {createAdmin} from './web/service/user.service';
 
 console.log(config.MONGO_URL);
 const fetchStartup = async () => {
   await mongoose.connect(config.MONGO_URL);
-  await createAdmin();
 };
 fetchStartup().catch(console.error);
 
@@ -31,7 +28,6 @@ app.use(express.urlencoded({extended: true}));
 
 app.use('/', indexRouter);
 app.use('/routes', routeRouter);
-app.use('/users', usersRouter);
 app.use('/orders', orderRouter);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swDocument));
 
