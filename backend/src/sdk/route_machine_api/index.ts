@@ -16,6 +16,7 @@ export const makeOptimalRoute = async (
   const bestRoute = optimalRoute.routes[0];
   const resultRoute: RouteData = {
     nodes: [],
+    coords: bestRoute.geometry.coordinates,
     distance: bestRoute.distance,
     duration: bestRoute.duration,
   };

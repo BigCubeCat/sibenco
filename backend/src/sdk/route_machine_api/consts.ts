@@ -11,5 +11,7 @@ export const osrmProfileCar = 'driving/';
 
 export const osrmRouteOptions = 'steps=false&annotations=true';
 
+export const osrmRouteGeoJson = '&geometries=geojson&overview=full';
+
 export const osrmTripOptions =
   'roundtrip=false&source=first&destination=last&steps=false';

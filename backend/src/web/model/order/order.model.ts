@@ -6,6 +6,7 @@ import {RouteData} from '../../../sdk/route_machine_api/types';
 import {makeOptimalRoute} from '../../../sdk/route_machine_api';
 import OrderDb, {IOrder} from '../../db/order.db';
 import {dataToView, IOrderData, IOrderView} from './order.interface';
+import {optimizeCoordinates} from '../../../sdk/algo/compare';
 
 
 class OrderModel {
@@ -19,6 +20,8 @@ class OrderModel {
   }
 
   async fromDTO(dto: TOrderDTO) {
+    // По сути это создание нашего заказа. Все остальные - from... -
+    // Восстановление данных из другого формата.
     // Восстанавливаем адреса.
     const recoveredDto = recoverOrderDTO(dto);
     // Вот тут this.data остается null
@@ -36,10 +39,12 @@ class OrderModel {
       waypoints: {
         points: dto.waypoints.points,
         nodes: this.optimalRoute?.nodes || [],
+        coords: optimizeCoordinates(this.optimalRoute?.coords || [])
       },
       distance: this.optimalRoute?.distance || 0,
       duration: this.optimalRoute?.duration || 0,
     };
+
     this.ID = '';
     this._saved = false;
   }
@@ -56,6 +61,7 @@ class OrderModel {
         distance: this.data?.distance || 0,
         duration: this.data?.duration || 0,
         nodes: this.data?.waypoints.nodes || [],
+        coords: this.data?.waypoints.coords || [],
       },
       order: {
         client: this.data?.clientId || '',
@@ -80,6 +86,7 @@ class OrderModel {
       waypoints: {
         points: doc.route.waypoints.points,
         nodes: doc.route.nodes,
+        coords: doc.route.coords,
       },
       distance: doc.route.distance,
       duration: doc.route.duration,

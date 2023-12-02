@@ -12,5 +12,6 @@ export const makeRouteRequestURL = (coordinates: Array<Array<number>>): string =
     .map((coordinate: number[]) => `${coordinate[0]},${coordinate[1]}`)
     .join(';');
   answer += `?` + constants.osrmRouteOptions;
+  answer += constants.osrmRouteGeoJson;
   return answer;
 };

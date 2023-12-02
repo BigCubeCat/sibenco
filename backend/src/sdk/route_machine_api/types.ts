@@ -58,8 +58,14 @@ export type Leg = {
   duration: number;
 };
 
+export type Coordinate = [number, number]; // lon, lat
+
 export type Route = {
   legs: Leg[];
+  geometry: {
+    coordinates: Coordinate[];
+    type: string;
+  }
   distance: number;
   duration: number;
 };
@@ -72,6 +78,7 @@ export type RouteResponse = {
 
 export type RouteData = {
   nodes: Array<number>;
+  coords: Array<Coordinate>;
   distance: number;
   duration: number;
 };
