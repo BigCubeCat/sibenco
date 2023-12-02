@@ -6,7 +6,7 @@ import {RouteData} from '../../../sdk/route_machine_api/types';
 import {makeOptimalRoute} from '../../../sdk/route_machine_api';
 import OrderDb, {IOrder} from '../../db/order.db';
 import {dataToView, IOrderData, IOrderView} from './order.interface';
-import {optimizeCoordinates} from '../../../sdk/algo/compare';
+import {createCoords} from '../../../sdk/algo/compare';
 
 
 class OrderModel {
@@ -39,11 +39,12 @@ class OrderModel {
       waypoints: {
         points: dto.waypoints.points,
         nodes: this.optimalRoute?.nodes || [],
-        coords: optimizeCoordinates(this.optimalRoute?.coords || [])
+        coords: createCoords(this.optimalRoute?.coords || [])
       },
       distance: this.optimalRoute?.distance || 0,
       duration: this.optimalRoute?.duration || 0,
     };
+    console.log(this.data.waypoints.coords);
 
     this.ID = '';
     this._saved = false;
