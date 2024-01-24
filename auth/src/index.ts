@@ -3,21 +3,12 @@ import createError from 'http-errors';
 import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
-import mongoose from 'mongoose';
-import swaggerUI from 'swagger-ui-express';
+
 import {config, LoadConfig} from './config';
+
 LoadConfig();
 
-import indexRouter from './web/routes/index';
-import routeRouter from './web/routes/route/routeRouter';
-import orderRouter from './web/routes/order/orderRouter';
-import swDocument from './sdk/utils/openapi';
-
-console.log(config.MONGO_URL);
-const fetchStartup = async () => {
-  await mongoose.connect(config.MONGO_URL);
-};
-fetchStartup().catch(console.error);
+import usersRouter from './routes/user.router';
 
 const app = express();
 app.use(cors());
@@ -26,10 +17,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-app.use('/', indexRouter);
-app.use('/routes', routeRouter);
-app.use('/orders', orderRouter);
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swDocument));
+app.use('/', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
