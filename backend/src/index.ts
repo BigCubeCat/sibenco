@@ -6,12 +6,15 @@ import morgan from 'morgan';
 import mongoose from 'mongoose';
 import swaggerUI from 'swagger-ui-express';
 import {config, LoadConfig} from './config';
+import swaggerJsdoc from 'swagger-jsdoc';
+
 LoadConfig();
 
 import indexRouter from './web/routes/index';
-import routeRouter from './web/routes/route/routeRouter';
-import orderRouter from './web/routes/order/orderRouter';
-import swDocument from './sdk/utils/openapi';
+import routeRouter from './web/routes/routeRouter';
+import orderRouter from './web/routes/orderRouter';
+
+import {swaggerOptions} from "./sdk/utils/openapi";
 
 console.log(config.MONGO_URL);
 const fetchStartup = async () => {
@@ -26,10 +29,12 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+const specs = swaggerJsdoc(swaggerOptions);
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
+
 app.use('/', indexRouter);
 app.use('/routes', routeRouter);
 app.use('/orders', orderRouter);
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swDocument));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
