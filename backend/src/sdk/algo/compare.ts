@@ -19,7 +19,6 @@ export const optimizeCoordinates = (coords: number[][]): number[][] => {
 
 const getDirection = (_from: number, _to: number) => {
   const r = Math.round(_to * 100) - Math.round(_from * 100);
-  console.log(r);
   if (r === 0) return 0;
   return (r < 0) ? -1 : 1;
 };

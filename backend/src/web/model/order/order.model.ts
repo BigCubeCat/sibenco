@@ -44,7 +44,6 @@ class OrderModel {
       distance: this.optimalRoute?.distance || 0,
       duration: this.optimalRoute?.duration || 0,
     };
-    console.log(this.data.waypoints.coords);
 
     this.ID = '';
     this._saved = false;
@@ -132,10 +131,10 @@ class OrderModel {
   matchOrder(order: OrderModel): number {
     // TODO create cool function
     if (sameDeadline(this.deadline, order.deadline)) {
-      const intersectionSize = (
+      const size = (
         new Set([...this.nodes, ...order.nodes])
-      ).size;
-      return intersectionSize / this.nodes.length;
+      ).size / 2;
+      return (this.nodes.length - size) / this.nodes.length;
     }
     return 0;
   }
