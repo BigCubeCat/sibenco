@@ -38,6 +38,7 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
         longitude: {type: String},
         address: {type: String},
         OSRMNode: {type: String},
+        pointType: {type: String},
         confirmed: {type: Boolean},
       }],
     },

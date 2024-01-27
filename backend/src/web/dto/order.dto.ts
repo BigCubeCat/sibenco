@@ -17,7 +17,7 @@ export const recoverOrderDTO = (order: TOrderDTO): TOrderDTO => {
     deadline: order.deadline,
     waypoints: {
       points: order.waypoints.points.map(
-        waypoint => recoverAddress(waypoint),
+        waypoint => recoverAddress(waypoint)
       ),
     },
   };
