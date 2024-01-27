@@ -1,7 +1,7 @@
 import {recoverOrderDTO, TOrderDTO} from '../../dto/order.dto';
 import {defaultCargo} from '../../dto/cargo.dto';
 import {sameDeadline, TDeadline} from '../../dto/deadline.dto';
-import {convertToOSM} from '../../dto/address.dto';
+import {convertToOSM, TAddressDTO} from '../../dto/address.dto';
 import {RouteData} from '../../../sdk/route_machine_api/types';
 import {makeOptimalRoute} from '../../../sdk/route_machine_api';
 import OrderDb, {IOrder} from '../../db/order.db';
@@ -31,6 +31,12 @@ class OrderModel {
       ),
     );
 
+    const getPointsCoords = (point: TAddressDTO) => {
+      return {
+        lat: Number(point.latitude), lon: Number(point.longitude)
+      };
+    }
+
     this.data = {
       id: '',
       clientId: dto.clientId,
@@ -39,7 +45,10 @@ class OrderModel {
       waypoints: {
         points: dto.waypoints.points,
         nodes: this.optimalRoute?.nodes || [],
-        coords: createCoords(this.optimalRoute?.coords || [])
+        coords: createCoords(
+          this.optimalRoute?.coords || [],
+          dto.waypoints.points.map(point => getPointsCoords(point))
+        )
       },
       distance: this.optimalRoute?.distance || 0,
       duration: this.optimalRoute?.duration || 0,
@@ -61,7 +70,7 @@ class OrderModel {
         distance: this.data?.distance || 0,
         duration: this.data?.duration || 0,
         nodes: this.data?.waypoints.nodes || [],
-        coords: this.data?.waypoints.coords || [],
+        coords: this.data?.waypoints.coords || "0,0,oon",
       },
       order: {
         client: this.data?.clientId || '',
@@ -130,6 +139,7 @@ class OrderModel {
    */
   matchOrder(order: OrderModel): number {
     // TODO create cool function
+    // In process
     if (sameDeadline(this.deadline, order.deadline)) {
       const size = (
         new Set([...this.nodes, ...order.nodes])

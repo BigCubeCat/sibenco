@@ -11,7 +11,7 @@ export interface IOrder {
   route: {
     waypoints: TWaypointsDTO;
     nodes: Array<number>;
-    coords: Array<Array<number>>;
+    coords: string;
     distance: number;
     duration: number;
   };
@@ -42,7 +42,7 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
       }],
     },
     nodes: [{type: Number}],
-    coords: [[{type: Number}]],
+    coords: {type: String},
     distance: {type: Number},
     duration: {type: Number},
   },
