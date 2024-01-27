@@ -33,7 +33,7 @@ class OrderModel {
 
     const getPointsCoords = (point: TAddressDTO) => {
       return {
-        lat: Number(point.latitude), lon: Number(point.longitude)
+        lat: Number(point.latitude), lon: Number(point.longitude), type: point.pointType
       };
     }
 

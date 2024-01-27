@@ -1,3 +1,9 @@
+interface ISimplifiedPoint {
+  lat: number;
+  lon: number;
+  type: string;
+}
+
 const optimizeCoord = (n: number, degree = 100) => Math.round(n * degree) / degree;
 const optimizeCoordinates = (coords: number[][]): number[][] => {
   const resultCoordinates = [[0, 0]];
@@ -44,19 +50,31 @@ const stringifyVelocity = (lat: number, lon: number) => {
   return getSymbol(lat) + getSymbol(lon);
 }
 
-const stringifyCoord = (coord: number[]): string => {
-  return coord[0] + "," + coord[1] + "," + stringifyVelocity(coord[2], coord[3]);
+const stringifyCoord = (coord: number[], stopCoords: ISimplifiedPoint[]): string => {
+  let pointType = 'n';
+  stopCoords.forEach(stopCoord => {
+    if (equalPoint(coord, [stopCoord.lat, stopCoord.lon])) {
+      pointType = stopCoord.type;
+    }
+  })
+  return coord[0] + "," + coord[1] + "," + stringifyVelocity(coord[2], coord[3]) + pointType;
 }
 
-const equalPoint = (first: number[][], second: number[][]) => (first[0] === second[0]) && (first[1] === second[1]);
+const equalPoint = (first: number[], second: number[]) => (first[0] === second[0]) && (first[1] === second[1]);
 
 
-const stringifyCoordinates = (coords: number[][], stopCoords: number[][]): string => {
-  return coords.map(coord => stringifyCoord(coord)).join(';');
+const stringifyCoordinates = (coords: number[][], stopCoords: ISimplifiedPoint[]): string => {
+  return coords.map(coord => stringifyCoord(coord, stopCoords)).join(';');
 }
 
-export const createCoords = (coords: number[][], points: {lat: number, lon: number}[]): string => {
-  const stopCoords = points.map(point => [optimizeCoord(point.lat), optimizeCoord(point.lon)]);
+export const createCoords = (coords: number[][], points: ISimplifiedPoint[]): string => {
+  const stopCoords = points.map(point => {
+    return {
+      lat: optimizeCoord(point.lat),
+      lon: optimizeCoord(point.lon),
+      type: point.type
+    };
+  });
   return stringifyCoordinates(
     vectorizeCoordinates(
       optimizeCoordinates(coords)
