@@ -1,9 +1,10 @@
 import {config} from "../../config";
+
 export const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Swagger Demo API',
+      title: 'SibGenCoRouting Search Engine',
       version: '1.0.0',
       description: 'A simple Express API using Swagger'
     },
@@ -14,5 +15,5 @@ export const swaggerOptions = {
       }
     ]
   },
-  apis: ['../../web/routes/*.ts']
+  apis: ['./src/web/routes/*.ts']
 };

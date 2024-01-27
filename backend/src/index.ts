@@ -10,13 +10,7 @@ import swaggerJsdoc from 'swagger-jsdoc';
 
 LoadConfig();
 
-import indexRouter from './web/routes/index';
-import routeRouter from './web/routes/routeRouter';
-import orderRouter from './web/routes/orderRouter';
 
-import {swaggerOptions} from "./sdk/utils/openapi";
-
-console.log(config.MONGO_URL);
 const fetchStartup = async () => {
   await mongoose.connect(config.MONGO_URL);
 };
@@ -29,12 +23,20 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+import {swaggerOptions} from "./web/routes/openapi";
+
 const specs = swaggerJsdoc(swaggerOptions);
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
+
+import indexRouter from './web/routes/index';
+import routeRouter from './web/routes/routeRouter';
+import orderRouter from './web/routes/orderRouter';
 
 app.use('/', indexRouter);
 app.use('/routes', routeRouter);
 app.use('/orders', orderRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
