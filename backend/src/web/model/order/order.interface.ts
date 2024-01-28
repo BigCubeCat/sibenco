@@ -10,7 +10,7 @@ export interface IOrderData {
   waypoints: {
     points: TAddressDTO[];
     nodes: number[];
-    coords: number[][];
+    coords: string;
   };
   duration: number;
   distance: number;

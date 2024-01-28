@@ -20,16 +20,18 @@ export const getSimilarOrders = async (id: string) => {
   await order.fromId(id);
   if (order.invalid) return [];
   const allOrders = await OrderDb.find({}).select({_id: 1});
+  console.log(allOrders.length)
   const results = [];
   for (let i = 0; i < allOrders.length; ++i) {
     const other = new OrderModel();
     await other.fromId(allOrders[i]._id);
     const percent = order.matchOrder(other);
-    if (percent > 0) {
+    if (percent > 0.5) {
+      console.log("percent = ", percent);
       results.push({order: other.outDTO, match: percent});
     }
   }
-  return [];
+  return results;
 };
 
 export const findOrders = async (page: number, pageSize: number, request: object) => {

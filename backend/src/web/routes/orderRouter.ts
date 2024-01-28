@@ -1,7 +1,6 @@
 import express from 'express';
-import * as routeController from '../../controllers/order.controller';
+import * as routeController from '../controllers/order.controller';
 
-//joiSchema.validateAsync(request.body); - задел на валидацию
 
 const router = express.Router();
 

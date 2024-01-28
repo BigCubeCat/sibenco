@@ -32,11 +32,9 @@ export const getOrder = createAbstractController(
 export const getSimilar = createAbstractController(
   async (req: Request) => {
     if (!req.params.id) {
-      return {
-        code: 200, body: await orderService.getSimilar(req.params.id),
-      };
+      return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))};
     }
-    return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))};
+    return {code: 200, body: await orderService.getSimilar(req.params.id)};
   },
 );
 

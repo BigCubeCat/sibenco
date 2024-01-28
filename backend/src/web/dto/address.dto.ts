@@ -3,16 +3,18 @@ export type TAddressDTO = {
   longitude?: string,
   address?: string,
   OSRMNode?: string,
+  pointType: string,
   // True, if object create in recover address, not from request
   confirmed: boolean,
 };
 
-const TAddressFromCoords = (lat: string, lon: string): TAddressDTO => {
+const TAddressFromCoords = (lat: string, lon: string, pointType: string): TAddressDTO => {
   return {
     latitude: lat,
     longitude: lon,
     address: 'TODO',
     OSRMNode: 'TODO',
+    pointType: pointType,
     confirmed: true,
   };
 };
@@ -23,27 +25,31 @@ const TAddressOSRMNode = (node: string): TAddressDTO => {
     longitude: 'TODO',
     address: 'TODO',
     OSRMNode: node,
+    pointType: 'n',
     confirmed: true,
   };
 };
 
-const TAddressFromAddress = (address: string): TAddressDTO => {
+const TAddressFromAddress = (address: string, pointType: string): TAddressDTO => {
   return {
     latitude: 'TODO',
     longitude: 'TODO',
     address: address,
     OSRMNode: '',
+    pointType: pointType,
     confirmed: true,
   };
 };
 
 export const recoverAddress = (address: TAddressDTO): TAddressDTO => {
+  address.pointType = address.pointType || 'n';
   if (address.latitude && address.longitude) {
-    return TAddressFromCoords(address.latitude, address.longitude);
+    return TAddressFromCoords(address.latitude, address.longitude, address.pointType);
   } else if (address.OSRMNode) {
     return TAddressOSRMNode(address.OSRMNode);
   }
-  return TAddressFromAddress(address.address ? address.address : '');
+
+  return TAddressFromAddress(address.address ? address.address : '', address.pointType);
 };
 
 export const convertToOSM = (address: TAddressDTO) => {
