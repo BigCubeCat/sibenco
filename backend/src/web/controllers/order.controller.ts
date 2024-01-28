@@ -34,7 +34,8 @@ export const getSimilar = createAbstractController(
     if (!req.params.id) {
       return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))};
     }
-    return {code: 200, body: await orderService.getSimilar(req.params.id)};
+    const matchPercent = Number(req.query.match) || 0.5;
+    return {code: 200, body: await orderService.getSimilar(req.params.id, matchPercent)};
   },
 );
 

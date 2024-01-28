@@ -19,7 +19,7 @@ export const getAllOrders = async (page: number, pageSize: number) => {
   return results;
 };
 
-export const getSimilarOrders = async (id: string) => {
+export const getSimilarOrders = async (id: string, matchPercent = 0.5) => {
   const order = new OrderModel();
   await order.fromId(id);
   if (order.invalid) return [];
@@ -34,7 +34,7 @@ export const getSimilarOrders = async (id: string) => {
 
     const compareResult = naiveCompareBoxes(other.boxes, order.boxes);
 
-    if (compareResult.match > 0.5) {
+    if (compareResult.match > matchPercent) {
       results.push({order: other.outDTO, match: compareResult});
     }
   }

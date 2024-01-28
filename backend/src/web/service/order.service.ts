@@ -27,8 +27,8 @@ export const getAll = async (page: number, pageSize: number) => {
   return await getAllOrders(page, pageSize);
 };
 
-export const getSimilar = async (id: string) => {
-  return await getSimilarOrders(id);
+export const getSimilar = async (id: string, matchPercent: number) => {
+  return await getSimilarOrders(id, matchPercent);
 };
 
 export const deleteOrder = async (id: string) => {

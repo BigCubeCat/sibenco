@@ -1,10 +1,12 @@
+import {config} from "../../config";
+
 interface ISimplifiedPoint {
   lat: number;
   lon: number;
   type: string;
 }
 
-const optimizeCoord = (n: number, degree = 1000) => Math.round(n * degree) / degree;
+const optimizeCoord = (n: number, degree = config.osrm.accuracy) => Math.round(n * degree) / degree;
 const optimizeCoordinates = (coords: number[][]): number[][] => {
   const resultCoordinates = [[0, 0]];
   coords.forEach(coord => {
