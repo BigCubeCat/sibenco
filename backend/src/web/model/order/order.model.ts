@@ -182,6 +182,10 @@ class OrderModel {
   get outDTO(): IOrderView | null {
     return dataToView(this.data);
   }
+
+  get boxes() : string {
+    return this.data?.waypoints.coords || "";
+  }
 }
 
 export default OrderModel;

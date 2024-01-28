@@ -4,7 +4,7 @@ interface ISimplifiedPoint {
   type: string;
 }
 
-const optimizeCoord = (n: number, degree = 100) => Math.round(n * degree) / degree;
+const optimizeCoord = (n: number, degree = 1000) => Math.round(n * degree) / degree;
 const optimizeCoordinates = (coords: number[][]): number[][] => {
   const resultCoordinates = [[0, 0]];
   coords.forEach(coord => {
