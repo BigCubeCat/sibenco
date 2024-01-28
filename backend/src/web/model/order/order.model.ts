@@ -6,7 +6,7 @@ import {RouteData} from '../../../sdk/route_machine_api/types';
 import {makeOptimalRoute} from '../../../sdk/route_machine_api';
 import OrderDb, {IOrder} from '../../db/order.db';
 import {dataToView, IOrderData, IOrderView} from './order.interface';
-import {createCoords} from '../../../sdk/algo/compare';
+import {createCoords} from '../../../sdk/algo/coords';
 
 
 class OrderModel {
