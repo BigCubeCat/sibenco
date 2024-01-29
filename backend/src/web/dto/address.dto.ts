@@ -19,7 +19,7 @@
  *                  format: float
  *              longitude:
  *                  type: number
- *                  description: "Широта"
+ *                  description: "Долгота"
  *                  format: float
  *              pointType:
  *                  type: string
