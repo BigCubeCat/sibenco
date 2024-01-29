@@ -1,4 +1,10 @@
 services:
+  # nginx:
+  #   image: nginx
+  #   ports:
+  #     - "9999:9999"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
   postgres:
     image: postgres:latest
     container_name: vanger_db
@@ -43,7 +49,12 @@ services:
       - DATABASE=${PG_DATABASE}
     stdin_open: true
     tty: true
-
+  cache:
+    image: redis:alpine
+    restart: always
+    # command: redis-server --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    ports:
+      - 6379:6379
   mongo:
     image: mongo:latest
     environment:
@@ -60,24 +71,24 @@ services:
       - ${OSRM_EXTERNAL_PORT}:${OSRM_INTERNAL_PORT}
     command: ${OSRM_COMMAND}
 
-  backend:
-    depends_on:
-      - mongo
-    build: ./backend
-    restart: always
-    ports:
-      - ${USER_PORT}:${USER_PORT}
-    environment:
-      - USER_PORT=${USER_PORT}
-      - JWT_KEY=${JWT_KEY}
-      - MONGO_URL=mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:${MONGO_PORT}
-      - OSRM_URL=http://@osrm:${OSRM_INTERNAL_PORT}
-      - GEOWORD_URL=http://@geoword:${GEOWORD_PORT}
-    stdin_open: true
-    tty: true
+  # backend:
+  #   depends_on:
+  #     - mongo
+  #   build: ./backend
+  #   restart: always
+  #   # ports:
+  #   #   - ${USER_PORT}:${USER_PORT}
+  #   environment:
+  #     - USER_PORT=${USER_PORT}
+  #     - JWT_KEY=${JWT_KEY}
+  #     - MONGO_URL=mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:${MONGO_PORT}
+  #     - OSRM_URL=http://@osrm:${OSRM_INTERNAL_PORT}
+  #     - GEOWORD_URL=http://@geoword:${GEOWORD_PORT}
+  #   stdin_open: true
+  #   tty: true
   auth:
-    depends_on:
-      - backend
+    # depends_on:
+    #   - backend
     build: ./auth
     restart: always
     ports:

@@ -38,7 +38,7 @@ router.get('/std/', routeController.getAll);
 
 /**
  * @openapi
- * /routes/std/:id/
+ * /routes/std/:id/:
  *  get:
  *    description: получение одного заказа по id
  */
@@ -52,7 +52,7 @@ router.get('/std/:id', routeController.getRoute);
 router.patch('/std/:id', routeController.patchRoute);
 /**
  * @openapi
- * /routes/std/:id/
+ * /routes/std/:id/:
  *  delete:
  *    description: Удаление маршрута по id
  */

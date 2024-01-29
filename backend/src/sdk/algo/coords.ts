@@ -1,10 +1,12 @@
+import {config} from "../../config";
+
 interface ISimplifiedPoint {
   lat: number;
   lon: number;
   type: string;
 }
 
-const optimizeCoord = (n: number, degree = 100) => Math.round(n * degree) / degree;
+const optimizeCoord = (n: number, degree = config.osrm.accuracy) => Math.round(n * degree) / degree;
 const optimizeCoordinates = (coords: number[][]): number[][] => {
   const resultCoordinates = [[0, 0]];
   coords.forEach(coord => {
@@ -81,4 +83,11 @@ export const createCoords = (coords: number[][], points: ISimplifiedPoint[]): st
     ),
     stopCoords
   );
+}
+
+export const getRedisKey = (point: ISimplifiedPoint) => {
+  let result = "";
+  result += optimizeCoord(point.lat, 1) + '_';
+  result += optimizeCoord(point.lon, 1);
+  return result;
 }
