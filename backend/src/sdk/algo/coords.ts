@@ -84,3 +84,10 @@ export const createCoords = (coords: number[][], points: ISimplifiedPoint[]): st
     stopCoords
   );
 }
+
+export const getRedisKey = (point: ISimplifiedPoint) => {
+  let result = "";
+  result += optimizeCoord(point.lat, 1) + '_';
+  result += optimizeCoord(point.lon, 1);
+  return result;
+}

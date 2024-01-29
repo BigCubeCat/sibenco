@@ -24,7 +24,7 @@ class RedisConn {
    * connect to redis. If got error, set isConnected false
    */
   async connectRedis() {
-    console.log(await this.client.connect());
+    await this.client.connect();
     this.connected = true;
   }
 
@@ -36,9 +36,10 @@ class RedisConn {
    */
   async appendByKey(key: string, value: string) {
     if (!this.isConnected) {
-      return false;
+      console.error("Cant append. connection required");
+      return -1;
     }
-    return (await this.client.sAdd(key, value) === 1);
+    return await this.client.sAdd(key, value);
   }
 
   /**

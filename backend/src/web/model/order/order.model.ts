@@ -6,7 +6,8 @@ import {RouteData} from '../../../sdk/route_machine_api/types';
 import {makeOptimalRoute} from '../../../sdk/route_machine_api';
 import OrderDb, {IOrder} from '../../db/order.db';
 import {dataToView, IOrderData, IOrderView} from './order.interface';
-import {createCoords} from '../../../sdk/algo/coords';
+import {createCoords, getRedisKey} from '../../../sdk/algo/coords';
+import getRedisClient from "../../../conn/cache/redis.conn";
 
 
 class OrderModel {
@@ -82,8 +83,9 @@ class OrderModel {
   async dump() {
     const model = this.getIOrderDoc();
     const m = await OrderDb.create(model);
-    this.ID = m._id;
+    this.ID = m._id.toString();
     this._saved = true;
+    await this.cacheOrder();
   }
 
   fromDoc(doc: IOrder) {
@@ -120,6 +122,25 @@ class OrderModel {
     this.ID = id;
   }
 
+  /**
+   * cacheOrder()
+   * Add this order to cache
+   */
+  async cacheOrder() {
+    const redisConn = await getRedisClient();
+    if (!redisConn.isConnected) {
+      console.error("Cant add ", this.ID, " to cache");
+    }
+    for (let i = 0; i < Number(this.data?.waypoints.points.length); ++i) {
+      const point = this.data?.waypoints.points[i];
+      if (!point) break;
+      const key = getRedisKey(
+        {lat: Number(point.latitude), lon: Number(point.longitude), type: 'n'}
+      ); // тут ненужен pointType
+      await redisConn.appendByKey(key, this.ID);
+    }
+  }
+
   /*
   async delete()
   @returns: true, if success
@@ -131,22 +152,6 @@ class OrderModel {
     } catch (e) {
       return false;
     }
-  }
-
-  /*
-  matchOrder
-  returns: процент совпадения двух маршрутов
-   */
-  matchOrder(order: OrderModel): number {
-    // TODO create cool function
-    // In process
-    if (sameDeadline(this.deadline, order.deadline)) {
-      const size = (
-        new Set([...this.nodes, ...order.nodes])
-      ).size / 2;
-      return (this.nodes.length - size) / this.nodes.length;
-    }
-    return 0;
   }
 
   get deadline(): TDeadline {
@@ -183,8 +188,12 @@ class OrderModel {
     return dataToView(this.data);
   }
 
-  get boxes() : string {
+  get boxes(): string {
     return this.data?.waypoints.coords || "";
+  }
+
+  get points(): TAddressDTO[] {
+    return this.data?.waypoints.points || [];
   }
 }
 
