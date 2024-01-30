@@ -4,6 +4,7 @@ import {naiveCompareBoxes, TNaiveCmp} from "../../../sdk/algo/compare";
 import {IOrderView} from "./order.interface";
 import getRedisClient from "../../../conn/cache/redis.conn";
 import {getRedisKey} from "../../../sdk/algo/coords";
+import orderDb from "../../db/order.db";
 
 export type TSearchRes = { order: IOrderView | null, match: TNaiveCmp };
 
@@ -95,3 +96,8 @@ export const findOrders = async (page: number, pageSize: number, request: object
   }
   return results;
 };
+
+export const countOrders = async () => {
+  const documentCount: number = await orderDb.count({});
+  return documentCount;
+}

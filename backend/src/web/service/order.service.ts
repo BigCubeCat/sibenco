@@ -3,6 +3,7 @@ import {TOrderDTO} from '../dto/order.dto';
 import OrderModel from '../model/order/order.model';
 import {findOrders, getAllOrders, getSimilarOrders} from '../model/order/order.functions';
 import {IOrderData} from '../model/order/order.interface';
+import {countOrders as count} from "../model/order/order.functions";
 
 /*
  * createSingleOrder(order, TOrderDoc)
@@ -12,6 +13,10 @@ export const create = async (orderDto: TOrderDTO) => {
   await order.fromDTO(orderDto);
   await order.dump();
   return order.ID;
+};
+
+export const countOrders = async () => {
+  return await count();
 };
 
 export const get = async (id: string) => {

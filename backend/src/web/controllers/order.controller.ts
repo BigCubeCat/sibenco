@@ -21,6 +21,12 @@ export const getAllOrders = createSimpleAbstractController(
   },
 );
 
+export const getCountOrders = createAbstractController(
+  async (req: Request) => {
+    return {code: 200, body: {count: await orderService.countOrders()}}
+  },
+);
+
 export const getOrder = createAbstractController(
   async (req: Request) => {
     if (!req.params.id) {

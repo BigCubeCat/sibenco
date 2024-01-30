@@ -66,6 +66,7 @@ router.post('/', routeController.createOrder);
  *                                - $ref: '#components/schemas/OrderDTO'
  */
 router.get('/', routeController.getAllOrders);
+router.get('/count', routeController.getCountOrders)
 
 /**
  * @openapi
