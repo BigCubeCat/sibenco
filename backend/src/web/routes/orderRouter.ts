@@ -46,9 +46,9 @@ router.post('/', routeController.createOrder);
  *              description: размер страницы
  *              items:
  *                  type: number
- *            - in query
+ *            - in: query
+ *              type: boolean
  *              name: done
- *                  type: boolean
  *              description: Если true, выдаст только выполненые заявки, если false, то только не выполненые. Если ничего не стоит то выдаст все
  *              items:
  *                  type: boolean
