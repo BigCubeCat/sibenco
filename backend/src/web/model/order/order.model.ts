@@ -1,6 +1,6 @@
 import {recoverOrderDTO, TOrderDTO} from '../../dto/order.dto';
 import {defaultCargo} from '../../dto/cargo.dto';
-import {sameDeadline, TDeadline} from '../../dto/deadline.dto';
+import {TDeadline} from '../../dto/deadline.dto';
 import {convertToOSM, TAddressDTO} from '../../dto/address.dto';
 import {RouteData} from '../../../sdk/route_machine_api/types';
 import {makeOptimalRoute} from '../../../sdk/route_machine_api';
@@ -51,6 +51,7 @@ class OrderModel {
           dto.waypoints.points.map(point => getPointsCoords(point))
         )
       },
+      done: this.done,
       distance: this.optimalRoute?.distance || 0,
       duration: this.optimalRoute?.duration || 0,
     };
@@ -77,6 +78,7 @@ class OrderModel {
         client: this.data?.clientId || '',
         cargo: this.data?.cargo || defaultCargo,
       },
+      done: this.done
     };
   }
 
@@ -99,9 +101,11 @@ class OrderModel {
         nodes: doc.route.nodes,
         coords: doc.route.coords,
       },
+      done: doc.done, // TODO fix it
       distance: doc.route.distance,
       duration: doc.route.duration,
     };
+    this.done = doc.done;
   }
 
   async update() {
@@ -141,6 +145,26 @@ class OrderModel {
     }
   }
 
+  async deleteOrderCache() {
+    const keys = this.points.map(point => getRedisKey({
+      lat: Number(point.latitude), lon: Number(point.longitude), type: 'n'
+    }));
+    const redisConn = await getRedisClient();
+    if (!redisConn.isConnected) {
+      console.error("cant connect redis");
+      return;
+    }
+    for (let i = 0; i < keys.length; ++i) {
+      await redisConn.deleteByKey(keys[i], this.ID);
+    }
+  }
+
+  async setDone() {
+    this.done = true;
+    await this.deleteOrderCache();
+    await this.dump();
+  }
+
   /*
   async delete()
   @returns: true, if success
@@ -148,6 +172,7 @@ class OrderModel {
   async delete() {
     try {
       await OrderDb.findByIdAndDelete(this.ID);
+      await this.deleteOrderCache();
       return true;
     } catch (e) {
       return false;
@@ -194,6 +219,16 @@ class OrderModel {
 
   get points(): TAddressDTO[] {
     return this.data?.waypoints.points || [];
+  }
+
+  set done(value: boolean) {
+    if (this.data) {
+      this.data.done = value;
+    }
+  }
+
+  get done(): boolean {
+    return this.data?.done || false;
   }
 }
 

@@ -51,6 +51,15 @@ export const updateOrder = async (id: string, data: IOrderData) => {
   await order.update();
 };
 
+export const cleanOrderCache = async (id: string) => {
+  const order = new OrderModel();
+  await order.fromId(id);
+  if (order.invalid) {
+    throw new Error(config.errors.NotFound);
+  }
+  await order.setDone();
+}
+
 export const find = async (data: object, page: number, pageSize: number) => {
   return await findOrders(page, pageSize, data);
 };

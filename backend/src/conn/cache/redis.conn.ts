@@ -51,6 +51,20 @@ class RedisConn {
   }
 
   /**
+   * deleteByKey
+   * delete <value>  from <key>
+   * @param key key of set
+   * @param value value to delete
+   */
+  async deleteByKey(key: string, value: string) {
+    if (!this.isConnected) {
+      console.error("Cant delete. connection required");
+      return -1;
+    }
+    return await this.client.sRem(key, value);
+  }
+
+  /**
    * return true, if redis client are connected;
    */
   get isConnected() {

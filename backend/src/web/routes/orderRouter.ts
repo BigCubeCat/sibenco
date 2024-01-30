@@ -101,10 +101,19 @@ router.get('/', routeController.getAllOrders);
  *        - name: id
  *          in: path
  *          required: true
+ *  put:
+ *    tags:
+ *        - orders
+ *    description: "Сделать заявку сделаной"
+ *    parameters:
+ *        - name: id
+ *          in: path
+ *          required: true
  */
 router.get('/:id', routeController.getOrder);
 router.patch('/:id', routeController.updateOrder);
 router.delete('/:id', routeController.deleteOrder);
+router.put('/:id', routeController.cleanOrderCache);
 
 /**
  * @openapi

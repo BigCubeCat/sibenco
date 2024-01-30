@@ -59,6 +59,16 @@ export const deleteOrder = createAbstractController(
   },
 );
 
+export const cleanOrderCache = createAbstractController(
+  async (req: Request) => {
+    if (!req.params.id) {
+      return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))};
+    }
+    await orderService.cleanOrderCache(req.params.id);
+    return {code: 200, body: config.messages.successClean};
+  },
+);
+
 
 export const findOrdersBySomething = createSimpleAbstractController(
   async (req: Request) => {
