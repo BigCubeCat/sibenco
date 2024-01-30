@@ -14,6 +14,7 @@ export interface IOrderData {
     coords: string;
   };
   done: boolean;
+  isSingle: boolean;
   duration: number;
   distance: number;
 }
@@ -67,6 +68,7 @@ export interface IOrderView {
   deadline: TDeadline;
   waypoints: TWaypointsDTO;
   done: boolean;
+  isSingle: boolean;
   duration: number;
   distance: number;
 }

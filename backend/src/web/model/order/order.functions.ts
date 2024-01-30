@@ -63,7 +63,8 @@ export const getSimilarOrders = async (id: string, matchPercent = 0.5) => {
     '_id': {
       '$in': Array.from(allMembers)
     },
-    'done': false
+    'done': false,
+    'isSingle': false,
   }).select({_id: -1});
 
   const results: TSearchRes[] = [];

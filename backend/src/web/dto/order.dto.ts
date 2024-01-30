@@ -30,13 +30,18 @@ import {recoverAddress} from './address.dto';
  *                  type: object
  *                  description: "Остановки"
  *                  $ref: '#components/schemas/WaypointsDTO'
+ *              isSingle:
+ *                  type: boolean
+ *                  description: "Заказ нельзя мержить"
  */
 export type TOrderDTO = {
   clientId: string;
   cargo: TCargoDTO;
   deadline: TDeadline;
   waypoints: TWaypointsDTO;
+  isSingle: boolean;
 };
+
 /**
  * @openapi
  * components:
@@ -84,5 +89,6 @@ export const recoverOrderDTO = (order: TOrderDTO): TOrderDTO => {
         waypoint => recoverAddress(waypoint)
       ),
     },
+    isSingle: order.isSingle
   };
 };

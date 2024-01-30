@@ -51,6 +51,7 @@ class OrderModel {
           dto.waypoints.points.map(point => getPointsCoords(point))
         )
       },
+      isSingle: dto.isSingle,
       done: this.done,
       distance: this.optimalRoute?.distance || 0,
       duration: this.optimalRoute?.duration || 0,
@@ -78,7 +79,8 @@ class OrderModel {
         client: this.data?.clientId || '',
         cargo: this.data?.cargo || defaultCargo,
       },
-      done: this.done
+      done: this.done,
+      isSingle: this.data?.isSingle || false
     };
   }
 
@@ -102,6 +104,7 @@ class OrderModel {
         coords: doc.route.coords,
       },
       done: doc.done, // TODO fix it
+      isSingle: doc.isSingle,
       distance: doc.route.distance,
       duration: doc.route.duration,
     };

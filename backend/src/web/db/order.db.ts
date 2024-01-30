@@ -20,6 +20,7 @@ export interface IOrder {
     cargo: TCargoDTO;
   };
   done: boolean;
+  isSingle: boolean;
 }
 
 export interface TOrderDoc extends IOrder, mongoose.Document {
@@ -57,7 +58,8 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
       price: {type: Number},
     },
   },
-  done: {type: Boolean}
+  done: {type: Boolean},
+  isSingle: {type: Boolean}
 });
 OrderSchema.pre('save', async function(next) {
   this.createdAt = todayDate();
