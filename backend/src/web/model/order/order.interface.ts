@@ -13,6 +13,8 @@ export interface IOrderData {
     nodes: number[];
     coords: string;
   };
+  done: boolean;
+  isSingle: boolean;
   duration: number;
   distance: number;
 }
@@ -65,6 +67,8 @@ export interface IOrderView {
   cargo: TCargoDTO;
   deadline: TDeadline;
   waypoints: TWaypointsDTO;
+  done: boolean;
+  isSingle: boolean;
   duration: number;
   distance: number;
 }

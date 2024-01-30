@@ -4,6 +4,7 @@ import {naiveCompareBoxes, TNaiveCmp} from "../../../sdk/algo/compare";
 import {IOrderView} from "./order.interface";
 import getRedisClient from "../../../conn/cache/redis.conn";
 import {getRedisKey} from "../../../sdk/algo/coords";
+import orderDb from "../../db/order.db";
 
 export type TSearchRes = { order: IOrderView | null, match: TNaiveCmp };
 
@@ -24,19 +25,21 @@ const compareFunction = (a: TSearchRes, b: TSearchRes) => {
   return b.match.match - a.match.match;
 }
 
-export const getAllOrders = async (page: number, pageSize: number) => {
-  const orders = await OrderDb.find({})
-    .sort({_id: -1})
-    .skip(page * pageSize)
-    .limit(pageSize).select({_id: 1});
-  const results = [];
-  for (let i = 0; i < orders.length; ++i) {
-    const o = new OrderModel();
-    await o.fromId(orders[i]._id);
-    results.push(o.outDTO);
+export const getAllOrders = async (page: number, pageSize: number, done: string) => {
+    const useFilter = (done === 'true' || done === 'false');
+    const orders = await OrderDb.find((useFilter) ? {done: done === 'true'} : {})
+      .sort({_id: -1})
+      .skip(page * pageSize)
+      .limit(pageSize).select({_id: 1});
+    const results = [];
+    for (let i = 0; i < orders.length; ++i) {
+      const o = new OrderModel();
+      await o.fromId(orders[i]._id);
+      results.push(o.outDTO);
+    }
+    return results;
   }
-  return results;
-};
+;
 
 export const getSimilarOrders = async (id: string, matchPercent = 0.5) => {
   const order = new OrderModel();
@@ -59,7 +62,9 @@ export const getSimilarOrders = async (id: string, matchPercent = 0.5) => {
   const allOrders = await OrderDb.find({
     '_id': {
       '$in': Array.from(allMembers)
-    }
+    },
+    'done': false,
+    'isSingle': false,
   }).select({_id: -1});
 
   const results: TSearchRes[] = [];
@@ -92,3 +97,8 @@ export const findOrders = async (page: number, pageSize: number, request: object
   }
   return results;
 };
+
+export const countOrders = async () => {
+  const documentCount: number = await orderDb.count({});
+  return documentCount;
+}
