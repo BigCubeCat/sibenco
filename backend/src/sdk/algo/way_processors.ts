@@ -1,12 +1,21 @@
-import { add, forEachRight } from "lodash";
 import { convertToOSM, getPointsCoords } from "../../web/dto/address.dto";
 import { TWaypointsDTO } from "../../web/dto/waypoints.dto";
 import { makeOptimalRoute } from "../route_machine_api"
-import { createCoords, optimizeCoord, stringifyCoord } from "./coords";
+import { createCoords, optimizeCoord } from "./coords";
+
+
+const makeOptimizedCoords = (waypoints: TWaypointsDTO) => {
+    const waypointsCoords = waypoints.points.map(point => getPointsCoords(point));
+    waypointsCoords.forEach(waypoint => {
+        waypoint.lat = optimizeCoord(waypoint.lat);
+        waypoint.lon = optimizeCoord(waypoint.lon);
+    })
+    return waypointsCoords;
+}
 
 export const createCoordsFromWaypoints = async (waypoints: TWaypointsDTO): Promise<string> => {
     const waypointsCoordinates = waypoints.points.map(point => convertToOSM(point));
-    let route = await makeOptimalRoute(waypointsCoordinates);
+    const route = await makeOptimalRoute(waypointsCoordinates);
     return createCoords(route?.coords || [], waypoints.points.map(point => getPointsCoords(point)));
 }
 
@@ -15,20 +24,14 @@ export const getFirstWaypointIndexAfterRoute = (mainRoute: string, waypoints: TW
         return 0;
     }
 
-    const waypointsCoords = waypoints.points.map(point => getPointsCoords(point));
+    const waypointsCoords = makeOptimizedCoords(waypoints);
 
-    waypointsCoords.forEach(waypoint => {
-        waypoint.lat = optimizeCoord(waypoint.lat);
-        waypoint.lon = optimizeCoord(waypoint.lon);
-    })
-    
     let currentWaypointIndex = 0;
     let currentWaypointString = waypointsCoords[0].lat + "," + waypointsCoords[0].lon;
 
-    let i = 1;
     let start = 0;
     let commaFlag = 1;
-    while (i < mainRoute.length) {
+    for (let i = 0; i < mainRoute.length; ++i) {
         if (mainRoute[i] == ';') {
             start = i + 1;
         }
@@ -41,7 +44,7 @@ export const getFirstWaypointIndexAfterRoute = (mainRoute: string, waypoints: TW
         }
         if (commaFlag == 0) {
             commaFlag++;
-            let currentCoordSubstring = mainRoute.substring(start, i);
+            const currentCoordSubstring = mainRoute.substring(start, i);
             if (currentCoordSubstring == currentWaypointString) {
                 if (currentWaypointIndex < waypointsCoords.length - 1) {
                     currentWaypointIndex++;
@@ -52,7 +55,6 @@ export const getFirstWaypointIndexAfterRoute = (mainRoute: string, waypoints: TW
                 }
             }
         }
-        ++i;
     }
     return currentWaypointIndex;
 }
@@ -66,31 +68,19 @@ export const mergeWaypoints = (mainRoute: string, mainRouteWaypoints: TWaypoints
 
     if (mainRoute[mainRoute.length - 1] != ";") mainRoute = mainRoute + ";";
 
-    const mainRouteWaypointsCoords = mainRouteWaypoints.points.map(point => getPointsCoords(point));
-    const additionalRouteWaypointsCoords = additionalRouteWaypoints.points.map(point => getPointsCoords(point));
+    const mainRouteWaypointsCoords = makeOptimizedCoords(mainRouteWaypoints);
+    const additionalRouteWaypointsCoords = makeOptimizedCoords(additionalRouteWaypoints);
     
     const resultWaypoints: TWaypointsDTO = { points: [] };
-    
-
-    mainRouteWaypointsCoords.forEach(waypoint => {
-        waypoint.lat = optimizeCoord(waypoint.lat);
-        waypoint.lon = optimizeCoord(waypoint.lon);
-    })
-
-    additionalRouteWaypointsCoords.forEach(waypoint => {
-        waypoint.lat = optimizeCoord(waypoint.lat);
-        waypoint.lon = optimizeCoord(waypoint.lon);
-    })
 
     let currentAdditionalRouteWaypointIndex = 0;
     let currentAdditionalWaypointString = additionalRouteWaypointsCoords[0].lat + "," + additionalRouteWaypointsCoords[0].lon;
     let currentMainRouteWaypointIndex = 0;
     let currentMainWaypointString = mainRouteWaypointsCoords[0].lat + "," + mainRouteWaypointsCoords[0].lon;
 
-    let i = 1;
     let start = 0;
     let commaFlag = 1;
-    while (i < mainRoute.length) {
+    for (let i = 0; i < mainRoute.length; ++i) {
         if (mainRoute[i] == ';') {
             start = i + 1;
         }
@@ -103,7 +93,7 @@ export const mergeWaypoints = (mainRoute: string, mainRouteWaypoints: TWaypoints
         }
         if (commaFlag == 0) {
             commaFlag++;
-            let currentCoordSubstring = mainRoute.substring(start, i);
+            const currentCoordSubstring = mainRoute.substring(start, i);
             if (currentCoordSubstring == currentAdditionalWaypointString) {
 
                 resultWaypoints.points.push(additionalRouteWaypoints.points[currentAdditionalRouteWaypointIndex]);
@@ -153,7 +143,6 @@ export const mergeWaypoints = (mainRoute: string, mainRouteWaypoints: TWaypoints
                 }
             }
         }
-        ++i;
     }
     for (let iter = currentAdditionalRouteWaypointIndex; iter < additionalRouteWaypoints.points.length; ++iter){
         resultWaypoints.points.push(additionalRouteWaypoints.points[iter]);

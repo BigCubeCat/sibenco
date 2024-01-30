@@ -1,5 +1,3 @@
-import { max, min } from "lodash";
-
 export type TDeadline = {
   noDeadline: boolean;
   beginDate?: number;
@@ -15,7 +13,7 @@ export const sameDeadline = (x: TDeadline, y: TDeadline) => {
   return x.endDate >= y.beginDate;
 };
 
-export const getDedlineIntersection = (x: TDeadline, y: TDeadline): TDeadline => {
+export const getDeadlineIntersection = (x: TDeadline, y: TDeadline): TDeadline => {
   if (x.noDeadline && y.noDeadline) {
     return { noDeadline: true };
   }
@@ -25,42 +23,10 @@ export const getDedlineIntersection = (x: TDeadline, y: TDeadline): TDeadline =>
   if (y.noDeadline) {
     return x;
   }
-
-  let maxBegin: number | undefined = 0;
-
-  if (x.beginDate) {
-    if (y.beginDate) {
-      maxBegin = max([x.beginDate, y.beginDate]);
-    } else {
-      maxBegin = x.beginDate;
-    }
-  } else {
-    if (y.beginDate) {
-      maxBegin = y.beginDate;
-    } else {
-      maxBegin = undefined;
-    }
-  }
-
-  let minEnd: number | undefined = 0;
-
-  if (x.endDate) {
-    if (y.endDate) {
-      minEnd = min([x.endDate, y.endDate]);
-    } else {
-      minEnd = x.endDate;
-    }
-  } else {
-    if (y.endDate) {
-      minEnd = y.endDate;
-    } else {
-      minEnd = undefined;
-    }
-  }
-
-  return {
+  const resultDeadline = {
     noDeadline: false,
-    beginDate: maxBegin,
-    endDate: minEnd
-  }
+    beginDate: Math.max(x.beginDate || 0, y.beginDate || 0),
+    endDate: Math.min(x.endDate || Infinity, y.endDate || Infinity)
+  };
+  return resultDeadline;
 }

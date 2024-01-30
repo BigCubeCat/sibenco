@@ -5,10 +5,8 @@ import RouteModel from './route.model';
 import OrderModel from '../order/order.model';
 import { TRouteDTO } from '../../dto/route.dto';
 import { TWaypointsDTO } from '../../dto/waypoints.dto';
-import { makeOptimalRoute } from '../../../sdk/route_machine_api';
-import { convertToOSM } from '../../dto/address.dto';
 import { createCoordsFromWaypoints, getFirstWaypointIndexAfterRoute, mergeWaypoints } from '../../../sdk/algo/way_processors';
-import { getDedlineIntersection } from '../../dto/deadline.dto';
+import { getDeadlineIntersection } from '../../dto/deadline.dto';
 
 export const getAllRoutes = async (page: number, pageSize: number) => {
   const routes = await RouteDb.find({})
@@ -91,7 +89,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     const resultRouteDTO: TRouteDTO = {
       orders: [...secondParentRoute.orders || [], ...firstParentRoute.orders || []],
       waypoints: mergeWaypoints(secondRouteCoords, secondRouteWaypoints, firstRouteWaypoints),
-      deadline: getDedlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
+      deadline: getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
       clients: [...secondParentRoute.outDTO?.clients || [], ...firstParentRoute.outDTO?.clients || []],
       vanger: secondParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // TODO пока так, вообще это из-за того что outDTO может вернуть null надо это исправить
     }
@@ -103,7 +101,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     const resultRouteDTO: TRouteDTO = {
       orders: [...firstParentRoute.orders || [], ...secondParentRoute.orders || []],
       waypoints: mergeWaypoints(firstRouteCoords, firstRouteWaypoints, secondRouteWaypoints),
-      deadline: getDedlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
+      deadline: getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
       clients: [...firstParentRoute.outDTO?.clients || [], ...secondParentRoute.outDTO?.clients || []],
       vanger: firstParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // пока так, вообще это из-за того что outDTO может вернуть null надо это исправить
     }
