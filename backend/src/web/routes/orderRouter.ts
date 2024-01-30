@@ -30,36 +30,43 @@ router.post('/', routeController.createOrder);
 /**
  * @openapi
  * /orders/:
- *  get:
- *    tags:
- *      - orders
- *    parameters:
- *      - in: query
- *        name: page
- *        type: number
- *        description: номер странцы
- *        items:
- *          type: number
- *      - in: query
- *        name: page_size
- *        type: number
- *        description: размер страницы
- *        items:
- *          type: number
- *    description: получение всех заказов
- *    responses:
- *      200:
- *        type: object
- *        description: Все заказы по возрастанию ID
- *        content:
- *            application/json:
- *                schema:
- *                    type: array
- *                    items:
- *                        allOf:
- *                            - $ref: '#components/schemas/OrderDTO'
+ *    get:
+ *        tags:
+ *            - orders
+ *        parameters:
+ *            - in: query
+ *              name: page
+ *              type: number
+ *              description: номер странцы
+ *              items:
+ *                  type: number
+ *            - in: query
+ *              name: page_size
+ *              type: number
+ *              description: размер страницы
+ *              items:
+ *                  type: number
+ *            - in query
+ *              name: done
+ *                  type: boolean
+ *              description: Если true, выдаст только выполненые заявки, если false, то только не выполненые. Если ничего не стоит то выдаст все
+ *              items:
+ *                  type: boolean
+ *        description: получение всех заказов
+ *        responses:
+ *            200:
+ *                type: object
+ *                description: Все заказы по возрастанию ID
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: array
+ *                            items:
+ *                            allOf:
+ *                                - $ref: '#components/schemas/OrderDTO'
  */
 router.get('/', routeController.getAllOrders);
+
 /**
  * @openapi
  * /orders/:id/:

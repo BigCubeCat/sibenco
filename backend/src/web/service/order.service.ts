@@ -23,8 +23,8 @@ export const get = async (id: string) => {
   return order.outDTO;
 };
 
-export const getAll = async (page: number, pageSize: number) => {
-  return await getAllOrders(page, pageSize);
+export const getAll = async (page: number, pageSize: number, done: string) => {
+  return await getAllOrders(page, pageSize, done);
 };
 
 export const getSimilar = async (id: string, matchPercent: number) => {

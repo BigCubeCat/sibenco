@@ -16,7 +16,8 @@ export const getAllOrders = createSimpleAbstractController(
       typeof req.query.page_size == 'string'
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
-    return await orderService.getAll(page, pageSize);
+    const done: string = typeof req.query.done == 'string' ? req.query.done : '';
+    return await orderService.getAll(page, pageSize, done);
   },
 );
 
