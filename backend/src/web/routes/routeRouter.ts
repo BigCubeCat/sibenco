@@ -12,6 +12,18 @@ const router = express.Router();
  */
 router.post('/std/', routeController.createRoute);
 
+
+/**
+ * @openapi
+ * /routes/std/create/:id/:
+ *  post:
+ *    description: Создание маршрута по id заказа
+ *    responses:
+ *      200:
+ *          description: возвращает id созданного маршрута
+ */
+router.post('/std/create/:id', routeController.createRouteWithOrder);
+
 /**
  * @openapi
  * /routes/std/:
@@ -38,7 +50,7 @@ router.get('/std/', routeController.getAll);
 
 /**
  * @openapi
- * /routes/std/:id/
+ * /routes/std/:id/:
  *  get:
  *    description: получение одного заказа по id
  */
@@ -52,11 +64,37 @@ router.get('/std/:id', routeController.getRoute);
 router.patch('/std/:id', routeController.patchRoute);
 /**
  * @openapi
- * /routes/std/:id/
+ * /routes/std/:id/:
  *  delete:
  *    description: Удаление маршрута по id
  */
 router.delete('/std/:id', routeController.deleteRoute);
+
+
+/**
+ * @openapi
+ * /routes/std/automerge/:
+ *  post:
+ *    description: Автоматическое слияние маршрутов в один.
+ *    parameters:
+ *      - in: query
+ *        name: first
+ *        type: string
+ *        description: id первого маршрута
+ *      - in: query
+ *        name: second
+ *        type: string
+ *        description: id второго маршрута
+ *    responses:
+ *      200:
+ *          description: возвращает id получившегося маршрута
+ *      400:
+ *          description: bad id
+ * 
+ */
+router.post('/std/automerge/', routeController.autoMergeRoute);
+
+
 
 //router.post('/std/merge', routeController.mergeRoutes);
 

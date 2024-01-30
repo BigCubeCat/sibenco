@@ -27,22 +27,22 @@ services:
           cpus: '1'
           memory: 4G
 
-  vangers:
-    depends_on:
-      - postgres
-    build: ./drivers/backend
-    container_name: vangers
-    restart: always
-    ports:
-      - ${EXTERNAL_PORT}:${INTERNAL_PORT}
-    environment:
-      - PORT=${EXTERNAL_PORT}
-      - USERNAME=${PG_USER}
-      - PASSWORD=${PG_PASSWORD}
-      - PORT_DB=${PG_PORT}
-      - DATABASE=${PG_DATABASE}
-    stdin_open: true
-    tty: true
+  #vangers:
+  #  depends_on:
+  #    - postgres
+  #  build: ./drivers/backend
+  #  container_name: vangers
+  #  restart: always
+  #  ports:
+  #    - ${EXTERNAL_PORT}:${INTERNAL_PORT}
+  #  environment:
+  #    - PORT=${EXTERNAL_PORT}
+  #    - USERNAME=${PG_USER}
+  #    - PASSWORD=${PG_PASSWORD}
+  #    - PORT_DB=${PG_PORT}
+  #    - DATABASE=${PG_DATABASE}
+  #  stdin_open: true
+  #  tty: true
 
   mongo:
     image: mongo:latest

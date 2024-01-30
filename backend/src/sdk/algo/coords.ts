@@ -4,7 +4,7 @@ interface ISimplifiedPoint {
   type: string;
 }
 
-const optimizeCoord = (n: number, degree = 100) => Math.round(n * degree) / degree;
+export const optimizeCoord = (n: number, degree = 100) => Math.round(n * degree) / degree;
 const optimizeCoordinates = (coords: number[][]): number[][] => {
   const resultCoordinates = [[0, 0]];
   coords.forEach(coord => {
@@ -50,7 +50,7 @@ const stringifyVelocity = (lat: number, lon: number) => {
   return getSymbol(lat) + getSymbol(lon);
 }
 
-const stringifyCoord = (coord: number[], stopCoords: ISimplifiedPoint[]): string => {
+export const stringifyCoord = (coord: number[], stopCoords: ISimplifiedPoint[]): string => {
   let pointType = 'n';
   stopCoords.forEach(stopCoord => {
     if (equalPoint(coord, [stopCoord.lat, stopCoord.lon])) {
@@ -67,8 +67,8 @@ const stringifyCoordinates = (coords: number[][], stopCoords: ISimplifiedPoint[]
   return coords.map(coord => stringifyCoord(coord, stopCoords)).join(';');
 }
 
-export const createCoords = (coords: number[][], points: ISimplifiedPoint[]): string => {
-  const stopCoords = points.map(point => {
+export const createCoords = (coords: number[][], points: ISimplifiedPoint[]): string => { //здесь coords - это координаты каждой точки 
+  const stopCoords = points.map(point => {                                                //в геометрии маршрута, а points - точки остановок
     return {
       lat: optimizeCoord(point.lat),
       lon: optimizeCoord(point.lon),
