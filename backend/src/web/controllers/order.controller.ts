@@ -16,7 +16,14 @@ export const getAllOrders = createSimpleAbstractController(
       typeof req.query.page_size == 'string'
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
-    return await orderService.getAll(page, pageSize);
+    const done: string = typeof req.query.done == 'string' ? req.query.done : '';
+    return await orderService.getAll(page, pageSize, done);
+  },
+);
+
+export const getCountOrders = createAbstractController(
+  async (req: Request) => {
+    return {code: 200, body: {count: await orderService.countOrders()}}
   },
 );
 
@@ -34,7 +41,8 @@ export const getSimilar = createAbstractController(
     if (!req.params.id) {
       return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))};
     }
-    return {code: 200, body: await orderService.getSimilar(req.params.id)};
+    const matchPercent = Number(req.query.match) || 0.5;
+    return {code: 200, body: await orderService.getSimilar(req.params.id, matchPercent)};
   },
 );
 
@@ -55,6 +63,16 @@ export const deleteOrder = createAbstractController(
     }
     await orderService.deleteOrder(req.params.id);
     return {code: 200, body: config.messages.successDelete};
+  },
+);
+
+export const cleanOrderCache = createAbstractController(
+  async (req: Request) => {
+    if (!req.params.id) {
+      return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))};
+    }
+    await orderService.cleanOrderCache(req.params.id);
+    return {code: 200, body: config.messages.successClean};
   },
 );
 

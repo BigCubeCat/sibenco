@@ -1,3 +1,36 @@
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *      AddressDTO:
+ *          type: object
+ *          required:
+ *              - address
+ *              - latitude
+ *              - longitude
+ *              - pointType
+ *          properties:
+ *              address:
+ *                  type: string
+ *                  description: "Адресс точки"
+ *              latitude:
+ *                  type: number
+ *                  description: "Широта"
+ *                  format: float
+ *              longitude:
+ *                  type: number
+ *                  description: "Долгота"
+ *                  format: float
+ *              pointType:
+ *                  type: string
+ *                  description: "Тип остановки: i - загрузка, o - разгрузка, b - и загрузка и разгрузка, n - ничего.\nНе используйте n на фронтенде"
+ *                  enum:
+ *                    - b
+ *                    - i
+ *                    - o
+ *                    - n
+ *                  default: n
+ */
 export type TAddressDTO = {
   latitude?: string,
   longitude?: string,
@@ -68,3 +101,4 @@ export const getPointsCoords = (point: TAddressDTO) => {
         lat: Number(point.latitude), lon: Number(point.longitude), type: point.pointType
       };
 }
+

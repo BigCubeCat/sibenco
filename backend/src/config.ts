@@ -18,7 +18,12 @@ interface IConfig {
   };
   osrm: {
     url: string;
+    accuracy: number;
   };
+  redis: {
+    url: string;
+    password: string;
+  }
   geocoder: {
     url: string;
   };
@@ -45,6 +50,11 @@ export const config: IConfig = {
   },
   osrm: {
     url: 'http://127.0.0.1:8080',
+    accuracy: 1000,
+  },
+  redis: {
+    url: "redis://127.0.0.1:6379",
+    password: "",
   },
   geocoder: {
     url: 'http://127.0.0.1:8000/',
@@ -61,6 +71,7 @@ export function LoadConfig() {
   config.MONGO_URL = url;
   config.geocoder.url = changeConf(process.env.GEOWORD_URL, config.geocoder.url);
   config.osrm.url = changeConf(process.env.OSRM_URL, config.osrm.url);
+  config.osrm.accuracy = process.env.ACCURACY ? Number(process.env.ACCURACY) : config.osrm.accuracy;
   config.mail = {
     port: process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 587,
     host: changeConf(process.env.MAIL_HOST, 'smtp.mail.ru'),

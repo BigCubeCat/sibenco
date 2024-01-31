@@ -1,6 +1,3 @@
-[submodule "Drivers-and-cars-service-for-Sibenco"]
-	path = Drivers-and-cars-service-for-Sibenco
-	url = https://github.com/reVInotip/Drivers-and-cars-service-for-Sibenco.git
 [submodule "drivers"]
 	path = drivers
 	url = https://github.com/reVInotip/Drivers-and-cars-service-for-Sibenco.git

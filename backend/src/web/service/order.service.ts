@@ -3,6 +3,7 @@ import {TOrderDTO} from '../dto/order.dto';
 import OrderModel from '../model/order/order.model';
 import {findOrders, getAllOrders, getSimilarOrders} from '../model/order/order.functions';
 import {IOrderData} from '../model/order/order.interface';
+import {countOrders as count} from "../model/order/order.functions";
 
 /*
  * createSingleOrder(order, TOrderDoc)
@@ -14,6 +15,10 @@ export const create = async (orderDto: TOrderDTO) => {
   return order.ID;
 };
 
+export const countOrders = async () => {
+  return await count();
+};
+
 export const get = async (id: string) => {
   const order = new OrderModel();
   await order.fromId(id);
@@ -23,12 +28,12 @@ export const get = async (id: string) => {
   return order.outDTO;
 };
 
-export const getAll = async (page: number, pageSize: number) => {
-  return await getAllOrders(page, pageSize);
+export const getAll = async (page: number, pageSize: number, done: string) => {
+  return await getAllOrders(page, pageSize, done);
 };
 
-export const getSimilar = async (id: string) => {
-  return await getSimilarOrders(id);
+export const getSimilar = async (id: string, matchPercent: number) => {
+  return await getSimilarOrders(id, matchPercent);
 };
 
 export const deleteOrder = async (id: string) => {
@@ -50,6 +55,15 @@ export const updateOrder = async (id: string, data: IOrderData) => {
   order.fromIOrderData(data);
   await order.update();
 };
+
+export const cleanOrderCache = async (id: string) => {
+  const order = new OrderModel();
+  await order.fromId(id);
+  if (order.invalid) {
+    throw new Error(config.errors.NotFound);
+  }
+  await order.setDone();
+}
 
 export const find = async (data: object, page: number, pageSize: number) => {
   return await findOrders(page, pageSize, data);

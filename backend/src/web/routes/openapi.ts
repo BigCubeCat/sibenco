@@ -15,5 +15,9 @@ export const swaggerOptions = {
       }
     ]
   },
-  apis: ['./src/web/routes/*.ts']
+  apis: [
+    './src/web/routes/*.ts',
+    './src/web/dto/*.ts',
+    './src/web/model/order/order.interface.ts'
+  ]
 };
