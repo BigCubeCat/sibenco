@@ -1,10 +1,26 @@
+# Перед деплоем закрыть все порты кроме фронта и auth
 services:
-  # nginx:
-  #   image: nginx
-  #   ports:
-  #     - "9999:9999"
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  # Настройка монго
+  mongo:
+    image: mongo # Instead of build you can use 'image: mongo'
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: T279KQNGSQGBEI56T54XRA0RTIT20EX9VP78D
+      MONGO_INITDB_DATABASE: maindb
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongo-volume:/data/db
+  # Настройка Redis
+  cache:
+    image: redis:alpine
+    restart: always
+    # command: redis-server --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    ports:
+      - 6379:6379
+  # Настройка Postgress
   postgres:
     image: postgres:latest
     container_name: vanger_db
@@ -32,74 +48,31 @@ services:
         limits:
           cpus: '1'
           memory: 4G
+  
+  # Настройка сервисов
 
-  vangers:
+  search_engine:
     depends_on:
-      - postgres
-    build: ./drivers/backend
-    container_name: vangers
+      - mongo
+    build: ./backend
     restart: always
     ports:
-      - ${EXTERNAL_PORT}:${INTERNAL_PORT}
+      - ${ENGINE_PORT}:${ENGINE_PORT}
     environment:
-      - PORT=${EXTERNAL_PORT}
-      - USERNAME=${PG_USER}
-      - PASSWORD=${PG_PASSWORD}
-      - PORT_DB=${PG_PORT}
-      - DATABASE=${PG_DATABASE}
-    stdin_open: true
-    tty: true
-  cache:
-    image: redis:alpine
-    restart: always
-    # command: redis-server --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    ports:
-      - 6379:6379
-  mongo:
-    image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
-    ports:
-      - ${MONGO_PORT}:${MONGO_PORT}
-    volumes:
-      - mongodb_data_container:/data/db
-  osrm:
-    build: ./osrm
-    restart: always
-    ports:
-      - ${OSRM_EXTERNAL_PORT}:${OSRM_INTERNAL_PORT}
-    command: ${OSRM_COMMAND}
-
-  # backend:
-  #   depends_on:
-  #     - mongo
-  #   build: ./backend
-  #   restart: always
-  #   # ports:
-  #   #   - ${USER_PORT}:${USER_PORT}
-  #   environment:
-  #     - USER_PORT=${USER_PORT}
-  #     - JWT_KEY=${JWT_KEY}
-  #     - MONGO_URL=mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:${MONGO_PORT}
-  #     - OSRM_URL=http://@osrm:${OSRM_INTERNAL_PORT}
-  #     - GEOWORD_URL=http://@geoword:${GEOWORD_PORT}
-  #   stdin_open: true
-  #   tty: true
-  auth:
-    # depends_on:
-    #   - backend
+      - PORT=${ENGINE_PORT}
+      - MONGO_URL=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB}
+      - OSRM_URL=http://@osrm:${OSRM_INTERNAL_PORT}
+  auth_service:
+    depends_on:
+      - search_engine
     build: ./auth
     restart: always
     ports:
       - ${AUTH_PORT}:${AUTH_PORT}
     environment:
       - PORT=${AUTH_PORT}
-      - JWT_SECRET=${JWT_KEY}
-      - ROUTE_ADDRESS=http://@backend:${USER_PORT}
-    stdin_open: true
-    tty: true
+      - ROUTE_ADDRESS=http://@search_engine:${ENGINE_PORT}
 
 volumes:
+  mongo-volume:
   pg_data_container:
-  mongodb_data_container:
