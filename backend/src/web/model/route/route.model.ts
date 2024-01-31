@@ -4,6 +4,7 @@ import {IOrderView} from '../order/order.interface';
 import OrderModel from '../order/order.model';
 import {TRouteDTO} from '../../dto/route.dto';
 import RouteDb, {IRouteDoc} from '../../db/route.db';
+import { TWaypointsDTO } from '../../dto/waypoints.dto';
 
 class RouteModel {
   private _invalid = false;
@@ -17,8 +18,10 @@ class RouteModel {
 
   async createFromDTO(dto: TRouteDTO) {
     this.data = {
+      id: '',
       orderIds: [],
       orders: [],
+      waypoints: dto.waypoints,
       nodes: [],
       distance: 0,
       clients: dto.clients,
@@ -41,9 +44,32 @@ class RouteModel {
     // Create complex
   }
 
+  async createFromOrderID(orderID: string) {
+    const mainOrderModel: OrderModel = new OrderModel();
+    await mainOrderModel.fromId(orderID);
+    if (mainOrderModel.invalid || mainOrderModel.orderData == null) {
+      this._invalid = true;
+      return;
+    }
+    this.data = {
+      id: '',
+      orderIds: [orderID],
+      orders: [mainOrderModel.orderData],
+      waypoints: {points: mainOrderModel.orderData.waypoints.points},
+      nodes: mainOrderModel.nodes,
+      distance: mainOrderModel.orderData.distance,
+      clients: [mainOrderModel.orderData.clientId],
+      vanger: "Баринов Виктор Петрович", //очень нужнна связь с сервисом водителей
+      time: mainOrderModel.deadline,
+      totalPrice: mainOrderModel.orderData.cargo.price, // price никому не нужен, это поле надо удалить
+    };
+        
+  }
+
   getIRouteDoc(): IRouteDoc {
     return {
       orders: this.data?.orderIds || [],
+      waypoints: this.data?.waypoints || {points: []},
       nodes: this.data?.nodes || [],
       distance: this.data?.distance || 0,
       clients: this.data?.clients || [],
@@ -60,7 +86,7 @@ class RouteModel {
   async dump() {
     const model = this.getIRouteDoc();
     const m = await RouteDb.create(model);
-    this._id = m._id;
+    this.ID = m._id;
     this._saved = true;
   }
 
@@ -78,8 +104,10 @@ class RouteModel {
 
   async fromDoc(doc: IRouteDoc) {
     this.data = {
+      id: '',
       orderIds: doc.orders,
       orders: [],
+      waypoints: doc.waypoints,
       nodes: doc.nodes,
       distance: doc.distance,
       clients: doc.clients,
@@ -91,13 +119,13 @@ class RouteModel {
   }
 
   async fromId(id: string) {
-    this._id = id;
     const doc: IRouteDoc | null | undefined = await RouteDb.findById(id);
     if (doc) {
       await this.fromDoc(doc);
     } else {
       this._invalid = true;
     }
+    this.ID = id;
   }
 
   /*
@@ -156,6 +184,13 @@ returns: процент совпадения двух маршрутов
     return this._id;
   }
 
+  set ID(id: string) {
+    this._id = id;
+    if (this.data) {
+      this.data.id = id;
+    }
+  }
+
   get saved(): boolean {
     return this._saved;
   }
@@ -171,6 +206,17 @@ returns: процент совпадения двух маршрутов
   get outDTO(): IRouteView | null {
     return dataToView(this.data);
   }
+
+  get stopPoints(): TWaypointsDTO {
+    return this.data?.waypoints || {points: []};
+  }
+
+  set setInvalid(isInvalid: boolean) {
+    this._invalid = isInvalid;
+  }
 }
 
 export default RouteModel;
+
+// TODO
+// Надо добавить выбор вангера при создании маршрута по заказу
