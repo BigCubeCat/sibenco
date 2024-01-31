@@ -17,7 +17,7 @@ services:
   cache:
     image: redis:alpine
     restart: always
-    # command: redis-server --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    command: redis-server --loglevel warning --requirepass ${REDIS_PASSWORD}
     ports:
       - 6379:6379
   # Настройка Postgress
@@ -48,7 +48,15 @@ services:
         limits:
           cpus: '1'
           memory: 4G
-  
+
+  # OSRM настройка
+  osrm:
+    build: ./osrm
+    restart: always
+    ports:
+      - ${OSRM_EXTERNAL_PORT}:${OSRM_INTERNAL_PORT}
+    command: ${OSRM_COMMAND}
+
   # Настройка сервисов
 
   search_engine:
@@ -62,6 +70,8 @@ services:
       - PORT=${ENGINE_PORT}
       - MONGO_URL=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB}
       - OSRM_URL=http://@osrm:${OSRM_INTERNAL_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_URI=redis://@cache:${REDIS_PORT}
   auth_service:
     depends_on:
       - search_engine
@@ -76,3 +86,5 @@ services:
 volumes:
   mongo-volume:
   pg_data_container:
+
+

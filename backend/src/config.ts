@@ -65,18 +65,16 @@ export const config: IConfig = {
 
 export function LoadConfig() {
   const changeConf = (value: string | undefined, defaultValue: string) => value ? value : defaultValue;
+
   const port = process.env.PORT ? Number(process.env.PORT) : 5000;
   const url = changeConf(process.env.MONGO_URL, 'mongodb://root:toor@127.0.0.1:27017');
   config.PORT = port;
   config.MONGO_URL = url;
-  config.geocoder.url = changeConf(process.env.GEOWORD_URL, config.geocoder.url);
+
   config.osrm.url = changeConf(process.env.OSRM_URL, config.osrm.url);
   config.osrm.accuracy = process.env.ACCURACY ? Number(process.env.ACCURACY) : config.osrm.accuracy;
-  config.mail = {
-    port: process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 587,
-    host: changeConf(process.env.MAIL_HOST, 'smtp.mail.ru'),
-    user: changeConf(process.env.MAIL_USER, 'user@mail.ru'),
-    password: changeConf(process.env.MAIL_PASS, 'qwerty1234')
-  };
+
+  config.redis.url = process.env.REDIS_URI ? process.env.REDIS_URI : config.redis.url;
+  config.redis.password = process.env.REDIS_PASSWORD ? process.env.REDIS_PASSWORD : config.redis.password;
 }
 
