@@ -1,7 +1,7 @@
 import {recoverOrderDTO, TOrderDTO} from '../../dto/order.dto';
 import {defaultCargo} from '../../dto/cargo.dto';
-import {TDeadline} from '../../dto/deadline.dto';
-import {convertToOSM, TAddressDTO} from '../../dto/address.dto';
+import {sameDeadline, TDeadline} from '../../dto/deadline.dto';
+import {convertToOSM, getPointsCoords, TAddressDTO} from '../../dto/address.dto';
 import {RouteData} from '../../../sdk/route_machine_api/types';
 import {makeOptimalRoute} from '../../../sdk/route_machine_api';
 import OrderDb, {IOrder} from '../../db/order.db';
@@ -31,12 +31,6 @@ class OrderModel {
         point => convertToOSM(point),
       ),
     );
-
-    const getPointsCoords = (point: TAddressDTO) => {
-      return {
-        lat: Number(point.latitude), lon: Number(point.longitude), type: point.pointType
-      };
-    }
 
     this.data = {
       id: '',

@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
 import {TDeadline} from '../dto/deadline.dto';
+import { TWaypointsDTO } from '../dto/waypoints.dto';
 
 export interface IRouteDoc {
   orders: Array<string>; // Список id заказов, ибо заказ может обновиться
+  waypoints: TWaypointsDTO;
   nodes: Array<number>;
   distance: number;
   clients: Array<string>; // Список id клиентов
@@ -15,7 +17,16 @@ export interface I_RouterDocument extends IRouteDoc, mongoose.Document {
 }
 
 const RouteSchema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
-  orders: [{type: String}],
+  orders: [{ type: String }],
+  waypoints: {
+    points: [{
+      latitude: { type: String },
+      longitude: { type: String },
+      address: { type: String },
+      OSRMNode: { type: String },
+      pointType: { type: String },
+      confirmed: { type: Boolean },
+  }]},
   nodes: [{type: Number}],
   distance: {type: Number},
   clients: [{type: String}],

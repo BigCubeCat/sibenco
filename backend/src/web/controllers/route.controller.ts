@@ -10,6 +10,16 @@ export const createRoute = createAbstractController(
   },
 );
 
+export const createRouteWithOrder = createAbstractController(
+  async (req: Request) => {
+    const id: string = req.params.id ? req.params.id : '';
+    if (id == '') {
+      return {code: 400, body: getErrorMessage(new Error('Bad id'))};
+    }
+    return { code: 200, body: await routeService.createWithOrderID(id) };
+  }
+);
+
 export const getAll = createAbstractController(
   async (req: Request) => {
     const page: number =
@@ -18,7 +28,7 @@ export const getAll = createAbstractController(
       typeof req.query.page_size == 'string'
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
-    const results = routeService.getAll(page, pageSize);
+    const results = await routeService.getAll(page, pageSize);
     return {code: 200, body: {results}};
   },
 );
@@ -47,3 +57,15 @@ export const deleteRoute = createAbstractController(
     return {code: 200, body: await routeService.del(req.params.id)};
   },
 );
+
+export const autoMergeRoute = createAbstractController(
+  async (req: Request) => {
+    if (!req.query.first || !req.query.second) {
+      return {code: 400, body: getErrorMessage(new Error('Bad id'))};
+    }
+    if (typeof req.query.first !== "string" || typeof req.query.second !== "string") {
+      return {code: 400, body: getErrorMessage(new Error('Bad id'))};
+    }
+    return {code: 200, body: await routeService.autoMerge(req.query.first, req.query.second)};
+  }
+)

@@ -27,6 +27,7 @@ export const makeOptimalRoute = async (
   return resultRoute;
 };
 
+
 //примеры работ основных функций osrm_api
 //console.log( makeRequestURL(Services.TRIP, [[ 153.0176,-27.5545],[ 152.6123,-28.3892],[ 152.9915,-27.9932]]));
 //getResponse<TripResponse>("http://localhost:5000/trip/v1/driving/153.0176,-27.5545;152.6123,-28.3892;152.9915,-27.9932?roundtrip=false&source=first&destination=last&steps=true");

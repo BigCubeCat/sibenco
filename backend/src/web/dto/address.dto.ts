@@ -95,3 +95,10 @@ export const convertToOSM = (address: TAddressDTO) => {
   }
   return [0, 0];
 }
+
+export const getPointsCoords = (point: TAddressDTO) => {
+      return {
+        lat: Number(point.latitude), lon: Number(point.longitude), type: point.pointType
+      };
+}
+
