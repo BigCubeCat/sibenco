@@ -72,6 +72,21 @@ services:
       - OSRM_URL=http://@osrm:${OSRM_INTERNAL_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_URI=redis://@cache:${REDIS_PORT}
+
+  vangers:
+    depends_on:
+      - postgres
+    build: ./drivers
+    container_name: vangers
+    restart: always
+    ports:
+      - ${VANGERS_EXTERNAL_PORT}:${VANGERS_INTERNAL_PORT}
+    environment:
+      - PORT=${VANGERS_EXTERNAL_PORT}
+      - USERNAME=${PG_USER}
+      - PASSWORD=${PG_PASSWORD}
+      - PORT_DB=${PG_PORT}
+      - DATABASE=${PG_DATABASE}
   auth_service:
     depends_on:
       - search_engine
