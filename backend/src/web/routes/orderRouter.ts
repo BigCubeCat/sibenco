@@ -66,7 +66,27 @@ router.post('/', routeController.createOrder);
  *                                - $ref: '#components/schemas/OrderDTO'
  */
 router.get('/', routeController.getAllOrders);
-router.get('/count', routeController.getCountOrders)
+
+/**
+ * @openapi
+ * /orders/realize/:id/:
+ * get:
+ *  tags:
+ *      - orders
+ *  parameters:
+ *      - name: id
+ *        in: path
+ *        required: true
+ *  responses:
+ *    200:
+ *        description: Получение маршрута, которому принадлежит заказ
+ *    500:
+ *        description: Текст ошибки
+ * 
+ */
+router.get('/realize/:id', routeController.getRealizingRoute);
+
+router.get('/count', routeController.getCountOrders);
 
 /**
  * @openapi

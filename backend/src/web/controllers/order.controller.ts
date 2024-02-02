@@ -21,6 +21,15 @@ export const getAllOrders = createSimpleAbstractController(
   },
 );
 
+export const getRealizingRoute = createAbstractController(
+  async (req: Request) => {
+    if (!req.params.id) {
+      return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))};
+    }
+    return {code: 200, body: await orderService.realizingRoute(req.params.id)};
+  }
+);
+
 export const getCountOrders = createAbstractController(
   async (req: Request) => {
     return {code: 200, body: {count: await orderService.countOrders()}}

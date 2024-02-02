@@ -4,6 +4,7 @@ import OrderModel from '../model/order/order.model';
 import {findOrders, getAllOrders, getSimilarOrders} from '../model/order/order.functions';
 import {IOrderData} from '../model/order/order.interface';
 import {countOrders as count} from "../model/order/order.functions";
+import RouteModel from '../model/route/route.model';
 
 /*
  * createSingleOrder(order, TOrderDoc)
@@ -63,6 +64,20 @@ export const cleanOrderCache = async (id: string) => {
     throw new Error(config.errors.NotFound);
   }
   await order.setDone();
+}
+
+export const realizingRoute = async (orderId: string) => { 
+  const order = new OrderModel();
+  await order.fromId(orderId);
+  if (order.invalid) {
+    throw new Error(config.errors.NotFound);
+  }
+  const realizingRoute = new RouteModel();
+  await realizingRoute.fromId(order.route);
+  if (realizingRoute.invalid) {
+    throw new Error(config.errors.NotFound);
+  }
+  return realizingRoute.outDTO;
 }
 
 export const find = async (data: object, page: number, pageSize: number) => {
