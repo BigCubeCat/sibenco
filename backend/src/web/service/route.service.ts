@@ -1,13 +1,14 @@
 import RouteModel from '../model/route/route.model';
 import {TRouteDTO} from '../dto/route.dto';
 import {config} from '../../config';
-import {autoMergeRoutes, getAllRoutes} from '../model/route/route.function';
+import {autoMergeRoutes, getAllRoutes, pinOrders} from '../model/route/route.function';
 import {IRouteData} from '../model/route/route.interface';
 
 export const create = async (dto: TRouteDTO) => {
   const route = new RouteModel();
   await route.createFromDTO(dto);
   await route.dump();
+  await pinOrders(route);
   return route.ID;
 };
 
@@ -18,7 +19,7 @@ export const createWithOrderID = async (id: string) => {
     throw new Error(config.errors.BadId);
   }
   await route.dump();
-
+  await pinOrders(route);
   return route.ID;
 }
 

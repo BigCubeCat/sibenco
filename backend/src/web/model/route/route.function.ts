@@ -109,7 +109,18 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     await resultModel.createFromDTO(resultRouteDTO);
     return resultModel;
   }
+}
 
+export const pinOrders = async (route: RouteModel) => {
+  if (route.orders) {
+    route.orders.forEach(async order =>
+    {
+      const currentOrderModel = new OrderModel();
+      await currentOrderModel.fromId(order.id);
+      currentOrderModel.route = route.ID;
+      currentOrderModel.update();
+    })
+  }
 }
 
 // TODO

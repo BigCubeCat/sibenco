@@ -35,6 +35,7 @@ class OrderModel {
     this.data = {
       id: '',
       clientId: dto.clientId,
+      routeId: dto.routeId,
       cargo: dto.cargo,
       deadline: dto.deadline,
       waypoints: {
@@ -71,6 +72,7 @@ class OrderModel {
       },
       order: {
         client: this.data?.clientId || '',
+        route: this.data?.routeId || '',
         cargo: this.data?.cargo || defaultCargo,
       },
       done: this.done,
@@ -90,6 +92,7 @@ class OrderModel {
     this.data = {
       id: '',
       clientId: doc.order.client,
+      routeId: doc.order.route,
       cargo: doc.order.cargo,
       deadline: doc.time,
       waypoints: {
@@ -227,6 +230,13 @@ class OrderModel {
   get done(): boolean {
     return this.data?.done || false;
   }
+
+  set route(_id: string) {
+    if (this.data) {
+      this.data.routeId = _id;
+    }
+  }
+  
 }
 
 export default OrderModel;

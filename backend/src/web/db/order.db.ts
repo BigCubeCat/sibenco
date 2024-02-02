@@ -17,6 +17,7 @@ export interface IOrder {
   };
   order: {
     client: string;
+    route: string;
     cargo: TCargoDTO;
   };
   done: boolean;
@@ -50,7 +51,8 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
     duration: {type: Number},
   },
   order: {
-    client: {type: String},
+    client: { type: String },
+    route: {type: String},
     cargo: {
       unit: {type: String},
       count: {type: Number},

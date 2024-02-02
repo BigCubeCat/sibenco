@@ -6,6 +6,7 @@ import {TWaypointsDTO} from "../../dto/waypoints.dto";
 export interface IOrderData {
   id: string;
   clientId: string;
+  routeId: string;
   cargo: TCargoDTO;
   deadline: TDeadline;
   waypoints: {
@@ -28,6 +29,7 @@ export interface IOrderData {
  *          required:
  *              - id
  *              - clientId
+ *              - routeId
  *              - cargo
  *              - deadline
  *              - waypoints
@@ -40,6 +42,9 @@ export interface IOrderData {
  *              clientId:
  *                  type: string
  *                  description: "Иденитфикатор клиента"
+ *              routeId:
+ *                  type: string
+ *                  description: "Идентификатор маршрута, которому принадлежиит заказ"
  *              cargo:
  *                  type: object
  *                  oneOf:
@@ -64,6 +69,7 @@ export interface IOrderData {
 export interface IOrderView {
   id: string;
   clientId: string;
+  routeId: string;
   cargo: TCargoDTO;
   deadline: TDeadline;
   waypoints: TWaypointsDTO;
