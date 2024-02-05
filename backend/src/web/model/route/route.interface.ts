@@ -13,6 +13,7 @@ export interface IRouteData {
   distance: number;
   clients: Array<string>; // Список id клиентов
   done: boolean;
+  active: boolean;
   vanger: string;
   time: TDeadline;
   totalPrice: number;
@@ -25,6 +26,7 @@ export interface IRouteView {
   distance: number;
   clients: Array<string>; // Список id клиентов
   done: boolean;
+  active: boolean;
   vanger: string;
   time: TDeadline;
   totalPrice: number;
@@ -39,6 +41,7 @@ export const dataToView = (route: IRouteData | null): (IRouteView | null) => {
       distance: route.distance,
       clients: route.clients,
       done: route.done,
+      active: route.active,
       vanger: route.vanger,
       time: route.time,
       totalPrice: route.totalPrice,

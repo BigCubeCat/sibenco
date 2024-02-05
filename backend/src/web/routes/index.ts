@@ -28,12 +28,24 @@ router.get('/', function (req, res, next) {
  *          type: number
  *      - in: query
  *        name: done
- *          description: Если true, выдаст только выполненые заявки / маршруты, если false, то только невыполненные. Если ничего не стоит то выдаст все
+ *        description: Если true, выдаст только выполненые заявки / маршруты, если false, то только невыполненные. Если ничего не стоит то выдаст все
  *        items:
  *          type: boolean
  *      - in: query
+ *        type: boolean
+ *        name: active
+ *        description: Если true, выдаст только выполняемые в данный момент маршруты (это свойство есть только у маршрутов), если false, то не выполняемые на данный момент. Если ничего не стоит то выдаст все
+ *        items:
+ *          type: boolean
+ *      - in: query
+ *        name: vanger
+ *        type: string
+ *        description: id вангера данного маршрута
+ *        items:
+ *          type: string
+ *      - in: query
  *        name: type
- *          description: Если order, выдаст только заявки, если route - то выдаст только маршруты, иначе выдаст и то, и другое
+ *        description: Если order, выдаст только заявки, если route - то выдаст только маршруты, иначе выдаст и то, и другое
  *        items:
  *          type: boolean
  *        

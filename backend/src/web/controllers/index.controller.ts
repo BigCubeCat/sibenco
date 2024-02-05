@@ -16,6 +16,8 @@ export const getAllDeals = createAbstractController(
     const done: string =
       typeof req.query.done == 'string' ? req.query.done : '';    
     
+    const active: string = typeof req.query.active == 'string' ? req.query.active : '';
+    const vanger: string = typeof req.query.vanger == 'string' ? req.query.vanger : '';
     if (typeof req.query.type == 'string') {
         if (req.query.type === "order") {
             return {
@@ -28,7 +30,7 @@ export const getAllDeals = createAbstractController(
             return {
                 code: 200, body: {
                     orders: [],
-                    routes: await routeService.getAll(page, pageSize, done)
+                    routes: await routeService.getAll(page, pageSize, done, active, vanger)
                 }
             };        
         }
@@ -36,7 +38,7 @@ export const getAllDeals = createAbstractController(
     return {
         code: 200, body: {
             orders: await orderService.getAll(page, pageSize, done, "true"),
-            routes: await routeService.getAll(page, pageSize, done)
+            routes: await routeService.getAll(page, pageSize, done, active, vanger)
         }
     };
   },

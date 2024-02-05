@@ -42,6 +42,24 @@ router.post('/std/create/:id', routeController.createRouteWithOrder);
  *        description: размер страницы
  *        items:
  *          type: number
+ *      - in: query
+ *        type: boolean
+ *        name: done
+ *        description: Если true, выдаст только выполненые маршруты, если false, то только не выполненые. Если ничего не стоит то выдаст все
+ *        items:
+ *          type: boolean
+ *      - in: query
+ *        type: boolean
+ *        name: active
+ *        description: Если true, выдаст только выполняемые в данный момент маршруты, если false, то не выполняемые на данный момент. Если ничего не стоит то выдаст все
+ *        items:
+ *          type: boolean
+ *      - in: query
+ *        name: vanger
+ *        type: string
+ *        description: id вангера данного маршрута
+ *        items:
+ *          type: string
  *    responses:
  *      200:
  *        description: Returns a mysterious string.

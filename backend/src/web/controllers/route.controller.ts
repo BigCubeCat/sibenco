@@ -29,7 +29,9 @@ export const getAll = createAbstractController(
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
     const done: string = typeof req.query.done == 'string' ? req.query.done : '';
-    const results = await routeService.getAll(page, pageSize, done);
+    const active: string = typeof req.query.active == 'string' ? req.query.active : '';
+    const vanger: string = typeof req.query.vanger == 'string' ? req.query.vanger : '';
+    const results = await routeService.getAll(page, pageSize, done, active, vanger);
     return {code: 200, body: {results}};
   },
 );

@@ -9,6 +9,7 @@ export interface IRouteDoc {
   distance: number;
   clients: Array<string>; // Список id клиентов
   done: boolean;
+  active: boolean;
   vanger: string;
   time: TDeadline;
   totalPrice: number;
@@ -31,7 +32,8 @@ const RouteSchema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
   nodes: [{type: Number}],
   distance: {type: Number},
   clients: [{ type: String }],
-  done: {type: Boolean},
+  done: { type: Boolean },
+  active: {type: Boolean},
   vanger: {type: String},
   time: {
     noDeadline: {type: Boolean},

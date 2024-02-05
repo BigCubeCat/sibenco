@@ -8,9 +8,16 @@ import { TWaypointsDTO } from '../../dto/waypoints.dto';
 import { createCoordsFromWaypoints, getFirstWaypointIndexAfterRoute, mergeWaypoints } from '../../../sdk/algo/way_processors';
 import { getDeadlineIntersection } from '../../dto/deadline.dto';
 
-export const getAllRoutes = async (page: number, pageSize: number, done: string) => {
+export const getAllRoutes = async (page: number, pageSize: number, done: string, active: string, vanger: string) => {
   const useDone = (done === 'true' || done === 'false');
-  const routes = await RouteDb.find((useDone) ? {done: (done === "true")} : {})
+  const useActive = (active === 'true' || active === 'false');
+  const filter = {
+    done: (useDone) ? (done === 'true') : { $exists: true },
+    active: (useActive) ? (active === 'true') : { $exists: true },
+    vanger: (vanger !== "")? vanger : { $exists: true }
+  }
+
+  const routes = await RouteDb.find(filter)
     .sort({_id: -1})
     .skip(page * pageSize)
     .limit(pageSize).select({_id: 1});

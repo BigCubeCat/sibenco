@@ -32,8 +32,9 @@ export const get = async (id: string) => {
   return route.outDTO;
 };
 
-export const getAll = async (page: number, pageSize: number, done: string) => {
-  return await getAllRoutes(page, pageSize, done);
+
+export const getAll = async (page: number, pageSize: number, done: string, active: string, vanger: string) => {
+  return await getAllRoutes(page, pageSize, done, active, vanger);
 };
 
 export const del = async (id: string) => {
