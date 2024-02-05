@@ -28,7 +28,7 @@ export const getAllDeals = createAbstractController(
             return {
                 code: 200, body: {
                     orders: [],
-                    routes: await routeService.getAll(page, pageSize)
+                    routes: await routeService.getAll(page, pageSize, done)
                 }
             };        
         }
@@ -36,7 +36,7 @@ export const getAllDeals = createAbstractController(
     return {
         code: 200, body: {
             orders: await orderService.getAll(page, pageSize, done, "true"),
-            routes: await routeService.getAll(page, pageSize)
+            routes: await routeService.getAll(page, pageSize, done)
         }
     };
   },

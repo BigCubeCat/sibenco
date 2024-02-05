@@ -28,7 +28,7 @@ router.get('/', function (req, res, next) {
  *          type: number
  *      - in: query
  *        name: done
- *          description: Если true, выдаст только выполненые заявки, если false, то только невыполненные. Если ничего не стоит то выдаст все
+ *          description: Если true, выдаст только выполненые заявки / маршруты, если false, то только невыполненные. Если ничего не стоит то выдаст все
  *        items:
  *          type: boolean
  *      - in: query

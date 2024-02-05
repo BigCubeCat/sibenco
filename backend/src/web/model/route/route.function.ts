@@ -8,8 +8,9 @@ import { TWaypointsDTO } from '../../dto/waypoints.dto';
 import { createCoordsFromWaypoints, getFirstWaypointIndexAfterRoute, mergeWaypoints } from '../../../sdk/algo/way_processors';
 import { getDeadlineIntersection } from '../../dto/deadline.dto';
 
-export const getAllRoutes = async (page: number, pageSize: number) => {
-  const routes = await RouteDb.find({})
+export const getAllRoutes = async (page: number, pageSize: number, done: string) => {
+  const useDone = (done === 'true' || done === 'false');
+  const routes = await RouteDb.find((useDone) ? {done: (done === "true")} : {})
     .sort({_id: -1})
     .skip(page * pageSize)
     .limit(pageSize).select({_id: 1});

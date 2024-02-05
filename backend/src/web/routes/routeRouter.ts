@@ -80,11 +80,19 @@ router.delete('/std/:id', routeController.deleteRoute);
  *      - in: query
  *        name: first
  *        type: string
- *        description: id первого маршрута
+ *        description: id первого маршрута / заказа
  *      - in: query
  *        name: second
  *        type: string
- *        description: id второго маршрута
+ *        description: id второго маршрута / заказа
+ *      - in: query
+ *        name: first_type
+ *        type: string
+ *        description: order / route (какой объект сливаем)
+ *      - in: query
+ *        name: second_type
+ *        type: string
+ *        description: order / route (какой объект сливаем)
  *    responses:
  *      200:
  *          description: возвращает id получившегося маршрута

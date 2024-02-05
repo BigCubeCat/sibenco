@@ -12,6 +12,7 @@ export interface IRouteData {
 
   distance: number;
   clients: Array<string>; // Список id клиентов
+  done: boolean;
   vanger: string;
   time: TDeadline;
   totalPrice: number;
@@ -23,6 +24,7 @@ export interface IRouteView {
   waypoints: TWaypointsDTO;
   distance: number;
   clients: Array<string>; // Список id клиентов
+  done: boolean;
   vanger: string;
   time: TDeadline;
   totalPrice: number;
@@ -36,6 +38,7 @@ export const dataToView = (route: IRouteData | null): (IRouteView | null) => {
       waypoints: route.waypoints,
       distance: route.distance,
       clients: route.clients,
+      done: route.done,
       vanger: route.vanger,
       time: route.time,
       totalPrice: route.totalPrice,

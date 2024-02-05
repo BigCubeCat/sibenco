@@ -28,7 +28,8 @@ export const getAll = createAbstractController(
       typeof req.query.page_size == 'string'
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
-    const results = await routeService.getAll(page, pageSize);
+    const done: string = typeof req.query.done == 'string' ? req.query.done : '';
+    const results = await routeService.getAll(page, pageSize, done);
     return {code: 200, body: {results}};
   },
 );
@@ -60,12 +61,12 @@ export const deleteRoute = createAbstractController(
 
 export const autoMergeRoute = createAbstractController(
   async (req: Request) => {
-    if (!req.query.first || !req.query.second) {
+    if (!req.query.first || !req.query.second || !req.query.first_type || !req.query.second_type) {
       return {code: 400, body: getErrorMessage(new Error('Bad id'))};
     }
-    if (typeof req.query.first !== "string" || typeof req.query.second !== "string") {
+    if (typeof req.query.first !== "string" || typeof req.query.second !== "string" || typeof req.query.first_type !== "string" || typeof req.query.second_type !== "string") {
       return {code: 400, body: getErrorMessage(new Error('Bad id'))};
     }
-    return {code: 200, body: await routeService.autoMerge(req.query.first, req.query.second)};
+    return {code: 200, body: await routeService.advancedAutoMerge(req.query.first, req.query.second, req.query.first_type, req.query.second_type)};
   }
 )

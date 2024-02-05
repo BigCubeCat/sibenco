@@ -25,6 +25,7 @@ class RouteModel {
       nodes: [],
       distance: 0,
       clients: dto.clients,
+      done: this.done,
       vanger: dto.vanger,
       time: dto.deadline,
       totalPrice: 0,
@@ -59,6 +60,7 @@ class RouteModel {
       nodes: mainOrderModel.nodes,
       distance: mainOrderModel.orderData.distance,
       clients: [mainOrderModel.orderData.clientId],
+      done: mainOrderModel.done,
       vanger: "Баринов Виктор Петрович", //очень нужнна связь с сервисом водителей
       time: mainOrderModel.deadline,
       totalPrice: mainOrderModel.orderData.cargo.price, // price никому не нужен, это поле надо удалить
@@ -73,6 +75,7 @@ class RouteModel {
       nodes: this.data?.nodes || [],
       distance: this.data?.distance || 0,
       clients: this.data?.clients || [],
+      done: this.data?.done || false,
       vanger: this.data?.vanger || '',
       time: this.data?.time || {noDeadline: true},
       totalPrice: this.data?.totalPrice || 0,
@@ -111,6 +114,7 @@ class RouteModel {
       nodes: doc.nodes,
       distance: doc.distance,
       clients: doc.clients,
+      done: doc.done,
       vanger: doc.vanger,
       time: doc.time,
       totalPrice: doc.totalPrice,
@@ -213,6 +217,16 @@ returns: процент совпадения двух маршрутов
 
   set setInvalid(isInvalid: boolean) {
     this._invalid = isInvalid;
+  }
+
+  set done(value: boolean) {
+    if (this.data) {
+      this.data.done = value;
+    }
+  }
+
+  get done(): boolean {
+    return this.data?.done || false;
   }
 }
 

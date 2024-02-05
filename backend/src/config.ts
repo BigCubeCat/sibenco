@@ -50,7 +50,7 @@ export const config: IConfig = {
   },
   osrm: {
     url: 'http://127.0.0.1:8080',
-    accuracy: 1000,
+    accuracy: 100,
   },
   redis: {
     url: "redis://127.0.0.1:6379",
