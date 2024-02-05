@@ -60,3 +60,4 @@ export const autoMerge = async (firstId: string, secondId: string) => {
   await resultRoute.dump();
   return resultRoute.ID;
 }
+

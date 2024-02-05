@@ -67,7 +67,7 @@ export function LoadConfig() {
   const changeConf = (value: string | undefined, defaultValue: string) => value ? value : defaultValue;
 
   const port = process.env.PORT ? Number(process.env.PORT) : 5000;
-  const url = changeConf(process.env.MONGO_URL, 'mongodb://root:toor@127.0.0.1:27017');
+  const url = changeConf(process.env.MONGO_URL, 'mongodb://user:DY9687FH@127.0.0.1:27017/maindb');
   config.PORT = port;
   config.MONGO_URL = url;
 

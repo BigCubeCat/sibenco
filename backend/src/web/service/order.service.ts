@@ -5,6 +5,7 @@ import {findOrders, getAllOrders, getSimilarOrders} from '../model/order/order.f
 import {IOrderData} from '../model/order/order.interface';
 import {countOrders as count} from "../model/order/order.functions";
 import RouteModel from '../model/route/route.model';
+import { createWithOrderID } from './route.service';
 
 /*
  * createSingleOrder(order, TOrderDoc)
@@ -15,6 +16,19 @@ export const create = async (orderDto: TOrderDTO) => {
   await order.dump();
   return order.ID;
 };
+
+
+export const advancedCreate = async (orderDto: TOrderDTO) => {
+  const order = new OrderModel();
+  await order.fromDTO(orderDto);
+  await order.dump();
+  if (order.deadline.noDeadline == true) {
+    return { type: "order", id: order.ID };
+  } else {
+    return { type: "route", id:  await createWithOrderID(order.ID) };
+  }
+}
+
 
 export const countOrders = async () => {
   return await count();
@@ -29,9 +43,10 @@ export const get = async (id: string) => {
   return order.outDTO;
 };
 
-export const getAll = async (page: number, pageSize: number, done: string) => {
-  return await getAllOrders(page, pageSize, done);
+export const getAll = async (page: number, pageSize: number, done: string, free: string) => {
+  return await getAllOrders(page, pageSize, done, free);
 };
+
 
 export const getSimilar = async (id: string, matchPercent: number) => {
   return await getSimilarOrders(id, matchPercent);
@@ -83,4 +98,5 @@ export const realizingRoute = async (orderId: string) => {
 export const find = async (data: object, page: number, pageSize: number) => {
   return await findOrders(page, pageSize, data);
 };
+
 
