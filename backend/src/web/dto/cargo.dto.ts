@@ -28,14 +28,14 @@
  *                  description: "Цена груза"
  */
 export type TCargoDTO = {
-  unit: 'people' | 'good';
+  unit: 'human' | 'cargo' | 'all';
   count: number;
   description: string;
   price: number;
 };
 
 export const defaultCargo: TCargoDTO = {
-  unit: 'good',
+  unit: 'all',
   count: 0,
   description: '',
   price: 0,

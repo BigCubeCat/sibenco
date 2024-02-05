@@ -6,7 +6,6 @@ interface ISimplifiedPoint {
   type: string;
 }
 
-
 export const optimizeCoord = (n: number, degree = config.osrm.accuracy) => Math.round(n * degree) / degree;
 
 const optimizeCoordinates = (coords: number[][]): number[][] => {
