@@ -120,6 +120,26 @@ router.delete('/std/:id', routeController.deleteRoute);
  */
 router.post('/std/automerge/', routeController.autoMergeRoute);
 
+/**
+ * @openapi
+ * /routes/std/automerge/:
+ *  post:
+ *    description: Автоматическое слияние маршрутов в один.
+ *    parameters:
+ *      - in: query
+ *        name: id
+ *        type: string
+ *        description: id маршрута
+ *      - in: query
+ *        name: state
+ *        type: string
+ *        description: start/stop/finish - начало исполнения, временная пауза, окончание выполнения маршрута
+ *    responses:
+ *      200: all is OK
+ * 
+ */
+router.post('/std/execution/', routeController.changeExecution);
+
 
 
 //router.post('/std/merge', routeController.mergeRoutes);

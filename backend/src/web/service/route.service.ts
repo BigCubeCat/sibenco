@@ -3,6 +3,7 @@ import {TRouteDTO} from '../dto/route.dto';
 import {config} from '../../config';
 import {autoMergeRoutes, getAllRoutes, pinOrders} from '../model/route/route.function';
 import {IRouteData} from '../model/route/route.interface';
+import OrderModel from '../model/order/order.model';
 
 export const create = async (dto: TRouteDTO) => {
   const route = new RouteModel();
@@ -81,3 +82,32 @@ export const advancedAutoMerge = async (firstId: string, secondId: string, first
   }
 }
 
+export const changeExecutionState = async (id: string, state: string) => {
+  const route = new RouteModel();
+  await route.fromId(id);
+  if (route.invalid) {
+    throw new Error(config.errors.BadId);
+  }
+  console.log(state);
+  if (state === "start") {
+    route.active = true;
+    console.log(route.active);
+    return await route.update();
+  } else if (state === "stop") {
+    route.active = false;
+    return await route.update();
+  } else if (state === "finish") {
+    route.active = false;
+    route.done = true;
+    await route.update();
+    route.ordersIds?.forEach(async order => {
+      const orderM = new OrderModel();
+      await orderM.fromId(order);
+      orderM.done = true;
+      await orderM.update();
+    });
+    return;
+  } else {
+    throw new Error(config.errors.NotFound);
+  }
+}

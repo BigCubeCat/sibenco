@@ -72,3 +72,13 @@ export const autoMergeRoute = createAbstractController(
     return {code: 200, body: await routeService.advancedAutoMerge(req.query.first, req.query.second, req.query.first_type, req.query.second_type)};
   }
 )
+
+
+export const changeExecution = createAbstractController(
+  async (req: Request) => {
+    if (typeof req.query.id !== "string" || typeof req.query.state !== "string") {
+      return {code: 400, body: getErrorMessage(new Error('Bad id'))};
+    }
+    return {code: 200, body: await routeService.changeExecutionState(req.query.id, req.query.state)};
+  }
+);

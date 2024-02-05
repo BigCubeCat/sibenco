@@ -184,6 +184,14 @@ returns: процент совпадения двух маршрутов
     return this.data.orders;
   }
 
+  get ordersIds(): Array<string> {
+    if (!this.data) return [];
+    if (!this.data.orders.length) {
+      return [];
+    }
+    return this.data.orderIds;
+  }
+
   get nodes(): Array<number> {
     return this.data?.nodes || [];
   }
