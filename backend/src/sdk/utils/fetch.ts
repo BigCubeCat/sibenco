@@ -16,6 +16,13 @@ export const fetchApiPost = async <T>(
   return response.data;
 };
 
+export const fetchApiDelete = async <T>(
+  address: string
+): Promise<T | undefined> => {
+  const response = await axios.delete(address);
+  console.log(response.statusText);
+  return response.data;
+};
 
 export const fetchApiPostWithBody = async <T>(
   address: string, body: object = {}

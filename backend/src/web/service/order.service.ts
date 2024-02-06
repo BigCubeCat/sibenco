@@ -20,7 +20,7 @@ export const create = async (orderDto: TOrderDTO) => {
 
   console.log(order);
 
-  if (!order.noDeadline) {
+  if (!order.deadline.noDeadline) {
     console.log('here');
     // Создаем маршрут автоматически
     const vanger = await getSuitableVanger(
@@ -41,7 +41,7 @@ export const create = async (orderDto: TOrderDTO) => {
     await route.dump();
     console.log('here\n');
   }
-
+  
   return order.ID;
 };
 

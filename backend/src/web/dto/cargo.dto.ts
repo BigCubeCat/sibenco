@@ -16,7 +16,11 @@
  *                  enum:
  *                    - people
  *                    - good
- *              count:
+ *              numberOfPassengersInCar:
+ *                  type: number
+ *                  description: "Число пассажиров"
+ *                  format: int64
+ *              amountOfCargoInCar:
  *                  type: number
  *                  description: "Число груза"
  *                  format: float
@@ -29,14 +33,16 @@
  */
 export type TCargoDTO = {
   unit: 'human' | 'cargo' | 'all';
-  count: number;
+  numberOfPassengersInCar: number;
+  amountOfCargoInCar: number;
   description: string;
   price: number;
 };
 
 export const defaultCargo: TCargoDTO = {
   unit: 'all',
-  count: 0,
+  numberOfPassengersInCar: 0,
+  amountOfCargoInCar: 0,
   description: '',
   price: 0,
 };

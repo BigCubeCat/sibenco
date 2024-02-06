@@ -3,6 +3,7 @@ import {TRouteDTO} from '../dto/route.dto';
 import {config} from '../../config';
 import {autoMergeRoutes, getAllRoutes} from '../model/route/route.function';
 import {IRouteData} from '../model/route/route.interface';
+import { deleteVanger } from '../../conn/vangers/vangers.conn';
 
 export const create = async (dto: TRouteDTO) => {
   const route = new RouteModel();
@@ -38,8 +39,15 @@ export const getAll = async (page: number, pageSize: number) => {
 export const del = async (id: string) => {
   const route = new RouteModel();
   await route.fromId(id);
+
+  const vangerId: string | undefined = route.vanger;
+  if (vangerId) {
+    await deleteVanger(vangerId);
+  }
+  
   return await route.delete();
 };
+
 export const patch = async (id: string, data: IRouteData) => {
   const route = new RouteModel();
   await route.fromId(id);

@@ -71,6 +71,19 @@ services:
       - PASSWORD=${PG_PASSWORD}
       - PORT_DB=${PG_PORT}
       - DATABASE=${PG_DATABASE}
+  
+  migrations:
+    depends_on:
+      - postgres
+    build: ./drivers
+    command: "yarn automigrate"
+    environment:
+      - PORT=${VANGERS_EXTERNAL_PORT}
+      - USERNAME=${PG_USER}
+      - PASSWORD=${PG_PASSWORD}
+      - PORT_DB=${PG_PORT}
+      - DATABASE=${PG_DATABASE}
+
   auth_service:
     depends_on:
       - search_engine
@@ -81,6 +94,7 @@ services:
     environment:
       - PORT=${AUTH_PORT}
       - ROUTE_ADDRESS=http://@search_engine:${ENGINE_PORT}
+  
   search_engine:
     depends_on:
       - mongo

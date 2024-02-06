@@ -5,6 +5,8 @@ import OrderModel from '../order/order.model';
 import {TRouteDTO} from '../../dto/route.dto';
 import RouteDb, {IRouteDoc} from '../../db/route.db';
 import { TWaypointsDTO } from '../../dto/waypoints.dto';
+import { getSuitableVanger } from '../../../conn/vangers/vangers.conn';
+import { TVangerDTO } from '../../dto/vanger.dto';
 
 class RouteModel {
   private _invalid = false;
@@ -47,6 +49,20 @@ class RouteModel {
   async createFromOrderID(orderID: string) {
     const mainOrderModel: OrderModel = new OrderModel();
     await mainOrderModel.fromId(orderID);
+    const location: string | undefined = mainOrderModel.points[0].address;
+
+    if (!location) {
+      this._invalid = true;
+      return;
+    }
+
+    const vanger: TVangerDTO | undefined = await getSuitableVanger(mainOrderModel.cargo, mainOrderModel.deadline, location);
+
+    if (!vanger) {
+      this._invalid = true;
+      return;
+    }
+
     if (mainOrderModel.invalid || mainOrderModel.orderData == null) {
       this._invalid = true;
       return;
@@ -59,7 +75,7 @@ class RouteModel {
       nodes: mainOrderModel.nodes,
       distance: mainOrderModel.orderData.distance,
       clients: [mainOrderModel.orderData.clientId],
-      vanger: "Баринов Виктор Петрович", //очень нужнна связь с сервисом водителей
+      vanger: vanger.id,
       time: mainOrderModel.deadline,
       totalPrice: mainOrderModel.orderData.cargo.price, // price никому не нужен, это поле надо удалить
     };
@@ -201,6 +217,10 @@ returns: процент совпадения двух маршрутов
 
   get complex(): boolean {
     return this._complex;
+  }
+
+  get vanger(): string | undefined {
+    return this.data?.vanger;
   }
 
   get outDTO(): IRouteView | null {
