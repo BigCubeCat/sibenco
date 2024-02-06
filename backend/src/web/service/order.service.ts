@@ -11,24 +11,17 @@ import {getSuitableVanger} from "../../conn/vangers/vangers.conn";
  * createSingleOrder(order, TOrderDoc)
  */
 export const create = async (orderDto: TOrderDTO) => {
-  console.log(orderDto);
   const order = new OrderModel();
-  console.log(order)
   await order.fromDTO(orderDto);
-  console.log(order);
   await order.dump();
 
-  console.log(order);
-
   if (!order.deadline.noDeadline) {
-    console.log('here');
     // Создаем маршрут автоматически
     const vanger = await getSuitableVanger(
       order.cargo,
       order.deadline,
       order.points[0].address || 'ru'
     );
-    console.log("vanger = ", vanger);
     const route = new RouteModel();
     const orders = order.orderData ? [order.orderData] : [];
     await route.createFromDTO({
@@ -36,10 +29,9 @@ export const create = async (orderDto: TOrderDTO) => {
       waypoints: {points: order.points},
       deadline: order.deadline,
       clients: [order.orderData?.clientId || ''],
-      vanger: vanger?.id || ""
+      vangerId: vanger?.id || ""
     });
     await route.dump();
-    console.log('here\n');
   }
   
   return order.ID;

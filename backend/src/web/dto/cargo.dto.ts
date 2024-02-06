@@ -44,5 +44,5 @@ export const defaultCargo: TCargoDTO = {
   numberOfPassengersInCar: 0,
   amountOfCargoInCar: 0,
   description: '',
-  price: 0,
+  price: 0
 };

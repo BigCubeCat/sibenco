@@ -4,9 +4,9 @@ import {IOrderView} from '../order/order.interface';
 import OrderModel from '../order/order.model';
 import {TRouteDTO} from '../../dto/route.dto';
 import RouteDb, {IRouteDoc} from '../../db/route.db';
-import { TWaypointsDTO } from '../../dto/waypoints.dto';
-import { getSuitableVanger } from '../../../conn/vangers/vangers.conn';
-import { TVangerDTO } from '../../dto/vanger.dto';
+import {TWaypointsDTO} from '../../dto/waypoints.dto';
+import {getSuitableVanger} from '../../../conn/vangers/vangers.conn';
+import {TVangerDTO} from '../../dto/vanger.dto';
 
 class RouteModel {
   private _invalid = false;
@@ -27,7 +27,7 @@ class RouteModel {
       nodes: [],
       distance: 0,
       clients: dto.clients,
-      vanger: dto.vanger,
+      vanger: dto.vangerId,
       time: dto.deadline,
       totalPrice: 0,
     };
@@ -47,6 +47,7 @@ class RouteModel {
   }
 
   async createFromOrderID(orderID: string) {
+    console.log("    async createFromOrderID(orderID: string) ");
     const mainOrderModel: OrderModel = new OrderModel();
     await mainOrderModel.fromId(orderID);
     const location: string | undefined = mainOrderModel.points[0].address;
@@ -67,6 +68,9 @@ class RouteModel {
       this._invalid = true;
       return;
     }
+
+    console.log("vanger = ", vanger);
+
     this.data = {
       id: '',
       orderIds: [orderID],
@@ -79,7 +83,7 @@ class RouteModel {
       time: mainOrderModel.deadline,
       totalPrice: mainOrderModel.orderData.cargo.price, // price никому не нужен, это поле надо удалить
     };
-        
+
   }
 
   getIRouteDoc(): IRouteDoc {
@@ -102,7 +106,7 @@ class RouteModel {
   async dump() {
     const model = this.getIRouteDoc();
     const m = await RouteDb.create(model);
-    this.ID = m._id;
+    this.ID = m._id.toString();
     this._saved = true;
   }
 
@@ -180,6 +184,15 @@ returns: процент совпадения двух маршрутов
     );
   }
 
+  async setVangerId(vangerId: string) {
+    if (!this.data) {
+      this.saved = false;
+      return;
+    }
+    this.data.vanger = vangerId;
+    return await this.update();
+  }
+
   get deadline(): TDeadline {
     return this.data?.time || {noDeadline: true};
   }
@@ -211,6 +224,10 @@ returns: процент совпадения двух маршрутов
     return this._saved;
   }
 
+  set saved(value: boolean) {
+    this._saved = value;
+  }
+
   get invalid(): boolean {
     return this._invalid;
   }
@@ -234,6 +251,7 @@ returns: процент совпадения двух маршрутов
   set setInvalid(isInvalid: boolean) {
     this._invalid = isInvalid;
   }
+
 }
 
 export default RouteModel;

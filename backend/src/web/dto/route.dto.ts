@@ -20,5 +20,5 @@ export type TRouteDTO = {
   waypoints: TWaypointsDTO;
   deadline: TDeadline;
   clients: Array<string>,
-  vanger: string;
+  vangerId: string;
 };

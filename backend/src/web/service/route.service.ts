@@ -3,7 +3,7 @@ import {TRouteDTO} from '../dto/route.dto';
 import {config} from '../../config';
 import {autoMergeRoutes, getAllRoutes} from '../model/route/route.function';
 import {IRouteData} from '../model/route/route.interface';
-import { deleteVanger } from '../../conn/vangers/vangers.conn';
+import {deleteVanger} from '../../conn/vangers/vangers.conn';
 
 export const create = async (dto: TRouteDTO) => {
   const route = new RouteModel();
@@ -19,8 +19,9 @@ export const createWithOrderID = async (id: string) => {
     throw new Error(config.errors.BadId);
   }
   await route.dump();
-
-  return route.ID;
+  if (!route.invalid && route.saved)
+    return route.ID;
+  throw new Error(config.errors.Create);
 }
 
 export const get = async (id: string) => {
@@ -44,7 +45,7 @@ export const del = async (id: string) => {
   if (vangerId) {
     await deleteVanger(vangerId);
   }
-  
+
   return await route.delete();
 };
 
@@ -66,4 +67,16 @@ export const autoMerge = async (firstId: string, secondId: string) => {
   }
   await resultRoute.dump();
   return resultRoute.ID;
+}
+
+/*
+TODO: Сделать проверки на корректность ID
+ */
+export const changeVanger = async (routeId: string, vangerId: string) => {
+  const route = new RouteModel();
+  await route.fromId(routeId);
+  if (route.invalid) {
+    throw new Error(config.errors.NotFound);
+  }
+  return await route.setVangerId(vangerId);
 }

@@ -91,7 +91,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
       waypoints: mergeWaypoints(secondRouteCoords, secondRouteWaypoints, firstRouteWaypoints),
       deadline: getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
       clients: [...secondParentRoute.outDTO?.clients || [], ...firstParentRoute.outDTO?.clients || []],
-      vanger: secondParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // TODO пока так, вообще это из-за того что outDTO может вернуть null надо это исправить
+      vangerId: secondParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // TODO пока так, вообще это из-за того что outDTO может вернуть null надо это исправить
     }
     const resultModel = new RouteModel();
     await resultModel.createFromDTO(resultRouteDTO);
@@ -103,7 +103,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
       waypoints: mergeWaypoints(firstRouteCoords, firstRouteWaypoints, secondRouteWaypoints),
       deadline: getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
       clients: [...firstParentRoute.outDTO?.clients || [], ...secondParentRoute.outDTO?.clients || []],
-      vanger: firstParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // пока так, вообще это из-за того что outDTO может вернуть null надо это исправить
+      vangerId: firstParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // пока так, вообще это из-за того что outDTO может вернуть null надо это исправить
     }
     const resultModel = new RouteModel();
     await resultModel.createFromDTO(resultRouteDTO);
