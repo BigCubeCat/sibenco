@@ -20,6 +20,12 @@ export const createRouteWithOrder = createAbstractController(
   }
 );
 
+export const createManualRoute = createAbstractController(
+  async (req: Request) => {
+    return { code: 200, body: await routeService.manualCreate(req.body.orders, req.body.waypoints) };
+  } 
+);
+
 export const getAll = createAbstractController(
   async (req: Request) => {
     const page: number =
@@ -28,7 +34,10 @@ export const getAll = createAbstractController(
       typeof req.query.page_size == 'string'
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
-    const results = await routeService.getAll(page, pageSize);
+    const done: string = typeof req.query.done == 'string' ? req.query.done : '';
+    const active: string = typeof req.query.active == 'string' ? req.query.active : '';
+    const vanger: string = typeof req.query.vanger == 'string' ? req.query.vanger : '';
+    const results = await routeService.getAll(page, pageSize, done, active, vanger);
     return {code: 200, body: {results}};
   },
 );
@@ -60,15 +69,26 @@ export const deleteRoute = createAbstractController(
 
 export const autoMergeRoute = createAbstractController(
   async (req: Request) => {
-    if (!req.query.first || !req.query.second) {
+    if (!req.query.first || !req.query.second || !req.query.first_type || !req.query.second_type) {
       return {code: 400, body: getErrorMessage(new Error('Bad id'))};
     }
-    if (typeof req.query.first !== "string" || typeof req.query.second !== "string") {
+    if (typeof req.query.first !== "string" || typeof req.query.second !== "string" || typeof req.query.first_type !== "string" || typeof req.query.second_type !== "string") {
       return {code: 400, body: getErrorMessage(new Error('Bad id'))};
     }
-    return {code: 200, body: await routeService.autoMerge(req.query.first, req.query.second)};
+    return {code: 200, body: await routeService.advancedAutoMerge(req.query.first, req.query.second, req.query.first_type, req.query.second_type)};
   }
 )
+
+
+
+export const changeExecution = createAbstractController(
+  async (req: Request) => {
+    if (typeof req.query.id !== "string" || typeof req.query.state !== "string") {
+      return {code: 400, body: getErrorMessage(new Error('Bad id'))};
+    }
+    return {code: 200, body: await routeService.changeExecutionState(req.query.id, req.query.state)};
+  }
+);
 
 export const changeVanger = createAbstractController(
   async (req: Request) => {
@@ -85,3 +105,4 @@ export const getSimilar = createAbstractController(
     return {code: 200, body: await routeService.getSimilar(req.params.id, matchPercent)};
   },
 );
+

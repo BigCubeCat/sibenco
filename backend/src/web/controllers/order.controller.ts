@@ -8,6 +8,12 @@ export const createOrder = createSimpleAbstractController(
   async (req: Request) => await orderService.create(req.body),
 );
 
+export const advancedCreateOrder = createSimpleAbstractController(
+  async (req: Request) => {
+    return await orderService.advancedCreate(req.body);
+  }
+);
+
 export const getAllOrders = createSimpleAbstractController(
   async (req: Request) => {
     const page: number =
@@ -17,8 +23,18 @@ export const getAllOrders = createSimpleAbstractController(
         ? Number(req.query.page_size)
         : config.PAGE_SIZE;
     const done: string = typeof req.query.done == 'string' ? req.query.done : '';
-    return await orderService.getAll(page, pageSize, done);
+    const free: string = typeof req.query.free == 'string' ? req.query.free : '';
+    return { code: 200, body: await orderService.getAll(page, pageSize, done, free) };
   },
+);
+
+export const getRealizingRoute = createAbstractController(
+  async (req: Request) => {
+    if (!req.params.id) {
+      return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))};
+    }
+    return {code: 200, body: await orderService.realizingRoute(req.params.id)};
+  }
 );
 
 export const getCountOrders = createAbstractController(

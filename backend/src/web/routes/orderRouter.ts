@@ -29,6 +29,30 @@ router.post('/', routeController.createOrder);
 
 /**
  * @openapi
+ * /orders/advanced/:
+ *   post:
+ *     tags:
+ *        - orders
+ *     description: Создание заказа.
+ *     requestBody:
+ *        required: true
+ *        content:
+ *            application/json:
+ *                schema:
+ *                    $ref: '#components/schemas/OrderDTO'
+ *     responses:
+ *       200:
+ *         description: "structure that contains {type of result object (order or route), result object}"
+ *       400:
+ *         description: "Текст ошибки"
+ *       500:
+ *         description: "Текст ошибки"
+ */
+router.post('/advanced/', routeController.advancedCreateOrder);
+
+
+/**
+ * @openapi
  * /orders/:
  *    get:
  *        tags:
@@ -66,7 +90,29 @@ router.post('/', routeController.createOrder);
  *                                - $ref: '#components/schemas/OrderDTO'
  */
 router.get('/', routeController.getAllOrders);
-router.get('/count', routeController.getCountOrders)
+
+/**
+ * @openapi
+ * /orders/realize/:id/:
+ * get:
+ *  tags:
+ *      - orders
+ *  parameters:
+ *      - name: id
+ *        in: path
+ *        required: true
+ *  responses:
+ *    200:
+ *        description: Получение маршрута, которому принадлежит заказ
+ *    500:
+ *        description: Текст ошибки
+ * 
+ */
+router.get('/realize/:id', routeController.getRealizingRoute);
+
+
+
+router.get('/count', routeController.getCountOrders);
 
 /**
  * @openapi

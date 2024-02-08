@@ -35,6 +35,7 @@ class OrderModel {
     this.data = {
       id: '',
       clientId: dto.clientId,
+      routeId: dto.routeId,
       cargo: dto.cargo,
       deadline: dto.deadline,
       waypoints: {
@@ -71,6 +72,7 @@ class OrderModel {
       },
       order: {
         client: this.data?.clientId || '',
+        route: this.data?.routeId || '',
         cargo: this.data?.cargo || defaultCargo,
       },
       done: this.done,
@@ -90,6 +92,7 @@ class OrderModel {
     this.data = {
       id: '',
       clientId: doc.order.client,
+      routeId: doc.order.route,
       cargo: doc.order.cargo,
       deadline: doc.time,
       waypoints: {
@@ -228,6 +231,16 @@ class OrderModel {
     return this.data?.done || false;
   }
 
+  set route(_id: string) {
+    if (this.data) {
+      this.data.routeId = _id;
+    }
+  }
+
+  get route(): string {
+    return this.data?.routeId || "";
+  }
+  
   get noDeadline(): boolean {
     return this.data?.deadline.noDeadline || false;
   }
@@ -235,6 +248,7 @@ class OrderModel {
   get cargo(): TCargoDTO {
     return this.data?.cargo || defaultCargo
   }
+
 }
 
 export default OrderModel;

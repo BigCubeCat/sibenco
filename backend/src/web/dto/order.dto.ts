@@ -11,6 +11,7 @@ import {recoverAddress} from './address.dto';
  *          type: object
  *          required:
  *              - clientId
+ *              - routeId
  *              - cargo
  *              - deadline
  *              - waypoints
@@ -18,6 +19,9 @@ import {recoverAddress} from './address.dto';
  *              clientId:
  *                  type: string
  *                  description: "ID клиента"
+ *              routeId:
+ *                  type: string
+ *                  description: "ID маршрута, которому принадлежит заказ"
  *              cargo:
  *                  type: object
  *                  description: "Кажись тут напартачил со свагером. По сути Cargo это объект типа CargoDTO"
@@ -36,6 +40,7 @@ import {recoverAddress} from './address.dto';
  */
 export type TOrderDTO = {
   clientId: string;
+  routeId: string;
   cargo: TCargoDTO;
   deadline: TDeadline;
   waypoints: TWaypointsDTO;
@@ -82,6 +87,7 @@ export type TOrderDTO = {
 export const recoverOrderDTO = (order: TOrderDTO): TOrderDTO => {
   return {
     clientId: order.clientId,
+    routeId: order.routeId,
     cargo: order.cargo,
     deadline: order.deadline,
     waypoints: {

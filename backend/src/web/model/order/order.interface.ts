@@ -29,6 +29,7 @@ export interface IOrderData {
  *          required:
  *              - id
  *              - clientId
+ *              - routeId
  *              - cargo
  *              - deadline
  *              - waypoints
@@ -41,6 +42,9 @@ export interface IOrderData {
  *              clientId:
  *                  type: string
  *                  description: "Иденитфикатор клиента"
+ *              routeId:
+ *                  type: string
+ *                  description: "Идентификатор маршрута, которому принадлежиит заказ"
  *              cargo:
  *                  type: object
  *                  oneOf:

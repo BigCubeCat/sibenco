@@ -25,21 +25,27 @@ const compareFunction = (a: TSearchRes, b: TSearchRes) => {
   return b.match.match - a.match.match;
 }
 
-export const getAllOrders = async (page: number, pageSize: number, done: string) => {
-    const useFilter = (done === 'true' || done === 'false');
-    const orders = await OrderDb.find((useFilter) ? {done: done === 'true'} : {})
-      .sort({_id: -1})
-      .skip(page * pageSize)
-      .limit(pageSize).select({_id: 1});
-    const results = [];
-    for (let i = 0; i < orders.length; ++i) {
-      const o = new OrderModel();
-      await o.fromId(orders[i]._id);
-      results.push(o.outDTO);
-    }
-    return results;
+export const getAllOrders = async (page: number, pageSize: number, done: string, free: string) => {
+  const useDone = (done === 'true' || done === 'false');
+  const useFree = (free === 'true' || free === 'false');
+  const filter = {
+    done: (useDone) ? (done === 'true') : { $exists: true },
+    'order.route': (useFree) ? ((free === 'true')? "" : {$ne: ""}) : {$exists: true }
   }
-;
+  console.log(filter);
+  const orders = await OrderDb.find(filter)
+    .sort({_id: -1})
+    .skip(page * pageSize)
+    .limit(pageSize).select({ _id: 1 });
+  console.log(orders);
+  const results = [];
+  for (let i = 0; i < orders.length; ++i) {
+    const o = new OrderModel();
+    await o.fromId(orders[i]._id);
+    results.push(o.outDTO);
+  }
+  return results;
+};
 
 export const getSimilarOrders = async (id: string, matchPercent = 0.5) => {
   const order = new OrderModel();

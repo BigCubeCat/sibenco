@@ -6,6 +6,8 @@ import {IOrderData} from '../model/order/order.interface';
 import {countOrders as count} from "../model/order/order.functions";
 import RouteModel from "../model/route/route.model";
 import {getSuitableVanger} from "../../conn/vangers/vangers.conn";
+import {createWithOrderID} from './route.service';
+
 
 /*
  * createSingleOrder(order, TOrderDoc)
@@ -37,6 +39,19 @@ export const create = async (orderDto: TOrderDTO) => {
   return order.ID;
 };
 
+
+export const advancedCreate = async (orderDto: TOrderDTO) => {
+  const order = new OrderModel();
+  await order.fromDTO(orderDto);
+  await order.dump();
+  if (order.deadline.noDeadline == true) {
+    return { type: "order", id: order.ID };
+  } else {
+    return { type: "route", id:  await createWithOrderID(order.ID) };
+  }
+}
+
+
 export const countOrders = async () => {
   return await count();
 };
@@ -50,9 +65,10 @@ export const get = async (id: string) => {
   return order.outDTO;
 };
 
-export const getAll = async (page: number, pageSize: number, done: string) => {
-  return await getAllOrders(page, pageSize, done);
+export const getAll = async (page: number, pageSize: number, done: string, free: string) => {
+  return await getAllOrders(page, pageSize, done, free);
 };
+
 
 export const getSimilar = async (id: string, matchPercent: number) => {
   return await getSimilarOrders(id, matchPercent);
@@ -87,7 +103,22 @@ export const cleanOrderCache = async (id: string) => {
   await order.setDone();
 }
 
+export const realizingRoute = async (orderId: string) => { 
+  const order = new OrderModel();
+  await order.fromId(orderId);
+  if (order.invalid) {
+    throw new Error(config.errors.NotFound);
+  }
+  const realizingRoute = new RouteModel();
+  await realizingRoute.fromId(order.route);
+  if (realizingRoute.invalid) {
+    throw new Error(config.errors.NotFound);
+  }
+  return realizingRoute.outDTO;
+}
+
 export const find = async (data: object, page: number, pageSize: number) => {
   return await findOrders(page, pageSize, data);
 };
+
 

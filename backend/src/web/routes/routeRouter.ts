@@ -24,6 +24,18 @@ router.post('/std/', routeController.createRoute);
  */
 router.post('/std/create/:id', routeController.createRouteWithOrder);
 
+
+/**
+ * @openapi
+ * /routes/std/manual/:
+ *  post:
+ *    description: Создание маршрута по структуре {orders: [], waypoints: []}
+ *    responses:
+ *      200:
+ *          description: возвращает id созданного маршрута
+ */
+router.post('/std/manual/', routeController.createManualRoute);
+
 /**
  * @openapi
  * /routes/std/:
@@ -42,6 +54,24 @@ router.post('/std/create/:id', routeController.createRouteWithOrder);
  *        description: размер страницы
  *        items:
  *          type: number
+ *      - in: query
+ *        type: boolean
+ *        name: done
+ *        description: Если true, выдаст только выполненые маршруты, если false, то только не выполненые. Если ничего не стоит то выдаст все
+ *        items:
+ *          type: boolean
+ *      - in: query
+ *        type: boolean
+ *        name: active
+ *        description: Если true, выдаст только выполняемые в данный момент маршруты, если false, то не выполняемые на данный момент. Если ничего не стоит то выдаст все
+ *        items:
+ *          type: boolean
+ *      - in: query
+ *        name: vanger
+ *        type: string
+ *        description: id вангера данного маршрута
+ *        items:
+ *          type: string
  *    responses:
  *      200:
  *        description: Returns a mysterious string.
@@ -84,11 +114,19 @@ router.delete('/std/:id', routeController.deleteRoute);
  *      - in: query
  *        name: first
  *        type: string
- *        description: id первого маршрута
+ *        description: id первого маршрута / заказа
  *      - in: query
  *        name: second
  *        type: string
- *        description: id второго маршрута
+ *        description: id второго маршрута / заказа
+ *      - in: query
+ *        name: first_type
+ *        type: string
+ *        description: order / route (какой объект сливаем)
+ *      - in: query
+ *        name: second_type
+ *        type: string
+ *        description: order / route (какой объект сливаем)
  *    responses:
  *      200:
  *          description: возвращает id получившегося маршрута
@@ -97,6 +135,26 @@ router.delete('/std/:id', routeController.deleteRoute);
  * 
  */
 router.post('/std/automerge/', routeController.autoMergeRoute);
+
+/**
+ * @openapi
+ * /routes/std/automerge/:
+ *  post:
+ *    description: Автоматическое слияние маршрутов в один.
+ *    parameters:
+ *      - in: query
+ *        name: id
+ *        type: string
+ *        description: id маршрута
+ *      - in: query
+ *        name: state
+ *        type: string
+ *        description: start/stop/finish - начало исполнения, временная пауза, окончание выполнения маршрута
+ *    responses:
+ *      200: all is OK
+ * 
+ */
+router.post('/std/execution/', routeController.changeExecution);
 
 
 

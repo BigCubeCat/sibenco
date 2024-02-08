@@ -27,6 +27,8 @@ class RouteModel {
       nodes: [],
       distance: 0,
       clients: dto.clients,
+      done: this.done,
+      active: this.active,
       vanger: dto.vangerId,
       time: dto.deadline,
       totalPrice: 0,
@@ -79,7 +81,9 @@ class RouteModel {
       nodes: mainOrderModel.nodes,
       distance: mainOrderModel.orderData.distance,
       clients: [mainOrderModel.orderData.clientId],
-      vanger: vangerId,
+      done: mainOrderModel.done,
+      active: false,
+      vanger: vangerId, //очень нужнна связь с сервисом водителей
       time: mainOrderModel.deadline,
       totalPrice: mainOrderModel.orderData.cargo.price, // price никому не нужен, это поле надо удалить
     };
@@ -93,6 +97,8 @@ class RouteModel {
       nodes: this.data?.nodes || [],
       distance: this.data?.distance || 0,
       clients: this.data?.clients || [],
+      done: this.data?.done || false,
+      active: this.data?.active || false,
       vanger: this.data?.vanger || '',
       time: this.data?.time || {noDeadline: true},
       totalPrice: this.data?.totalPrice || 0,
@@ -131,6 +137,8 @@ class RouteModel {
       nodes: doc.nodes,
       distance: doc.distance,
       clients: doc.clients,
+      done: doc.done,
+      active: doc.active,
       vanger: doc.vanger,
       time: doc.time,
       totalPrice: doc.totalPrice,
@@ -205,6 +213,14 @@ returns: процент совпадения двух маршрутов
     return this.data.orders;
   }
 
+  get ordersIds(): Array<string> {
+    if (!this.data) return [];
+    if (!this.data.orders.length) {
+      return [];
+    }
+    return this.data.orderIds;
+  }
+
   get nodes(): Array<number> {
     return this.data?.nodes || [];
   }
@@ -250,6 +266,26 @@ returns: процент совпадения двух маршрутов
 
   set setInvalid(isInvalid: boolean) {
     this._invalid = isInvalid;
+  }
+
+  set done(value: boolean) {
+    if (this.data) {
+      this.data.done = value;
+    }
+  }
+
+  get done(): boolean {
+    return this.data?.done || false;
+  }
+
+  set active(value: boolean) {
+    if (this.data) {
+      this.data.active = value;
+    }
+  }
+
+  get active(): boolean {
+    return this.data?.active || false;
   }
 
 }

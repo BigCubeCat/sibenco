@@ -11,14 +11,23 @@ import {
   getFirstWaypointIndexAfterRoute,
   mergeWaypoints
 } from '../../../sdk/algo/way_processors';
-import {getDeadlineIntersection} from '../../dto/deadline.dto';
+import {TDeadline, getDeadlineIntersection} from '../../dto/deadline.dto';
 import {TNaiveCmp} from "../../../sdk/algo/compare";
 import {IRouteView} from "./route.interface";
-
+import { TOrderDTO } from '../../dto/order.dto';
 export type TSearchRes = { object: IRouteView | null, match: TNaiveCmp };
 
-export const getAllRoutes = async (page: number, pageSize: number) => {
-  const routes = await RouteDb.find({})
+
+export const getAllRoutes = async (page: number, pageSize: number, done: string, active: string, vanger: string) => {
+  const useDone = (done === 'true' || done === 'false');
+  const useActive = (active === 'true' || active === 'false');
+  const filter = {
+    done: (useDone) ? (done === 'true') : { $exists: true },
+    active: (useActive) ? (active === 'true') : { $exists: true },
+    vanger: (vanger !== "")? vanger : { $exists: true }
+  }
+
+  const routes = await RouteDb.find(filter)
     .sort({_id: -1})
     .skip(page * pageSize)
     .limit(pageSize).select({_id: 1});
@@ -61,6 +70,35 @@ export const findRoutes = async (page: number, pageSize: number, request: object
   }
   return results;
 };
+
+export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO) => {
+  const orders: TOrderDTO[] = [];
+  for (let i = 0; i < ids.length; ++i) {
+    const order = new OrderModel();
+    await order.fromId(ids[i]);
+    if (order.orderData) {
+     orders.push(order.orderData); 
+    }
+  }
+
+  let currentDeadline: TDeadline = { noDeadline: true };
+
+  for (let i = 0; i < orders.length; ++i) {
+    currentDeadline = getDeadlineIntersection(currentDeadline, orders[i].deadline);
+  }
+
+  const resultRouteDTO: TRouteDTO = {
+    orders: orders,
+    waypoints: waypoints,
+    deadline: currentDeadline,
+    clients: orders.map(order => { return order.clientId}),
+    vangerId: "Кожанов Александр Иванович" // пока так, вообще тут должен быть выбор через сервис вангеров 
+  }
+  const resultModel = new RouteModel();
+  await resultModel.createFromDTO(resultRouteDTO);
+  return resultModel;
+}
+
 
 export const autoMergeRoutes = async (firstId: string, secondId: string): Promise<RouteModel> => {
   const firstParentRoute = new RouteModel();
@@ -118,7 +156,21 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     await resultModel.createFromDTO(resultRouteDTO);
     return resultModel;
   }
+
 }
+
+export const pinOrders = async (route: RouteModel) => {
+  if (route.orders) {
+    route.orders.forEach(async order =>
+    {
+      const currentOrderModel = new OrderModel();
+      await currentOrderModel.fromId(order.id);
+      currentOrderModel.route = route.ID;
+      currentOrderModel.update();
+    })
+  }
+}
+
 
 /*
 В теории должно работать, не тестил
@@ -144,6 +196,7 @@ export const getSimilarRoutes = async (id: string, matchPercent = 0.5) => {
   }
   return Array.from(answerSet);
 };
+
 
 // TODO
 // Исправить ситуацию когда outDTO возвращает null
