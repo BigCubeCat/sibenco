@@ -56,23 +56,7 @@ services:
     ports:
       - ${OSRM_EXTERNAL_PORT}:${OSRM_INTERNAL_PORT}
     command: ${OSRM_COMMAND}
-
   # Настройка сервисов
-
-  search_engine:
-    depends_on:
-      - mongo
-    build: ./backend
-    restart: always
-    ports:
-      - ${ENGINE_PORT}:${ENGINE_PORT}
-    environment:
-      - PORT=${ENGINE_PORT}
-      - MONGO_URL=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB}
-      - OSRM_URL=http://@osrm:${OSRM_INTERNAL_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_URI=redis://@cache:${REDIS_PORT}
-
   vangers:
     depends_on:
       - postgres
@@ -87,6 +71,7 @@ services:
       - PASSWORD=${PG_PASSWORD}
       - PORT_DB=${PG_PORT}
       - DATABASE=${PG_DATABASE}
+
   
   migrations:
     depends_on:
@@ -99,6 +84,7 @@ services:
       - PASSWORD=${PG_PASSWORD}
       - PORT_DB=${PG_PORT}
       - DATABASE=${PG_DATABASE}
+
   
   auth_service:
     depends_on:
@@ -110,6 +96,22 @@ services:
     environment:
       - PORT=${AUTH_PORT}
       - ROUTE_ADDRESS=http://@search_engine:${ENGINE_PORT}
+  search_engine:
+    depends_on:
+      - mongo
+      - vangers
+    build: ./backend
+    restart: always
+    ports:
+      - ${ENGINE_PORT}:${ENGINE_PORT}
+    environment:
+      - PORT=${ENGINE_PORT}
+      - MONGO_URL=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB}
+      - OSRM_URL=http://@osrm:${OSRM_INTERNAL_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_URI=redis://@cache:${REDIS_PORT}
+      - VANGERS_URL=http://@vangers:${VANGERS_EXTERNAL_PORT}
+    tty: true
 
 volumes:
   mongo-volume:

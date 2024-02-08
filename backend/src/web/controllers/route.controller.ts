@@ -16,7 +16,7 @@ export const createRouteWithOrder = createAbstractController(
     if (id == '') {
       return {code: 400, body: getErrorMessage(new Error('Bad id'))};
     }
-    return { code: 200, body: await routeService.createWithOrderID(id) };
+    return {code: 200, body: await routeService.createWithOrderID(id)};
   }
 );
 
@@ -69,3 +69,19 @@ export const autoMergeRoute = createAbstractController(
     return {code: 200, body: await routeService.autoMerge(req.query.first, req.query.second)};
   }
 )
+
+export const changeVanger = createAbstractController(
+  async (req: Request) => {
+    return {code: 200, body: await routeService.changeVanger(req.params.id, req.params.vanger)};
+  }
+)
+
+export const getSimilar = createAbstractController(
+  async (req: Request) => {
+    if (!req.params.id) {
+      return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))};
+    }
+    const matchPercent = Number(req.query.match) || 0.5;
+    return {code: 200, body: await routeService.getSimilar(req.params.id, matchPercent)};
+  },
+);

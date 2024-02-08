@@ -1,8 +1,9 @@
 import RouteModel from '../model/route/route.model';
 import {TRouteDTO} from '../dto/route.dto';
 import {config} from '../../config';
-import {autoMergeRoutes, getAllRoutes} from '../model/route/route.function';
+import {autoMergeRoutes, getAllRoutes, getSimilarRoutes} from '../model/route/route.function';
 import {IRouteData} from '../model/route/route.interface';
+import {deleteVanger} from '../../conn/vangers/vangers.conn';
 
 export const create = async (dto: TRouteDTO) => {
   const route = new RouteModel();
@@ -18,8 +19,9 @@ export const createWithOrderID = async (id: string) => {
     throw new Error(config.errors.BadId);
   }
   await route.dump();
-
-  return route.ID;
+  if (!route.invalid && route.saved)
+    return route.ID;
+  throw new Error(config.errors.Create);
 }
 
 export const get = async (id: string) => {
@@ -38,8 +40,15 @@ export const getAll = async (page: number, pageSize: number) => {
 export const del = async (id: string) => {
   const route = new RouteModel();
   await route.fromId(id);
+
+  const vangerId: string | undefined = route.vanger;
+  if (vangerId) {
+    await deleteVanger(vangerId);
+  }
+
   return await route.delete();
 };
+
 export const patch = async (id: string, data: IRouteData) => {
   const route = new RouteModel();
   await route.fromId(id);
@@ -59,3 +68,19 @@ export const autoMerge = async (firstId: string, secondId: string) => {
   await resultRoute.dump();
   return resultRoute.ID;
 }
+
+/*
+TODO: Сделать проверки на корректность ID
+ */
+export const changeVanger = async (routeId: string, vangerId: string) => {
+  const route = new RouteModel();
+  await route.fromId(routeId);
+  if (route.invalid) {
+    throw new Error(config.errors.NotFound);
+  }
+  return await route.setVangerId(vangerId);
+}
+
+export const getSimilar = async (id: string, matchPercent: number) => {
+  return await getSimilarRoutes(id, matchPercent);
+};
