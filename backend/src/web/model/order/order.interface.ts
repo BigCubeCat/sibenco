@@ -6,6 +6,7 @@ import {TWaypointsDTO} from "../../dto/waypoints.dto";
 export interface IOrderData {
   id: string;
   clientId: string;
+  routeId: string;
   cargo: TCargoDTO;
   deadline: TDeadline;
   waypoints: {
@@ -64,6 +65,7 @@ export interface IOrderData {
 export interface IOrderView {
   id: string;
   clientId: string;
+  routeId: string;
   cargo: TCargoDTO;
   deadline: TDeadline;
   waypoints: TWaypointsDTO;

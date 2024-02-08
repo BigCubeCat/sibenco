@@ -3,10 +3,19 @@ import OrderDb from '../../db/order.db';
 
 import RouteModel from './route.model';
 import OrderModel from '../order/order.model';
-import { TRouteDTO } from '../../dto/route.dto';
-import { TWaypointsDTO } from '../../dto/waypoints.dto';
-import { createCoordsFromWaypoints, getFirstWaypointIndexAfterRoute, mergeWaypoints } from '../../../sdk/algo/way_processors';
-import { getDeadlineIntersection } from '../../dto/deadline.dto';
+import * as orderFunctions from '../order/order.functions';
+import {TRouteDTO} from '../../dto/route.dto';
+import {TWaypointsDTO} from '../../dto/waypoints.dto';
+import {
+  createCoordsFromWaypoints,
+  getFirstWaypointIndexAfterRoute,
+  mergeWaypoints
+} from '../../../sdk/algo/way_processors';
+import {getDeadlineIntersection} from '../../dto/deadline.dto';
+import {TNaiveCmp} from "../../../sdk/algo/compare";
+import {IRouteView} from "./route.interface";
+
+export type TSearchRes = { object: IRouteView | null, match: TNaiveCmp };
 
 export const getAllRoutes = async (page: number, pageSize: number) => {
   const routes = await RouteDb.find({})
@@ -109,8 +118,32 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     await resultModel.createFromDTO(resultRouteDTO);
     return resultModel;
   }
-
 }
+
+/*
+В теории должно работать, не тестил
+ */
+export const getSimilarRoutes = async (id: string, matchPercent = 0.5) => {
+  const route = new RouteModel();
+  await route.fromId(id);
+  if (route.invalid) return [];
+
+  const answerSet = new Set<string>();
+  if (!route.orders) {
+    return [];
+  }
+
+  for (let i = 0; i < route.orders.length; ++i) {
+    const id = route.orders[i].routeId;
+    const ids = await orderFunctions.getSimilarOrders(id, matchPercent);
+    for (let j = 0; j < ids.length; ++j) {
+      const order = ids[j].order;
+      if (!order) continue;
+      answerSet.add(order.routeId);
+    }
+  }
+  return Array.from(answerSet);
+};
 
 // TODO
 // Исправить ситуацию когда outDTO возвращает null

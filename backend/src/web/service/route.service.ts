@@ -1,7 +1,7 @@
 import RouteModel from '../model/route/route.model';
 import {TRouteDTO} from '../dto/route.dto';
 import {config} from '../../config';
-import {autoMergeRoutes, getAllRoutes} from '../model/route/route.function';
+import {autoMergeRoutes, getAllRoutes, getSimilarRoutes} from '../model/route/route.function';
 import {IRouteData} from '../model/route/route.interface';
 import {deleteVanger} from '../../conn/vangers/vangers.conn';
 
@@ -80,3 +80,7 @@ export const changeVanger = async (routeId: string, vangerId: string) => {
   }
   return await route.setVangerId(vangerId);
 }
+
+export const getSimilar = async (id: string, matchPercent: number) => {
+  return await getSimilarRoutes(id, matchPercent);
+};
