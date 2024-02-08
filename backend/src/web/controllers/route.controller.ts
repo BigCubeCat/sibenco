@@ -20,6 +20,12 @@ export const createRouteWithOrder = createAbstractController(
   }
 );
 
+export const createManualRoute = createAbstractController(
+  async (req: Request) => {
+    return { code: 200, body: await routeService.manualCreate(req.body.orders, req.body.waypoints) };
+  } 
+);
+
 export const getAll = createAbstractController(
   async (req: Request) => {
     const page: number =

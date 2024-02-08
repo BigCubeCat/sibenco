@@ -6,7 +6,8 @@ import OrderModel from '../order/order.model';
 import { TRouteDTO } from '../../dto/route.dto';
 import { TWaypointsDTO } from '../../dto/waypoints.dto';
 import { createCoordsFromWaypoints, getFirstWaypointIndexAfterRoute, mergeWaypoints } from '../../../sdk/algo/way_processors';
-import { getDeadlineIntersection } from '../../dto/deadline.dto';
+import { TDeadline, getDeadlineIntersection } from '../../dto/deadline.dto';
+import { TOrderDTO } from '../../dto/order.dto';
 
 export const getAllRoutes = async (page: number, pageSize: number, done: string, active: string, vanger: string) => {
   const useDone = (done === 'true' || done === 'false');
@@ -60,6 +61,35 @@ export const findRoutes = async (page: number, pageSize: number, request: object
   }
   return results;
 };
+
+export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO) => {
+  const orders: TOrderDTO[] = [];
+  for (let i = 0; i < ids.length; ++i) {
+    const order = new OrderModel();
+    await order.fromId(ids[i]);
+    if (order.orderData) {
+     orders.push(order.orderData); 
+    }
+  }
+
+  let currentDeadline: TDeadline = { noDeadline: true };
+
+  for (let i = 0; i < orders.length; ++i) {
+    currentDeadline = getDeadlineIntersection(currentDeadline, orders[i].deadline);
+  }
+
+  const resultRouteDTO: TRouteDTO = {
+    orders: orders,
+    waypoints: waypoints,
+    deadline: currentDeadline,
+    clients: orders.map(order => { return order.clientId}),
+    vanger: "Кожанов Александр Иванович" // пока так, вообще тут должен быть выбор через сервис вангеров 
+  }
+  const resultModel = new RouteModel();
+  await resultModel.createFromDTO(resultRouteDTO);
+  return resultModel;
+}
+
 
 export const autoMergeRoutes = async (firstId: string, secondId: string): Promise<RouteModel> => {
   const firstParentRoute = new RouteModel();

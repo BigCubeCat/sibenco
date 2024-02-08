@@ -24,6 +24,18 @@ router.post('/std/', routeController.createRoute);
  */
 router.post('/std/create/:id', routeController.createRouteWithOrder);
 
+
+/**
+ * @openapi
+ * /routes/std/manual/:
+ *  post:
+ *    description: Создание маршрута по структуре {orders: [], waypoints: []}
+ *    responses:
+ *      200:
+ *          description: возвращает id созданного маршрута
+ */
+router.post('/std/manual/', routeController.createManualRoute);
+
 /**
  * @openapi
  * /routes/std/:

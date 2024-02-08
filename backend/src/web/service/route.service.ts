@@ -1,9 +1,10 @@
 import RouteModel from '../model/route/route.model';
 import {TRouteDTO} from '../dto/route.dto';
 import {config} from '../../config';
-import {autoMergeRoutes, getAllRoutes, pinOrders} from '../model/route/route.function';
+import {autoMergeRoutes, getAllRoutes, manualCreateRoute, pinOrders} from '../model/route/route.function';
 import {IRouteData} from '../model/route/route.interface';
 import OrderModel from '../model/order/order.model';
+import { TWaypointsDTO } from '../dto/waypoints.dto';
 
 export const create = async (dto: TRouteDTO) => {
   const route = new RouteModel();
@@ -22,6 +23,15 @@ export const createWithOrderID = async (id: string) => {
   await route.dump();
   await pinOrders(route);
   return route.ID;
+}
+
+export const manualCreate = async (ids: string[], waypoints: TWaypointsDTO) => { //TODO довести ручку до роутера
+  const route = await manualCreateRoute(ids, waypoints);
+  if (route.invalid) {
+    throw new Error(config.errors.NotFound);
+  }
+  await route.dump();
+  return route.ID; //TODO добавить аргумент тип машины и выбор подходящего вангера
 }
 
 export const get = async (id: string) => {
@@ -111,3 +121,4 @@ export const changeExecutionState = async (id: string, state: string) => {
     throw new Error(config.errors.NotFound);
   }
 }
+
