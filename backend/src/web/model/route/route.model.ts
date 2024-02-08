@@ -58,18 +58,18 @@ class RouteModel {
     }
 
     const vanger: TVangerDTO | undefined = await getSuitableVanger(mainOrderModel.cargo, mainOrderModel.deadline, location);
+    let vangerId: string;
 
     if (!vanger) {
-      this._invalid = true;
-      return;
+        vangerId = '0';
+    } else {
+      vangerId = vanger.id;
     }
 
     if (mainOrderModel.invalid || mainOrderModel.orderData == null) {
       this._invalid = true;
       return;
     }
-
-    console.log("vanger = ", vanger);
 
     this.data = {
       id: '',
@@ -79,7 +79,7 @@ class RouteModel {
       nodes: mainOrderModel.nodes,
       distance: mainOrderModel.orderData.distance,
       clients: [mainOrderModel.orderData.clientId],
-      vanger: vanger.id,
+      vanger: vangerId,
       time: mainOrderModel.deadline,
       totalPrice: mainOrderModel.orderData.cargo.price, // price никому не нужен, это поле надо удалить
     };

@@ -5,18 +5,22 @@ import {TCargoDTO} from "../../web/dto/cargo.dto";
 import {TDeadline} from "../../web/dto/deadline.dto";
 
 export const getSuitableVanger = async (cargo: TCargoDTO, deadline: TDeadline, location: string) => {
-  console.log('get su');
-  return await fetchApiPostWithBody<TVangerDTO>(config.vangers.url + '/vangers/suitable/vanger', {
-    maxNumberOfPassengers: cargo.numberOfPassengersInCar,
-    maxAmountOfCargo: cargo.amountOfCargoInCar,
-    title: cargo.unit,
-    location: location,
-    beginDate: deadline.beginDate,
-    endDate: deadline.endDate
-  });
+  try {
+    const res = await fetchApiPostWithBody<TVangerDTO>(config.vangers.url + '/vangers/suitable/vanger', {
+      maxNumberOfPassengers: cargo.numberOfPassengersInCar,
+      maxAmountOfCargo: cargo.amountOfCargoInCar,
+      title: cargo.unit,
+      location: location,
+      beginDate: deadline.beginDate,
+      endDate: deadline.endDate
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
 };
 
 export const deleteVanger = async (id: string) => {
-  console.log('del vang');
   return await fetchApiDelete<string>(config.vangers.url + '/vangers/' + id);
 }
