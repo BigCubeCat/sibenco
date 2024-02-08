@@ -24,7 +24,7 @@ interface IConfig {
     url: string;
     password: string;
   }
-  geocoder: {
+  vangers: {
     url: string;
   };
 
@@ -56,7 +56,7 @@ export const config: IConfig = {
     url: "redis://127.0.0.1:6379",
     password: "",
   },
-  geocoder: {
+  vangers: {
     url: 'http://127.0.0.1:8000/',
   },
   messages: messages,
@@ -67,7 +67,8 @@ export function LoadConfig() {
   const changeConf = (value: string | undefined, defaultValue: string) => value ? value : defaultValue;
 
   const port = process.env.PORT ? Number(process.env.PORT) : 5000;
-  const url = changeConf(process.env.MONGO_URL, 'mongodb://user:DY9687FH@127.0.0.1:27017/maindb');
+  const url = changeConf(process.env.MONGO_URL, 'mongodb://user:DY9687FH@localhost:27017/maindb');
+  console.log(url);
   config.PORT = port;
   config.MONGO_URL = url;
 
@@ -76,5 +77,7 @@ export function LoadConfig() {
 
   config.redis.url = process.env.REDIS_URI ? process.env.REDIS_URI : config.redis.url;
   config.redis.password = process.env.REDIS_PASSWORD ? process.env.REDIS_PASSWORD : config.redis.password;
+
+  config.vangers.url = process.env.VANGERS_URL ? process.env.VANGERS_URL : 'http://localhost:8008/';
 }
 

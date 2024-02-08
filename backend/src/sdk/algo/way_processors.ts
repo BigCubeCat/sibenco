@@ -70,7 +70,7 @@ export const mergeWaypoints = (mainRoute: string, mainRouteWaypoints: TWaypoints
 
     const mainRouteWaypointsCoords = makeOptimizedCoords(mainRouteWaypoints);
     const additionalRouteWaypointsCoords = makeOptimizedCoords(additionalRouteWaypoints);
-    
+
     const resultWaypoints: TWaypointsDTO = { points: [] };
 
     let currentAdditionalRouteWaypointIndex = 0;
@@ -102,18 +102,18 @@ export const mergeWaypoints = (mainRoute: string, mainRouteWaypoints: TWaypoints
 
                     if (mainRouteWaypoints.points[currentMainRouteWaypointIndex].address ==
                         additionalRouteWaypoints.points[currentAdditionalRouteWaypointIndex].address) {
-                        
+
                         if ((mainRouteWaypoints.points[currentMainRouteWaypointIndex].pointType == "i" &&
                             additionalRouteWaypoints.points[currentAdditionalRouteWaypointIndex].pointType == "o") ||
                             (mainRouteWaypoints.points[currentMainRouteWaypointIndex].pointType == "o" &&
                                 additionalRouteWaypoints.points[currentAdditionalRouteWaypointIndex].pointType == "i") ||
                             mainRouteWaypoints.points[currentMainRouteWaypointIndex].pointType == "b" ||
                             additionalRouteWaypoints.points[currentAdditionalRouteWaypointIndex].pointType == "b") {
-                            resultWaypoints.points[resultWaypoints.points.length - 1].pointType = "b";        
+                            resultWaypoints.points[resultWaypoints.points.length - 1].pointType = "b";
                         }
                     } else {
                         resultWaypoints.points.push(mainRouteWaypoints.points[currentMainRouteWaypointIndex]);
-                        
+
                         if (currentMainRouteWaypointIndex < mainRouteWaypointsCoords.length - 1) {
                             currentMainRouteWaypointIndex++;
                             currentMainWaypointString = mainRouteWaypointsCoords[currentMainRouteWaypointIndex].lat + "," + mainRouteWaypointsCoords[currentMainRouteWaypointIndex].lon;
@@ -125,8 +125,8 @@ export const mergeWaypoints = (mainRoute: string, mainRouteWaypoints: TWaypoints
                 }
 
                 if (currentAdditionalRouteWaypointIndex < additionalRouteWaypointsCoords.length - 1) {
-                            currentAdditionalRouteWaypointIndex++;
-                            currentAdditionalWaypointString = additionalRouteWaypointsCoords[currentAdditionalRouteWaypointIndex].lat + "," + additionalRouteWaypointsCoords[currentAdditionalRouteWaypointIndex].lon;
+                    currentAdditionalRouteWaypointIndex++;
+                    currentAdditionalWaypointString = additionalRouteWaypointsCoords[currentAdditionalRouteWaypointIndex].lat + "," + additionalRouteWaypointsCoords[currentAdditionalRouteWaypointIndex].lon;
                 } else {
                     currentAdditionalRouteWaypointIndex++;
                     break;
@@ -144,12 +144,12 @@ export const mergeWaypoints = (mainRoute: string, mainRouteWaypoints: TWaypoints
             }
         }
     }
-    for (let iter = currentAdditionalRouteWaypointIndex; iter < additionalRouteWaypoints.points.length; ++iter){
+    for (let iter = currentAdditionalRouteWaypointIndex; iter < additionalRouteWaypoints.points.length; ++iter) {
         resultWaypoints.points.push(additionalRouteWaypoints.points[iter]);
     }
-    for (let iter = currentMainRouteWaypointIndex; iter < mainRouteWaypoints.points.length; ++iter){
+    for (let iter = currentMainRouteWaypointIndex; iter < mainRouteWaypoints.points.length; ++iter) {
         resultWaypoints.points.push(mainRouteWaypoints.points[iter]);
     }
-    
+
     return resultWaypoints;
 }

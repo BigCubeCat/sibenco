@@ -90,8 +90,12 @@ router.get('/std/:id', routeController.getRoute);
  * /routes/std/:id/:
  *  patch:
  *    description: Обновление маршрута по id
+ *  put:
+ *    description: Обновление id водителя маршрута
  */
 router.patch('/std/:id', routeController.patchRoute);
+router.put('/std/:id/:vanger', routeController.changeVanger);
+
 /**
  * @openapi
  * /routes/std/:id/:

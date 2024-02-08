@@ -1,5 +1,5 @@
 import {recoverOrderDTO, TOrderDTO} from '../../dto/order.dto';
-import {defaultCargo} from '../../dto/cargo.dto';
+import {defaultCargo, TCargoDTO} from '../../dto/cargo.dto';
 import {TDeadline} from '../../dto/deadline.dto';
 import {convertToOSM, getPointsCoords, TAddressDTO} from '../../dto/address.dto';
 import {RouteData} from '../../../sdk/route_machine_api/types';
@@ -241,6 +241,14 @@ class OrderModel {
     return this.data?.routeId || "";
   }
   
+  get noDeadline(): boolean {
+    return this.data?.deadline.noDeadline || false;
+  }
+
+  get cargo(): TCargoDTO {
+    return this.data?.cargo || defaultCargo
+  }
+
 }
 
 export default OrderModel;
