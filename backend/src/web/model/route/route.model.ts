@@ -4,7 +4,9 @@ import {IOrderView} from '../order/order.interface';
 import OrderModel from '../order/order.model';
 import {TRouteDTO} from '../../dto/route.dto';
 import RouteDb, {IRouteDoc} from '../../db/route.db';
-import { TWaypointsDTO } from '../../dto/waypoints.dto';
+import {TWaypointsDTO} from '../../dto/waypoints.dto';
+import {getSuitableVanger} from '../../../conn/vangers/vangers.conn';
+import {TVangerDTO} from '../../dto/vanger.dto';
 
 class RouteModel {
   private _invalid = false;
@@ -25,7 +27,7 @@ class RouteModel {
       nodes: [],
       distance: 0,
       clients: dto.clients,
-      vanger: dto.vanger,
+      vanger: dto.vangerId,
       time: dto.deadline,
       totalPrice: 0,
     };
@@ -45,12 +47,30 @@ class RouteModel {
   }
 
   async createFromOrderID(orderID: string) {
+    console.log("    async createFromOrderID(orderID: string) ");
     const mainOrderModel: OrderModel = new OrderModel();
     await mainOrderModel.fromId(orderID);
+    const location: string | undefined = mainOrderModel.points[0].address;
+
+    if (!location) {
+      this._invalid = true;
+      return;
+    }
+
+    const vanger: TVangerDTO | undefined = await getSuitableVanger(mainOrderModel.cargo, mainOrderModel.deadline, location);
+    let vangerId: string;
+
+    if (!vanger) {
+        vangerId = '0';
+    } else {
+      vangerId = vanger.id;
+    }
+
     if (mainOrderModel.invalid || mainOrderModel.orderData == null) {
       this._invalid = true;
       return;
     }
+
     this.data = {
       id: '',
       orderIds: [orderID],
@@ -59,11 +79,11 @@ class RouteModel {
       nodes: mainOrderModel.nodes,
       distance: mainOrderModel.orderData.distance,
       clients: [mainOrderModel.orderData.clientId],
-      vanger: "Баринов Виктор Петрович", //очень нужнна связь с сервисом водителей
+      vanger: vangerId,
       time: mainOrderModel.deadline,
       totalPrice: mainOrderModel.orderData.cargo.price, // price никому не нужен, это поле надо удалить
     };
-        
+
   }
 
   getIRouteDoc(): IRouteDoc {
@@ -86,7 +106,7 @@ class RouteModel {
   async dump() {
     const model = this.getIRouteDoc();
     const m = await RouteDb.create(model);
-    this.ID = m._id;
+    this.ID = m._id.toString();
     this._saved = true;
   }
 
@@ -164,6 +184,15 @@ returns: процент совпадения двух маршрутов
     );
   }
 
+  async setVangerId(vangerId: string) {
+    if (!this.data) {
+      this.saved = false;
+      return;
+    }
+    this.data.vanger = vangerId;
+    return await this.update();
+  }
+
   get deadline(): TDeadline {
     return this.data?.time || {noDeadline: true};
   }
@@ -195,12 +224,20 @@ returns: процент совпадения двух маршрутов
     return this._saved;
   }
 
+  set saved(value: boolean) {
+    this._saved = value;
+  }
+
   get invalid(): boolean {
     return this._invalid;
   }
 
   get complex(): boolean {
     return this._complex;
+  }
+
+  get vanger(): string | undefined {
+    return this.data?.vanger;
   }
 
   get outDTO(): IRouteView | null {
@@ -214,6 +251,7 @@ returns: процент совпадения двух маршрутов
   set setInvalid(isInvalid: boolean) {
     this._invalid = isInvalid;
   }
+
 }
 
 export default RouteModel;
