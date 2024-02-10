@@ -2,7 +2,7 @@
  * @openapi
  * components:
  *  schemas:
- *      FeightDTO:
+ *      FreightDTO:
  *          type: object
  *          required:
  *              - description
@@ -31,7 +31,7 @@
  *                  description: "индекс остановки в заказе, на которой выгружают груз (остановки индексируются с нуля)"
  *                  format: int64
  */
-export type TFeightDTO = {
+export type TFreightDTO = {
   description: string;
   weight: number;
   volume: number

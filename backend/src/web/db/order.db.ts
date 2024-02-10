@@ -40,6 +40,7 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
         latitude: {type: String},
         longitude: {type: String},
         address: {type: String},
+        city: {type: String},
         OSRMNode: {type: String},
         pointType: {type: String},
         confirmed: {type: Boolean},
@@ -64,7 +65,7 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
         startIndex: {type: Number},
         endIndex: {type: Number},
       }],
-      feights: [{
+      freights: [{
         description: {type: String},
         weight: {type: Number},
         volume: { type: Number },

@@ -1,4 +1,4 @@
-import { TFeightDTO } from "./freight.dto";
+import { TFreightDTO } from "./freight.dto";
 import { TPassengerDTO } from "./passenger.dto";
 
 /**
@@ -28,6 +28,11 @@ import { TPassengerDTO } from "./passenger.dto";
  *                  type: number
  *                  description: "Число груза"
  *                  format: float
+ *              passengers:
+ *                  type: array
+ *                  description: "Пассажиры"
+ *                  items:
+ *                      $ref: '#components/schemas/'
  *              department:
  *                  type: string
  *                  description: "Стуктурное подразделение"
@@ -40,7 +45,7 @@ export type TCargoDTO = {
   numberOfPassengersInCar: number;
   amountOfCargoInCar: number;
   passengers: Array<TPassengerDTO>;
-  feights: Array<TFeightDTO>;
+  freights: Array<TFreightDTO>;
   department: string; 
   description: string;
 };
@@ -50,7 +55,7 @@ export const defaultCargo: TCargoDTO = {
   numberOfPassengersInCar: 0,
   amountOfCargoInCar: 0,
   passengers: [],
-  feights: [],
+  freights: [],
   department: 'отсутсвует',
   description: ''
 };

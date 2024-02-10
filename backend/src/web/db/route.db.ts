@@ -24,6 +24,7 @@ const RouteSchema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
       latitude: { type: String },
       longitude: { type: String },
       address: { type: String },
+      city: {type: String},
       OSRMNode: { type: String },
       pointType: { type: String },
       confirmed: { type: Boolean },
