@@ -12,7 +12,6 @@ export interface IRouteDoc {
   active: boolean;
   vanger: string;
   time: TDeadline;
-  totalPrice: number;
 }
 
 export interface I_RouterDocument extends IRouteDoc, mongoose.Document {
@@ -28,7 +27,9 @@ const RouteSchema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
       OSRMNode: { type: String },
       pointType: { type: String },
       confirmed: { type: Boolean },
-  }]},
+    }],
+    times: [{type: Number}],
+  },
   nodes: [{type: Number}],
   distance: {type: Number},
   clients: [{ type: String }],
@@ -40,7 +41,6 @@ const RouteSchema: mongoose.Schema<I_RouterDocument> = new mongoose.Schema({
     beginDate: {type: Number},
     endDate: {type: Number},
   },
-  totalPrice: {type: Number},
 });
 
 const RouteDb = mongoose.model<I_RouterDocument>('Route', RouteSchema);

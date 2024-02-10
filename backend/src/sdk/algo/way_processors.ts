@@ -71,7 +71,7 @@ export const mergeWaypoints = (mainRoute: string, mainRouteWaypoints: TWaypoints
     const mainRouteWaypointsCoords = makeOptimizedCoords(mainRouteWaypoints);
     const additionalRouteWaypointsCoords = makeOptimizedCoords(additionalRouteWaypoints);
 
-    const resultWaypoints: TWaypointsDTO = { points: [] };
+    const resultWaypoints: TWaypointsDTO = { points: [], times: [] };
 
     let currentAdditionalRouteWaypointIndex = 0;
     let currentAdditionalWaypointString = additionalRouteWaypointsCoords[0].lat + "," + additionalRouteWaypointsCoords[0].lon;

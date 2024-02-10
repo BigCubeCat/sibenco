@@ -16,7 +16,6 @@ export interface IRouteData {
   active: boolean;
   vanger: string;
   time: TDeadline;
-  totalPrice: number;
 }
 
 export interface IRouteView {
@@ -29,7 +28,6 @@ export interface IRouteView {
   active: boolean;
   vanger: string;
   time: TDeadline;
-  totalPrice: number;
 }
 
 export const dataToView = (route: IRouteData | null): (IRouteView | null) => {
@@ -44,7 +42,6 @@ export const dataToView = (route: IRouteData | null): (IRouteView | null) => {
       active: route.active,
       vanger: route.vanger,
       time: route.time,
-      totalPrice: route.totalPrice,
     };
   }
   return null;

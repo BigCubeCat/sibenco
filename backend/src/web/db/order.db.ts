@@ -44,6 +44,7 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
         pointType: {type: String},
         confirmed: {type: Boolean},
       }],
+      times: [{type: Number}]
     },
     nodes: [{type: Number}],
     coords: {type: String},
@@ -55,9 +56,23 @@ const OrderSchema: mongoose.Schema<TOrderDoc> = new mongoose.Schema({
     route: {type: String},
     cargo: {
       unit: {type: String},
-      count: {type: Number},
+      numberOfPassengersInCar: { type: Number },
+      amountOfCargoInCar: { type: Number },
+      passengers: [{
+        name: {type: String},
+        contact: {type: String},
+        startIndex: {type: Number},
+        endIndex: {type: Number},
+      }],
+      feights: [{
+        description: {type: String},
+        weight: {type: Number},
+        volume: { type: Number },
+        startIndex: {type: Number},
+        endIndex: {type: Number},
+      }],
+      department: {type: String},
       description: {type: String},
-      price: {type: Number},
     },
   },
   done: {type: Boolean},

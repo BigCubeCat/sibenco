@@ -6,6 +6,7 @@ import {IRouteData} from '../model/route/route.interface';
 import OrderModel from '../model/order/order.model';
 import { TWaypointsDTO } from '../dto/waypoints.dto';
 import {deleteVanger} from '../../conn/vangers/vangers.conn';
+import { TCargoDTO } from '../dto/cargo.dto';
 
 export const create = async (dto: TRouteDTO) => {
   const route = new RouteModel();
@@ -29,13 +30,16 @@ export const createWithOrderID = async (id: string) => {
 
 }
 
-export const manualCreate = async (ids: string[], waypoints: TWaypointsDTO) => { //TODO довести ручку до роутера
-  const route = await manualCreateRoute(ids, waypoints);
+export const manualCreate = async (ids: string[], waypoints: TWaypointsDTO, cargo: TCargoDTO) => {
+  const route = await manualCreateRoute(ids, waypoints, cargo);
   if (route.invalid) {
     throw new Error(config.errors.NotFound);
   }
   await route.dump();
-  return route.ID; //TODO добавить аргумент тип машины и выбор подходящего вангера
+  await pinOrders(route);
+  if (route.saved)
+    return route.ID;
+  throw new Error(config.errors.Create);
 }
 
 export const get = async (id: string) => {
@@ -81,6 +85,7 @@ export const autoMerge = async (firstId: string, secondId: string) => {
     throw new Error(config.errors.BadId);
   }
   await resultRoute.dump();
+  await pinOrders(resultRoute);
   return resultRoute.ID;
 }
 
@@ -89,16 +94,31 @@ export const advancedAutoMerge = async (firstId: string, secondId: string, first
   if (firstType == "order" && secondType == "order") {
     const firstRouteId: string = await createWithOrderID(firstId);
     const secondRouteId: string = await createWithOrderID(secondId);
-    return autoMerge(firstRouteId, secondRouteId);
+    const resultRouteId: string = await autoMerge(firstRouteId, secondRouteId);
+    const route = new RouteModel();
+    await route.fromId(resultRouteId);
+    await pinOrders(route);
+    return resultRouteId;
   } else if (firstType == "order" && secondType == "route") {
     const firstRouteId: string = await createWithOrderID(firstId);
-    return autoMerge(firstRouteId, secondId);
+    const resultRouteId: string = await autoMerge(firstRouteId, secondId);
+    const route = new RouteModel();
+    await route.fromId(resultRouteId);
+    await pinOrders(route);
+    return resultRouteId;
   } else if (firstType == "route" && secondType == "order") {
     const secondRouteId: string = await createWithOrderID(secondId);
-    return autoMerge(firstId, secondRouteId);
+    const resultRouteId: string = await autoMerge(firstId, secondRouteId);
+    const route = new RouteModel();
+    await route.fromId(resultRouteId);
+    await pinOrders(route);
+    return resultRouteId;
   } else if (firstType == "route" && secondType == "route") {
-    console.log("Hello");
-    return autoMerge(firstId, secondId);
+    const resultRouteId: string = await autoMerge(firstId, secondId);
+    const route = new RouteModel();
+    await route.fromId(resultRouteId);
+    await pinOrders(route);
+    return resultRouteId;
   } else {
     throw new Error(config.errors.NotFound);
   }

@@ -2,6 +2,7 @@ import {TCargoDTO} from '../../dto/cargo.dto';
 import {TDeadline} from '../../dto/deadline.dto';
 import {TAddressDTO} from '../../dto/address.dto';
 import {TWaypointsDTO} from "../../dto/waypoints.dto";
+import { time } from 'console';
 
 export interface IOrderData {
   id: string;
@@ -11,6 +12,7 @@ export interface IOrderData {
   deadline: TDeadline;
   waypoints: {
     points: TAddressDTO[];
+    times: number[];
     nodes: number[];
     coords: string;
   };
@@ -84,6 +86,7 @@ export const dataToView = (order: IOrderData | null) => {
     return {
       ...order, waypoints: {
         points: order.waypoints.points,
+        times: order.waypoints.times,
       },
     };
   return null;

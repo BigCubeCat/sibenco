@@ -1,6 +1,5 @@
 import RouteDb from '../../db/route.db';
 import OrderDb from '../../db/order.db';
-
 import RouteModel from './route.model';
 import OrderModel from '../order/order.model';
 import * as orderFunctions from '../order/order.functions';
@@ -15,6 +14,9 @@ import {TDeadline, getDeadlineIntersection} from '../../dto/deadline.dto';
 import {TNaiveCmp} from "../../../sdk/algo/compare";
 import {IRouteView} from "./route.interface";
 import { TOrderDTO } from '../../dto/order.dto';
+import { TCargoDTO } from '../../dto/cargo.dto';
+import { TVangerDTO } from '../../dto/vanger.dto';
+import { getSuitableVanger } from '../../../conn/vangers/vangers.conn';
 export type TSearchRes = { object: IRouteView | null, match: TNaiveCmp };
 
 
@@ -71,7 +73,7 @@ export const findRoutes = async (page: number, pageSize: number, request: object
   return results;
 };
 
-export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO) => {
+export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO, cargo: TCargoDTO) => {
   const orders: TOrderDTO[] = [];
   for (let i = 0; i < ids.length; ++i) {
     const order = new OrderModel();
@@ -87,15 +89,38 @@ export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO)
     currentDeadline = getDeadlineIntersection(currentDeadline, orders[i].deadline);
   }
 
+  // определяем водителя
+
+  const location: string | undefined = waypoints.points[0].address;
+
+  if (!location) {
+    const resultModel = new RouteModel();
+    resultModel.setInvalid = true;
+    return resultModel;
+  }
+
+  console.log(cargo);
+  console.log(currentDeadline);
+  console.log(location);
+
+  const vanger: TVangerDTO | undefined = await getSuitableVanger(cargo, currentDeadline, location);
+  let vangerId: string;
+
+  if (!vanger) {
+      vangerId = "0";
+  } else {
+    vangerId = vanger.id;
+  }
+
   const resultRouteDTO: TRouteDTO = {
     orders: orders,
     waypoints: waypoints,
     deadline: currentDeadline,
     clients: orders.map(order => { return order.clientId}),
-    vangerId: "Кожанов Александр Иванович" // пока так, вообще тут должен быть выбор через сервис вангеров 
+    vangerId: vangerId
   }
   const resultModel = new RouteModel();
-  await resultModel.createFromDTO(resultRouteDTO);
+  await resultModel.createFromDTO(resultRouteDTO);    
   return resultModel;
 }
 
@@ -138,7 +163,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
       waypoints: mergeWaypoints(secondRouteCoords, secondRouteWaypoints, firstRouteWaypoints),
       deadline: getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
       clients: [...secondParentRoute.outDTO?.clients || [], ...firstParentRoute.outDTO?.clients || []],
-      vangerId: secondParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // TODO пока так, вообще это из-за того что outDTO может вернуть null надо это исправить
+      vangerId: secondParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // TODO Надо проверить вангера, что ему места хватает, если не хватает, то искать другого
     }
     const resultModel = new RouteModel();
     await resultModel.createFromDTO(resultRouteDTO);

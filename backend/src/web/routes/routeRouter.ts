@@ -29,7 +29,7 @@ router.post('/std/create/:id', routeController.createRouteWithOrder);
  * @openapi
  * /routes/std/manual/:
  *  post:
- *    description: Создание маршрута по структуре {orders: [], waypoints: []}
+ *    description: Создание маршрута по структуре {orders: [ string ], waypoints: TWaypointsDTO , cargo: TCargoDTO}
  *    responses:
  *      200:
  *          description: возвращает id созданного маршрута
@@ -138,9 +138,9 @@ router.post('/std/automerge/', routeController.autoMergeRoute);
 
 /**
  * @openapi
- * /routes/std/automerge/:
+ * /routes/std/execution/:
  *  post:
- *    description: Автоматическое слияние маршрутов в один.
+ *    description: Изменение статуса поездки
  *    parameters:
  *      - in: query
  *        name: id
