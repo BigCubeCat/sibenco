@@ -7,6 +7,7 @@ import RouteDb, {IRouteDoc} from '../../db/route.db';
 import {TWaypointsDTO} from '../../dto/waypoints.dto';
 import {getSuitableVanger} from '../../../conn/vangers/vangers.conn';
 import {TVangerDTO} from '../../dto/vanger.dto';
+import { TLocationDTO } from '../../dto/location.dto';
 import { TAddressDTO } from '../../dto/address.dto';
 
 class RouteModel {
@@ -51,12 +52,18 @@ class RouteModel {
     console.log("    async createFromOrderID(orderID: string) ");
     const mainOrderModel: OrderModel = new OrderModel();
     await mainOrderModel.fromId(orderID);
-    const location: string | undefined = mainOrderModel.points[0].address;
+    const latitude: string | undefined = mainOrderModel.points[0].latitude;
+    const longitude: string | undefined = mainOrderModel.points[0].longitude;
 
-    if (!location) {
+    if (!latitude || !longitude) {
       this._invalid = true;
       return;
     }
+
+    const location: TLocationDTO = {
+      latitude: latitude,
+      longitude: longitude
+    };
 
     const vanger: TVangerDTO | undefined = await getSuitableVanger(mainOrderModel.cargo, mainOrderModel.deadline, location);
     let vangerId: string;
