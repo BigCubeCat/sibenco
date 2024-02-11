@@ -234,12 +234,12 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
         department: " ",
         description: " "
       }
-      
+
 
       const location: TLocationDTO = {
         latitude: resultQueue.points[0].latitude || "0",
         longitude: resultQueue.points[0].longitude || "0"
-      }; //TODO так нельзя надо на=ормальное исключение делать
+      }; //TODO так нельзя надо нормальное исключение делать
 
     
       const vanger: TVangerDTO | undefined = await getSuitableVanger(sampleCargo, getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline), location);

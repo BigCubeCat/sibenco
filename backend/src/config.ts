@@ -26,6 +26,8 @@ interface IConfig {
   }
   vangers: {
     url: string;
+    accuracyLat: number,
+    accuracyLong: number
   };
 
   // messages
@@ -58,6 +60,8 @@ export const config: IConfig = {
   },
   vangers: {
     url: 'http://127.0.0.1:8000/',
+    accuracyLat: 0.9,
+    accuracyLong: 1.6
   },
   messages: messages,
   errors: errors,

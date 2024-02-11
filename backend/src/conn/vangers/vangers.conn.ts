@@ -14,7 +14,17 @@ export const getSuitableVanger = async (cargo: TCargoDTO, deadline: TDeadline, l
       latitude: location.latitude,
       longitude: location.longitude,
       beginDate: deadline.beginDate,
-      endDate: deadline.endDate
+      endDate: deadline.endDate,
+      locationBorders: {
+        latitude: {
+          min: String(Number(location.latitude) - config.vangers.accuracyLat / 2),
+          max: String(Number(location.latitude) + config.vangers.accuracyLat / 2)
+        },
+        longitude: {
+          min: String(Number(location.longitude) - config.vangers.accuracyLong / 2),
+          max: String(Number(location.longitude) + config.vangers.accuracyLong / 2)
+        }        
+      }
     });
     return res;
   } catch (error) {
