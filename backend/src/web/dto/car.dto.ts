@@ -1,10 +1,11 @@
 export type TCarDTO = {
   id: string;
-  numberOfTransport: number;
+  numberOfTransport: string;
   title: string;
   loadCapacity: number;
   numberOfPassengersInCar: number;
   amountOfCargoInCar: number;
-  location: string;
+  latitude: string;
+  longitude: string;
   timetable: string[];
 };

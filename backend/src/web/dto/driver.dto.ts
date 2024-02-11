@@ -1,8 +1,10 @@
 export type TDriverDTO = {
   id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
+  phoneNumber: string;
+  mail: string;
   category: string;
-  location: string;
+  latitude: string;
+  longitude: string;
   timetable: string[];
 };
