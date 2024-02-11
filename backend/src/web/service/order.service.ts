@@ -43,7 +43,7 @@ export const create = async (orderDto: TOrderDTO) => {
     const orders = order.orderData ? [order.orderData] : [];
     await route.createFromDTO({
       orders: orders,
-      waypoints: {points: order.points},
+      waypoints: {points: order.points, times: order.times},
       deadline: order.deadline,
       clients: [order.orderData?.clientId || ''],
       vangerId: vanger?.id || ""

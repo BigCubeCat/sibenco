@@ -8,6 +8,7 @@ import {TWaypointsDTO} from '../../dto/waypoints.dto';
 import {getSuitableVanger} from '../../../conn/vangers/vangers.conn';
 import {TVangerDTO} from '../../dto/vanger.dto';
 import { TLocationDTO } from '../../dto/location.dto';
+import { TAddressDTO } from '../../dto/address.dto';
 
 class RouteModel {
   private _invalid = false;
@@ -32,7 +33,6 @@ class RouteModel {
       active: this.active,
       vanger: dto.vangerId,
       time: dto.deadline,
-      totalPrice: 0,
     };
     for (let i = 0; i < dto.orders.length; ++i) {
       const order = new OrderModel();
@@ -42,7 +42,6 @@ class RouteModel {
         this.data?.orderIds.push(order.ID);
         this.data?.orders.push(order.orderData);
         this.data.distance += order.orderData.distance;
-        this.data.totalPrice += order.orderData.cargo.price;
         this.data.nodes.push(...order.nodes);
       }
     }
@@ -74,6 +73,7 @@ class RouteModel {
     } else {
       vangerId = vanger.id;
     }
+    await this.setVangerId(vangerId);
 
     if (mainOrderModel.invalid || mainOrderModel.orderData == null) {
       this._invalid = true;
@@ -84,15 +84,14 @@ class RouteModel {
       id: '',
       orderIds: [orderID],
       orders: [mainOrderModel.orderData],
-      waypoints: {points: mainOrderModel.orderData.waypoints.points},
+      waypoints: {points: mainOrderModel.orderData.waypoints.points, times: mainOrderModel.orderData.waypoints.times},
       nodes: mainOrderModel.nodes,
       distance: mainOrderModel.orderData.distance,
       clients: [mainOrderModel.orderData.clientId],
       done: mainOrderModel.done,
       active: false,
-      vanger: vangerId, //очень нужнна связь с сервисом водителей
+      vanger: vangerId,
       time: mainOrderModel.deadline,
-      totalPrice: mainOrderModel.orderData.cargo.price, // price никому не нужен, это поле надо удалить
     };
 
   }
@@ -100,7 +99,7 @@ class RouteModel {
   getIRouteDoc(): IRouteDoc {
     return {
       orders: this.data?.orderIds || [],
-      waypoints: this.data?.waypoints || {points: []},
+      waypoints: this.data?.waypoints || {points: [], times: []},
       nodes: this.data?.nodes || [],
       distance: this.data?.distance || 0,
       clients: this.data?.clients || [],
@@ -108,7 +107,6 @@ class RouteModel {
       active: this.data?.active || false,
       vanger: this.data?.vanger || '',
       time: this.data?.time || {noDeadline: true},
-      totalPrice: this.data?.totalPrice || 0,
     };
   }
 
@@ -148,7 +146,6 @@ class RouteModel {
       active: doc.active,
       vanger: doc.vanger,
       time: doc.time,
-      totalPrice: doc.totalPrice,
     };
     await this.loadOrders();
   }
@@ -228,6 +225,11 @@ returns: процент совпадения двух маршрутов
     return this.data.orderIds;
   }
 
+  set ordersIds(ids: Array<string>) {
+    if (!this.data) return;
+    this.data.orderIds = ids;
+  }
+
   get nodes(): Array<number> {
     return this.data?.nodes || [];
   }
@@ -268,7 +270,7 @@ returns: процент совпадения двух маршрутов
   }
 
   get stopPoints(): TWaypointsDTO {
-    return this.data?.waypoints || {points: []};
+    return this.data?.waypoints || {points: [], times: []};
   }
 
   set setInvalid(isInvalid: boolean) {
@@ -295,9 +297,16 @@ returns: процент совпадения двух маршрутов
     return this.data?.active || false;
   }
 
+  get waypoints(): TWaypointsDTO {
+    return this.data?.waypoints || { points: [], times: [] };
+  }
+
+  set points(points: Array<TAddressDTO>) {
+    if (!this.data) return;
+    this.data.waypoints.points = points;
+  }
+
 }
 
 export default RouteModel;
 
-// TODO
-// Надо добавить выбор вангера при создании маршрута по заказу

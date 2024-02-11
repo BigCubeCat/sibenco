@@ -94,6 +94,7 @@ export const recoverOrderDTO = (order: TOrderDTO): TOrderDTO => {
       points: order.waypoints.points.map(
         waypoint => recoverAddress(waypoint)
       ),
+      times: order.waypoints.times
     },
     isSingle: order.isSingle
   };

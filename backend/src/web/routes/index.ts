@@ -47,12 +47,26 @@ router.get('/', function (req, res, next) {
  *        name: type
  *        description: Если order, выдаст только заявки, если route - то выдаст только маршруты, иначе выдаст и то, и другое
  *        items:
- *          type: boolean
+ *          type: string
  *        
  *    responses:
  *      200:
  *        description: Возвращает объект с двумя массивами orders и routes
  */
 router.get('/deals', routeController.getAllDeals);
+
+/**
+ * @openapi
+ * /similar/:id/:
+ * get:
+ *    description: получение всех гомоморфных объектов
+ *    parameters:
+ *    - in: query
+ *        name: type
+ *        type: string
+ *        description: Если order, выдаст заявки, если route - то выдаст маршруты
+ * 
+ */
+router.get('/similar/:id', routeController.getSimilarDeals);
 
 export default router;
