@@ -16,12 +16,13 @@ import {IRouteView} from "./route.interface";
 import { TOrderDTO } from '../../dto/order.dto';
 import { TCargoDTO } from '../../dto/cargo.dto';
 import { TVangerDTO } from '../../dto/vanger.dto';
-import { getSuitableVanger } from '../../../conn/vangers/vangers.conn';
+import { getSuitableVanger, getVangerById } from '../../../conn/vangers/vangers.conn';
 import { convertToOSM, getPointsCoords, recoverAddress } from '../../dto/address.dto';
 import { makeOptimalRoute } from '../../../sdk/route_machine_api';
 import { createCoords } from '../../../sdk/algo/coords';
+import { getMaxCargo } from '../../../sdk/algo/backpack_problem';
 export type TSearchRes = { route: IRouteView | null, match: TNaiveCmp };
-
+export type TBackpackParams = { passengers: number, freights: number };
 
 export const getAllRoutes = async (page: number, pageSize: number, done: string, active: string, vanger: string) => {
   const useDone = (done === 'true' || done === 'false');
@@ -127,6 +128,13 @@ export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO,
   return resultModel;
 }
 
+const checkVangerCapacity = async (backPack: TBackpackParams, vangerId: string): Promise<boolean> => {
+  const vanger: TVangerDTO | undefined = await getVangerById(vangerId);
+  if (!vanger) return false;
+  if (vanger.Car.amountOfCargoInCar < backPack.freights || vanger.Car.numberOfPassengersInCar < backPack.passengers) return false;
+  return true;
+}
+
 
 export const autoMergeRoutes = async (firstId: string, secondId: string): Promise<RouteModel> => {
   const firstParentRoute = new RouteModel();
@@ -143,6 +151,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     return secondParentRoute;
   }
 
+  
   const firstRouteWaypoints: TWaypointsDTO = firstParentRoute.stopPoints;
   const secondRouteWaypoints: TWaypointsDTO = secondParentRoute.stopPoints;
   // получили квадратики маршрутов
@@ -160,25 +169,83 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
       resultModel.setInvalid = true;
       return resultModel;
     }
+    const resultQueue = mergeWaypoints(secondRouteCoords, secondRouteWaypoints, firstRouteWaypoints);
+
+    // Считаем максимальную необходимую вместимость
+
+    // генерируем груз и проверяем водителя
+    const maxBackpackParams = getMaxCargo([...firstParentRoute.orders || [], ...secondParentRoute.orders || []], resultQueue);
+
+    let resultVangerId = secondParentRoute.outDTO?.vanger || "Кожанов Александр Иванович";
+
+    if (!(await checkVangerCapacity(maxBackpackParams, secondParentRoute.outDTO?.vanger || "0"))) {
+      const sampleCargo: TCargoDTO = {
+        unit: (maxBackpackParams.freights > 0) ? ((maxBackpackParams.passengers > 0) ? "all" : "cargo") : ((maxBackpackParams.passengers > 0) ? "human" : "all"),
+        numberOfPassengersInCar: maxBackpackParams.passengers,
+        amountOfCargoInCar: maxBackpackParams.freights,
+        passengers: [],
+        freights: [],
+        department: " ",
+        description: " "
+      }
+
+      const location: string = resultQueue.points[0].address || "0"; //TODO так нельзя надо на=ормальное исключение делать
+
+      const vanger: TVangerDTO | undefined = await getSuitableVanger(sampleCargo, getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline), location);
+      if (!vanger) {
+          resultVangerId = '0';
+      } else {
+        resultVangerId = vanger.id;
+      }
+    }
+
     //Первый маршрут лежит на втором, делаем слияние
     const resultRouteDTO: TRouteDTO = {
       orders: [],
-      waypoints: mergeWaypoints(secondRouteCoords, secondRouteWaypoints, firstRouteWaypoints),
+      waypoints: resultQueue,
       deadline: getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
       clients: [...secondParentRoute.outDTO?.clients || [], ...firstParentRoute.outDTO?.clients || []],
-      vangerId: secondParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // TODO Надо проверить вангера, что ему места хватает, если не хватает, то искать другого
+      vangerId: resultVangerId
     }
+    
     const resultModel = new RouteModel();
     await resultModel.createFromDTO(resultRouteDTO);
     return resultModel;
   } else {
     //Второй маршрут лежит на первом
+    const resultQueue = mergeWaypoints(firstRouteCoords, firstRouteWaypoints, secondRouteWaypoints)
+    const maxBackpackParams = getMaxCargo([...firstParentRoute.orders || [], ...secondParentRoute.orders || []], resultQueue);
+
+    let resultVangerId = firstParentRoute.outDTO?.vanger || "Кожанов Александр Иванович";
+
+    if (!(await checkVangerCapacity(maxBackpackParams, secondParentRoute.outDTO?.vanger || "0"))) {
+      const sampleCargo: TCargoDTO = {
+        unit: (maxBackpackParams.freights > 0) ? ((maxBackpackParams.passengers > 0) ? "all" : "cargo") : ((maxBackpackParams.passengers > 0) ? "human" : "all"),
+        numberOfPassengersInCar: maxBackpackParams.passengers,
+        amountOfCargoInCar: maxBackpackParams.freights,
+        passengers: [],
+        freights: [],
+        department: " ",
+        description: " "
+      }
+
+      const location: string = resultQueue.points[0].address || "0"; //TODO так нельзя надо на=ормальное исключение делать
+
+    
+      const vanger: TVangerDTO | undefined = await getSuitableVanger(sampleCargo, getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline), location);
+      if (!vanger) {
+          resultVangerId = '0';
+      } else {
+        resultVangerId = vanger.id;
+      }
+    }
+
     const resultRouteDTO: TRouteDTO = {
       orders: [],
-      waypoints: mergeWaypoints(firstRouteCoords, firstRouteWaypoints, secondRouteWaypoints),
+      waypoints: resultQueue,
       deadline: getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
       clients: [...firstParentRoute.outDTO?.clients || [], ...secondParentRoute.outDTO?.clients || []],
-      vangerId: firstParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // пока так, вообще это из-за того что outDTO может вернуть null надо это исправить
+      vangerId: resultVangerId
     }
     const resultModel = new RouteModel();
     await resultModel.createFromDTO(resultRouteDTO);

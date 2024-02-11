@@ -1,4 +1,4 @@
-import {fetchApiDelete, fetchApiPostWithBody} from "../../sdk/utils/fetch";
+import {fetchApiDelete, fetchApiGet, fetchApiPostWithBody} from "../../sdk/utils/fetch";
 import {TVangerDTO} from "../../web/dto/vanger.dto";
 import {config} from "../../config";
 import {TCargoDTO} from "../../web/dto/cargo.dto";
@@ -20,6 +20,17 @@ export const getSuitableVanger = async (cargo: TCargoDTO, deadline: TDeadline, l
     return undefined;
   }
 };
+
+export const getVangerById = async (id: string) => {
+  try {
+    const res = await fetchApiGet<TVangerDTO>(config.vangers.url + '/vangers/' + id);
+    return res;
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
+  
+}
 
 export const deleteVanger = async (id: string) => {
   return await fetchApiDelete<string>(config.vangers.url + '/vangers/' + id);

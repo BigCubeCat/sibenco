@@ -91,26 +91,6 @@ router.post('/advanced/', routeController.advancedCreateOrder);
  */
 router.get('/', routeController.getAllOrders);
 
-/**
- * @openapi
- * /orders/realize/:id/:
- * get:
- *  tags:
- *      - orders
- *  parameters:
- *      - name: id
- *        in: path
- *        required: true
- *  responses:
- *    200:
- *        description: Получение маршрута, которому принадлежит заказ
- *    500:
- *        description: Текст ошибки
- * 
- */
-router.get('/realize/:id', routeController.getRealizingRoute);
-
-
 
 router.get('/count', routeController.getCountOrders);
 
@@ -192,6 +172,26 @@ router.put('/:id', routeController.cleanOrderCache);
  *          description: error message
  */
 router.get('/similar/:id', routeController.getSimilar);
+
+
+/**
+ * @openapi
+ * /orders/get_realize/:id/:
+ *  get:
+ *      tags:
+ *         - orders
+ *   parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *   responses:
+ *        200:
+ *           description: Получение маршрута, которому принадлежит заказ
+ *        500:
+ *           description: Текст ошибки
+ * 
+ */
+router.get('/get_realize/:id', routeController.getRealizingRoute);
 
 /**
  * @openapi
