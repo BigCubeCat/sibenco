@@ -7,6 +7,7 @@ import RouteDb, {IRouteDoc} from '../../db/route.db';
 import {TWaypointsDTO} from '../../dto/waypoints.dto';
 import {getSuitableVanger} from '../../../conn/vangers/vangers.conn';
 import {TVangerDTO} from '../../dto/vanger.dto';
+import { TAddressDTO } from '../../dto/address.dto';
 
 class RouteModel {
   private _invalid = false;
@@ -217,6 +218,11 @@ returns: процент совпадения двух маршрутов
     return this.data.orderIds;
   }
 
+  set ordersIds(ids: Array<string>) {
+    if (!this.data) return;
+    this.data.orderIds = ids;
+  }
+
   get nodes(): Array<number> {
     return this.data?.nodes || [];
   }
@@ -282,6 +288,15 @@ returns: процент совпадения двух маршрутов
 
   get active(): boolean {
     return this.data?.active || false;
+  }
+
+  get waypoints(): TWaypointsDTO {
+    return this.data?.waypoints || { points: [], times: [] };
+  }
+
+  set points(points: Array<TAddressDTO>) {
+    if (!this.data) return;
+    this.data.waypoints.points = points;
   }
 
 }

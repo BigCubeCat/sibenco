@@ -29,7 +29,7 @@ router.post('/std/create/:id', routeController.createRouteWithOrder);
  * @openapi
  * /routes/std/manual/:
  *  post:
- *    description: Создание маршрута по структуре {orders: [ string ], waypoints: TWaypointsDTO , cargo: TCargoDTO}
+ *    description: "Создание маршрута по структуре \n{\n orders: [ string ],\n waypoints: TWaypointsDTO,\n cargo: TCargoDTO\n}"
  *    responses:
  *      200:
  *          description: возвращает id созданного маршрута
