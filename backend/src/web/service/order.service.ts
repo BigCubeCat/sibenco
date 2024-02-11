@@ -7,6 +7,7 @@ import {countOrders as count} from "../model/order/order.functions";
 import RouteModel from "../model/route/route.model";
 import {getSuitableVanger} from "../../conn/vangers/vangers.conn";
 import {createWithOrderID} from './route.service';
+import { pinOrders } from '../model/route/route.function';
 
 
 /*
@@ -15,9 +16,9 @@ import {createWithOrderID} from './route.service';
 export const create = async (orderDto: TOrderDTO) => {
   const order = new OrderModel();
   await order.fromDTO(orderDto);
-  await order.dump();
-
-  if (!order.deadline.noDeadline) {
+  if (order.deadline.noDeadline) {
+    await order.dump();
+  } else {
     // Создаем маршрут автоматически
     const vanger = await getSuitableVanger(
       order.cargo,
@@ -34,8 +35,9 @@ export const create = async (orderDto: TOrderDTO) => {
       vangerId: vanger?.id || ""
     });
     await route.dump();
+    await pinOrders(route);
+    await order.fromId(route.ordersIds[0]);
   }
-  
   return order.ID;
 };
 
