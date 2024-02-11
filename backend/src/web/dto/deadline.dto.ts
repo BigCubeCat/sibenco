@@ -35,7 +35,7 @@ export const sameDeadline = (x: TDeadline, y: TDeadline) => {
   return x.endDate >= y.beginDate;
 };
 
-export const getDeadlineIntersection = (x: TDeadline, y: TDeadline): TDeadline => {
+export const getDeadlineUnion = (x: TDeadline, y: TDeadline): TDeadline => {
   if (x.noDeadline && y.noDeadline) {
     return { noDeadline: true };
   }
@@ -47,8 +47,8 @@ export const getDeadlineIntersection = (x: TDeadline, y: TDeadline): TDeadline =
   }
   const resultDeadline = {
     noDeadline: false,
-    beginDate: Math.max(x.beginDate || 0, y.beginDate || 0),
-    endDate: Math.min(x.endDate || Infinity, y.endDate || Infinity)
+    beginDate: Math.min(x.beginDate || 0, y.beginDate || 0),
+    endDate: Math.max(x.endDate || Infinity, y.endDate || Infinity)
   };
   return resultDeadline;
 }

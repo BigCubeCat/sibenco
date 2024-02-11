@@ -10,7 +10,7 @@ import {
   getFirstWaypointIndexAfterRoute,
   mergeWaypoints
 } from '../../../sdk/algo/way_processors';
-import {TDeadline, getDeadlineIntersection} from '../../dto/deadline.dto';
+import {TDeadline, getDeadlineUnion} from '../../dto/deadline.dto';
 import {TNaiveCmp, naiveCompareBoxes} from "../../../sdk/algo/compare";
 import {IRouteView} from "./route.interface";
 import { TOrderDTO } from '../../dto/order.dto';
@@ -91,7 +91,7 @@ export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO,
   let currentDeadline: TDeadline = { noDeadline: true };
 
   for (let i = 0; i < orders.length; ++i) {
-    currentDeadline = getDeadlineIntersection(currentDeadline, orders[i].deadline);
+    currentDeadline = getDeadlineUnion(currentDeadline, orders[i].deadline);
   }
 
   // определяем водителя
@@ -195,12 +195,12 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
       const location: TLocationDTO = {
         latitude: resultQueue.points[0].latitude || "0",
         longitude: resultQueue.points[0].longitude || "0"
-      }; //TODO так нельзя надо на=ормальное исключение делать
+      }; //TODO так нельзя надо нормальное исключение делать
 
       console.log("sample cargo:");
       console.log(sampleCargo);
 
-      const vanger: TVangerDTO | undefined = await getSuitableVanger(sampleCargo, getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline), location);
+      const vanger: TVangerDTO | undefined = await getSuitableVanger(sampleCargo, getDeadlineUnion(firstParentRoute.deadline, secondParentRoute.deadline), location);
       if (!vanger) {
           resultVangerId = '0';
       } else {
@@ -212,7 +212,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     const resultRouteDTO: TRouteDTO = {
       orders: [],
       waypoints: resultQueue,
-      deadline: getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
+      deadline: getDeadlineUnion(firstParentRoute.deadline, secondParentRoute.deadline),
       clients: [...secondParentRoute.outDTO?.clients || [], ...firstParentRoute.outDTO?.clients || []],
       vangerId: resultVangerId
     }
@@ -246,7 +246,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
       }; //TODO так нельзя надо нормальное исключение делать
 
     
-      const vanger: TVangerDTO | undefined = await getSuitableVanger(sampleCargo, getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline), location);
+      const vanger: TVangerDTO | undefined = await getSuitableVanger(sampleCargo, getDeadlineUnion(firstParentRoute.deadline, secondParentRoute.deadline), location);
       if (!vanger) {
           resultVangerId = '0';
       } else {
@@ -257,7 +257,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     const resultRouteDTO: TRouteDTO = {
       orders: [],
       waypoints: resultQueue,
-      deadline: getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
+      deadline: getDeadlineUnion(firstParentRoute.deadline, secondParentRoute.deadline),
       clients: [...firstParentRoute.outDTO?.clients || [], ...secondParentRoute.outDTO?.clients || []],
       vangerId: resultVangerId
     }
@@ -284,6 +284,7 @@ export const pinOrders = async (route: RouteModel) => {
 
 /*
 В теории должно работать, не тестил
+upd: потестил, пофиксил, баги остались
  */
 export const getSimilarRoutes = async (id: string, matchPercent = 0.5, ordersMatchPercent = 0.5) => {
   const route = new RouteModel();

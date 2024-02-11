@@ -61,7 +61,7 @@ export const del = async (id: string) => {
   await route.fromId(id);
 
   const vangerId: string | undefined = route.vanger;
-  if (vangerId) {
+  if (vangerId && (await getAllRoutes(0,2,"","",vangerId)).length == 1) {
     await deleteVanger(vangerId);
   }
 
@@ -81,12 +81,16 @@ export const patch = async (id: string, data: IRouteData) => {
 
 export const autoMerge = async (firstId: string, secondId: string) => {
   const resultRoute = await autoMergeRoutes(firstId, secondId);
-  console.log(resultRoute.ordersIds);
   if (resultRoute.invalid) {
     throw new Error(config.errors.BadId);
   }
+  if (resultRoute.vanger === "" || resultRoute.vanger === "0" || resultRoute.vanger === " ") {
+    throw new Error(config.errors.NotFound);
+  }
   await resultRoute.dump();
   await pinOrders(resultRoute);
+  del(firstId);
+  del(secondId);
   return resultRoute.ID;
 }
 
