@@ -8,6 +8,8 @@ import RouteModel from "../model/route/route.model";
 import {getSuitableVanger} from "../../conn/vangers/vangers.conn";
 import {createWithOrderID} from './route.service';
 import { TLocationDTO } from '../dto/location.dto';
+import { pinOrders } from '../model/route/route.function';
+
 
 
 /*
@@ -16,9 +18,9 @@ import { TLocationDTO } from '../dto/location.dto';
 export const create = async (orderDto: TOrderDTO) => {
   const order = new OrderModel();
   await order.fromDTO(orderDto);
-  await order.dump();
-
-  if (!order.deadline.noDeadline) {
+  if (order.deadline.noDeadline) {
+    await order.dump();
+  } else {
     // Создаем маршрут автоматически
 
     const latitude: string | undefined = order.points[0].latitude;
@@ -49,8 +51,9 @@ export const create = async (orderDto: TOrderDTO) => {
       vangerId: vanger?.id || ""
     });
     await route.dump();
+    await pinOrders(route);
+    await order.fromId(route.ordersIds[0]);
   }
-  
   return order.ID;
 };
 
