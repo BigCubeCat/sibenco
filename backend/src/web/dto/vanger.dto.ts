@@ -3,7 +3,7 @@ import {TDriverDTO} from "./driver.dto";
 
 export type TVangerDTO = {
   id: string;
-  Car: TCarDTO;
+  car: TCarDTO;
   Driver: TDriverDTO;
   timeBegin: number;
   timeEnd: number;

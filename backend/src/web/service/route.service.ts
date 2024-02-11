@@ -81,6 +81,7 @@ export const patch = async (id: string, data: IRouteData) => {
 
 export const autoMerge = async (firstId: string, secondId: string) => {
   const resultRoute = await autoMergeRoutes(firstId, secondId);
+  console.log(resultRoute.ordersIds);
   if (resultRoute.invalid) {
     throw new Error(config.errors.BadId);
   }

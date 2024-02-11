@@ -60,6 +60,9 @@ export const create = async (orderDto: TOrderDTO) => {
 
 export const advancedCreate = async (orderDto: TOrderDTO) => {
   const order = new OrderModel();
+  console.log("---------orederDTO--VV----")
+  console.log(orderDto);
+  console.log("---------orederDTO--^^----")
   await order.fromDTO(orderDto);
   await order.dump();
   if (order.deadline.noDeadline == true) {

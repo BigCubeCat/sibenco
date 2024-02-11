@@ -58,14 +58,21 @@ router.get('/deals', routeController.getAllDeals);
 /**
  * @openapi
  * /similar/:id/:
- * get:
- *    description: получение всех гомоморфных объектов
+ *  get:
+ *    description: получение всех похожих гомоморфных объектов
  *    parameters:
- *    - in: query
+ *      - in: query
  *        name: type
  *        type: string
- *        description: Если order, выдаст заявки, если route - то выдаст маршруты
- * 
+ *        description: Если order, выдаст заявки, если route - то выдаст маршруты, иначе не работает)
+ *      - in: query
+ *        name: match
+ *        type: number
+ *        description: коэффициент от 0 до 1, который показывает на сколько должны совпадать маршруты
+ *        
+ *    responses:
+ *      200:
+ *        description: Возвращает объект с двумя массивами orders и routes
  */
 router.get('/similar/:id', routeController.getSimilarDeals);
 

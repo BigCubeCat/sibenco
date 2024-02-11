@@ -17,7 +17,7 @@ export function getMaxCargo(orders: TOrderDTO[], queue: TWaypointsDTO) {
             
             if (startFlag) {
                 domainPassengers[k] += orders[i].cargo.numberOfPassengersInCar;
-                domainPassengers[k] += orders[i].cargo.amountOfCargoInCar;
+                domainFreights[k] += orders[i].cargo.amountOfCargoInCar;
             }
 
             if (startFlag && queue.points[k].latitude == currentEndPoint.latitude && queue.points[k].longitude == currentEndPoint.longitude) {

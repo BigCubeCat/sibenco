@@ -74,15 +74,16 @@ export const getSimilarOrders = async (id: string, matchPercent = 0.5) => {
   }).select({_id: -1});
 
   const results: TSearchRes[] = [];
+  
   for (let i = 0; i < allOrders.length; ++i) {
     if (allOrders[i]._id.toString() == id) {
       continue;
     }
     const other = new OrderModel();
     await other.fromId(allOrders[i]._id.toString());
-
+    //console.log("----------START_OF_PROCESS_", i, "---------VVVV   ", allOrders[i]._id.toString());
     const compareResult = naiveCompareBoxes(other.boxes, order.boxes);
-
+    //console.log("------------END_OF_PROCESS_", i, "---------^^^^");
     if (compareResult.match > matchPercent) {
       results.push({order: other.outDTO, match: compareResult});
     }

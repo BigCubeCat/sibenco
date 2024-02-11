@@ -134,7 +134,9 @@ export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO,
 const checkVangerCapacity = async (backPack: TBackpackParams, vangerId: string): Promise<boolean> => {
   const vanger: TVangerDTO | undefined = await getVangerById(vangerId);
   if (!vanger) return false;
-  if (vanger.Car.amountOfCargoInCar < backPack.freights || vanger.Car.numberOfPassengersInCar < backPack.passengers) return false;
+  if (vanger.car.amountOfCargoInCar < backPack.freights || vanger.car.numberOfPassengersInCar < backPack.passengers) {
+    return false;
+  }
   return true;
 }
 
@@ -144,7 +146,6 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
   const secondParentRoute = new RouteModel();
   await firstParentRoute.fromId(firstId);
   await secondParentRoute.fromId(secondId);
-
   // проверка на invalid
   if (firstParentRoute.invalid) {
     return firstParentRoute;
@@ -180,7 +181,6 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     const maxBackpackParams = getMaxCargo([...firstParentRoute.orders || [], ...secondParentRoute.orders || []], resultQueue);
 
     let resultVangerId = secondParentRoute.outDTO?.vanger || "Кожанов Александр Иванович";
-
     if (!(await checkVangerCapacity(maxBackpackParams, secondParentRoute.outDTO?.vanger || "0"))) {
       const sampleCargo: TCargoDTO = {
         unit: (maxBackpackParams.freights > 0) ? ((maxBackpackParams.passengers > 0) ? "all" : "cargo") : ((maxBackpackParams.passengers > 0) ? "human" : "all"),
@@ -196,6 +196,9 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
         latitude: resultQueue.points[0].latitude || "0",
         longitude: resultQueue.points[0].longitude || "0"
       }; //TODO так нельзя надо на=ормальное исключение делать
+
+      console.log("sample cargo:");
+      console.log(sampleCargo);
 
       const vanger: TVangerDTO | undefined = await getSuitableVanger(sampleCargo, getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline), location);
       if (!vanger) {
@@ -216,6 +219,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     
     const resultModel = new RouteModel();
     await resultModel.createFromDTO(resultRouteDTO);
+    resultModel.ordersIds = [...firstParentRoute.ordersIds, ...secondParentRoute.ordersIds];
     return resultModel;
   } else {
     //Второй маршрут лежит на первом
@@ -292,7 +296,7 @@ export const getSimilarRoutes = async (id: string, matchPercent = 0.5, ordersMat
   }
 
   for (let i = 0; i < route.orders.length; ++i) {
-    const id = route.orders[i].routeId;
+    const id = route.orders[i].id;
     const ids = await orderFunctions.getSimilarOrders(id, ordersMatchPercent); 
     for (let j = 0; j < ids.length; ++j) {
       const order = ids[j].order;
@@ -300,6 +304,8 @@ export const getSimilarRoutes = async (id: string, matchPercent = 0.5, ordersMat
       answerSet.add(order.routeId);
     }
   }
+  console.log("answer set:")
+  console.log(answerSet);
   
   //Здесь надо сделать как с заявками: строим маршруты по waypoints и сверяем их с помощью нужного метода, определяем процент совпадения и возможность автомёрджа
 
