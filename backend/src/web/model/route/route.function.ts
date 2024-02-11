@@ -234,6 +234,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
         department: " ",
         description: " "
       }
+      
 
       const location: TLocationDTO = {
         latitude: resultQueue.points[0].latitude || "0",
