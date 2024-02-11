@@ -21,6 +21,7 @@ import { convertToOSM, getPointsCoords, recoverAddress } from '../../dto/address
 import { makeOptimalRoute } from '../../../sdk/route_machine_api';
 import { createCoords } from '../../../sdk/algo/coords';
 import { getMaxCargo } from '../../../sdk/algo/backpack_problem';
+import { TLocationDTO } from '../../dto/location.dto';
 export type TSearchRes = { route: IRouteView | null, match: TNaiveCmp };
 export type TBackpackParams = { passengers: number, freights: number };
 
@@ -94,10 +95,12 @@ export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO,
   }
 
   // определяем водителя
+  const location: TLocationDTO = {
+      latitude: waypoints.points[0].latitude || "n",
+      longitude: waypoints.points[0].longitude || "n"
+  };
 
-  const location: string | undefined = waypoints.points[0].address;
-
-  if (!location) {
+  if (location.latitude == "n" || location.longitude == "n") {
     const resultModel = new RouteModel();
     resultModel.setInvalid = true;
     return resultModel;
@@ -189,7 +192,10 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
         description: " "
       }
 
-      const location: string = resultQueue.points[0].address || "0"; //TODO так нельзя надо на=ормальное исключение делать
+      const location: TLocationDTO = {
+        latitude: resultQueue.points[0].latitude || "0",
+        longitude: resultQueue.points[0].longitude || "0"
+      }; //TODO так нельзя надо на=ормальное исключение делать
 
       const vanger: TVangerDTO | undefined = await getSuitableVanger(sampleCargo, getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline), location);
       if (!vanger) {
@@ -229,7 +235,10 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
         description: " "
       }
 
-      const location: string = resultQueue.points[0].address || "0"; //TODO так нельзя надо на=ормальное исключение делать
+      const location: TLocationDTO = {
+        latitude: resultQueue.points[0].latitude || "0",
+        longitude: resultQueue.points[0].longitude || "0"
+      }; //TODO так нельзя надо на=ормальное исключение делать
 
     
       const vanger: TVangerDTO | undefined = await getSuitableVanger(sampleCargo, getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline), location);
