@@ -6,6 +6,7 @@ import * as orderFunctions from '../order/order.functions';
 import {TRouteDTO} from '../../dto/route.dto';
 import {TWaypointsDTO} from '../../dto/waypoints.dto';
 import {
+  computeTimes,
   createCoordsFromWaypoints,
   getFirstWaypointIndexAfterRoute,
   mergeWaypoints
@@ -175,6 +176,9 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     }
     const resultQueue = mergeWaypoints(secondRouteCoords, secondRouteWaypoints, firstRouteWaypoints);
 
+    resultQueue.times = await computeTimes(resultQueue, getDeadlineUnion(firstParentRoute.deadline, secondParentRoute.deadline).beginDate || 0);
+    
+
     // Считаем максимальную необходимую вместимость
 
     // генерируем груз и проверяем водителя
@@ -224,6 +228,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
   } else {
     //Второй маршрут лежит на первом
     const resultQueue = mergeWaypoints(firstRouteCoords, firstRouteWaypoints, secondRouteWaypoints)
+    resultQueue.times = await computeTimes(resultQueue, getDeadlineUnion(firstParentRoute.deadline, secondParentRoute.deadline).beginDate || 0);
     const maxBackpackParams = getMaxCargo([...firstParentRoute.orders || [], ...secondParentRoute.orders || []], resultQueue);
 
     let resultVangerId = firstParentRoute.outDTO?.vanger || "Кожанов Александр Иванович";
@@ -276,6 +281,17 @@ export const pinOrders = async (route: RouteModel) => {
       const currentOrderModel = new OrderModel();
       await currentOrderModel.fromId(order.id);
       currentOrderModel.route = route.ID;
+      for (let i = 0; i < (currentOrderModel.orderData?.waypoints.points.length || 0); ++i){
+        for (let j = 0; j < route.waypoints.points.length; ++j) {
+          if (currentOrderModel.orderData && currentOrderModel.orderData.waypoints.points[i].latitude == route.waypoints.points[j].latitude
+            && currentOrderModel.orderData.waypoints.points[i].longitude == route.waypoints.points[j].longitude) {
+            currentOrderModel.orderData.waypoints.times[i] = route.waypoints.times[j];
+            break;
+          }
+        }
+      } //наверное действия ниже надо делать безопаснее
+      currentOrderModel.deadline.beginDate = currentOrderModel.orderData?.waypoints.times[0];
+      currentOrderModel.deadline.endDate = currentOrderModel.orderData?.waypoints.times[currentOrderModel.orderData?.waypoints.times.length -1];
       currentOrderModel.update();
     })
   }

@@ -32,12 +32,10 @@ export const getAllOrders = async (page: number, pageSize: number, done: string,
     done: (useDone) ? (done === 'true') : { $exists: true },
     'order.route': (useFree) ? ((free === 'true')? "" : {$ne: ""}) : {$exists: true }
   }
-  console.log(filter);
   const orders = await OrderDb.find(filter)
     .sort({_id: -1})
     .skip(page * pageSize)
     .limit(pageSize).select({ _id: 1 });
-  console.log(orders);
   const results = [];
   for (let i = 0; i < orders.length; ++i) {
     const o = new OrderModel();

@@ -135,7 +135,6 @@ export const changeExecutionState = async (id: string, state: string) => {
   if (route.invalid) {
     throw new Error(config.errors.BadId);
   }
-  console.log(state);
   if (state === "start") {
     route.active = true;
     console.log(route.active);

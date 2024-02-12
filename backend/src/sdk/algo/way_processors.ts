@@ -153,3 +153,19 @@ export const mergeWaypoints = (mainRoute: string, mainRouteWaypoints: TWaypoints
 
     return resultWaypoints;
 }
+
+
+export const computeTimes = async (waypoints: TWaypointsDTO, startTime: number): Promise<number[]> => {
+    const waypointsTimes = [startTime];
+    for (let i = 1; i < waypoints.points.length; ++i) {
+      const currentPartOfRoute = await makeOptimalRoute(
+          [convertToOSM(waypoints.points[i - 1]), convertToOSM(waypoints.points[i])]
+      );
+        if (!currentPartOfRoute) {
+            waypointsTimes.push(waypointsTimes[i - 1]);
+            break;
+        }
+        waypointsTimes.push(waypointsTimes[i - 1] + Number(currentPartOfRoute.duration.toFixed()));
+    }
+    return waypointsTimes;
+}

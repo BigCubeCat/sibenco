@@ -138,7 +138,7 @@ router.post('/std/automerge/', routeController.autoMergeRoute);
 
 /**
  * @openapi
- * /routes/std/execution/:
+ * /routes/cexecution/:
  *  post:
  *    description: Изменение статуса поездки
  *    parameters:

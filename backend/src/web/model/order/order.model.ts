@@ -8,6 +8,7 @@ import OrderDb, {IOrder} from '../../db/order.db';
 import {dataToView, IOrderData, IOrderView} from './order.interface';
 import {createCoords, getRedisKey} from '../../../sdk/algo/coords';
 import getRedisClient from "../../../conn/cache/redis.conn";
+import { computeTimes } from '../../../sdk/algo/way_processors';
 
 
 class OrderModel {
@@ -32,16 +33,20 @@ class OrderModel {
         point => convertToOSM(point),
       ),
     );
-
+    const waypointsTimes = await computeTimes(recoveredDto.waypoints, dto.deadline.beginDate || 0);
     this.data = {
       id: '',
       clientId: dto.clientId,
       routeId: dto.routeId,
       cargo: dto.cargo,
-      deadline: dto.deadline,
+      deadline: {
+        noDeadline: dto.deadline.noDeadline,
+        beginDate: dto.deadline.beginDate,
+        endDate: dto.deadline.beginDate ? waypointsTimes[waypointsTimes.length - 1]: undefined
+      },
       waypoints: {
         points: dto.waypoints.points,
-        times: dto.waypoints.times,
+        times: waypointsTimes,
         nodes: this.optimalRoute?.nodes || [],
         coords: createCoords(
           this.optimalRoute?.coords || [],
