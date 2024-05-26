@@ -1,5 +1,5 @@
-import messages, {TMessages} from './properties/messages';
-import errors, {TErrors} from './properties/errors';
+import messages, {TMessages} from './web/properties/messages';
+import errors, {TErrors} from './web/properties/errors';
 
 interface IConfig {
   PORT: number;
@@ -16,6 +16,19 @@ interface IConfig {
     port: number;
     host: string;
   };
+  osrm: {
+    url: string;
+    accuracy: number;
+  };
+  redis: {
+    url: string;
+    password: string;
+  }
+  vangers: {
+    url: string;
+  };
+
+  // messages
   messages: TMessages;
   errors: TErrors;
 }
@@ -35,26 +48,36 @@ export const config: IConfig = {
     host: '',
     port: 0,
   },
+  osrm: {
+    url: 'http://127.0.0.1:8080',
+    accuracy: 100,
+  },
+  redis: {
+    url: "redis://127.0.0.1:6379",
+    password: "",
+  },
+  vangers: {
+    url: 'http://127.0.0.1:8000/',
+  },
   messages: messages,
   errors: errors,
 };
 
 export function LoadConfig() {
+  const changeConf = (value: string | undefined, defaultValue: string) => value ? value : defaultValue;
+
   const port = process.env.PORT ? Number(process.env.PORT) : 5000;
-  const url = process.env.MONGO_URL
-    ? process.env.MONGO_URL
-    : 'mongodb://root:toor@127.0.0.1:27017';
+  const url = changeConf(process.env.MONGO_URL, 'mongodb://user:DY9687FH@localhost:27017/maindb');
+  console.log(url);
   config.PORT = port;
   config.MONGO_URL = url;
-  config.mail = {
-    port: process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 587,
-    host: process.env.MAIL_HOST ? process.env.MAIL_HOST : 'smtp.mail.ru',
-    user: process.env.MAIL_USER ? process.env.MAIL_USER : 'user@mail.ru',
-    password: process.env.MAIL_PASS ? process.env.MAIL_PASS : 'qwerty1234',
-  };
+
+  config.osrm.url = changeConf(process.env.OSRM_URL, config.osrm.url);
+  config.osrm.accuracy = process.env.ACCURACY ? Number(process.env.ACCURACY) : config.osrm.accuracy;
+
+  config.redis.url = process.env.REDIS_URI ? process.env.REDIS_URI : config.redis.url;
+  config.redis.password = process.env.REDIS_PASSWORD ? process.env.REDIS_PASSWORD : config.redis.password;
+
+  config.vangers.url = process.env.VANGERS_URL ? process.env.VANGERS_URL : 'http://localhost:8008/';
 }
 
-export const incorrectRouteMachineWork =
-  'The error occurred while routing machine was working';
-export const incorrectGeocoderWork =
-  'The error occurred while geocoder was working';

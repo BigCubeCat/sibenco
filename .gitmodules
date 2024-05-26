@@ -1,0 +1,6 @@
+[submodule "drivers"]
+	path = drivers
+	url = https://github.com/reVInotip/Drivers-and-cars-service-for-Sibenco.git
+[submodule "sgk"]
+	path = sgk
+	url = https://github.com/Buterbrod-iku/sgk.git

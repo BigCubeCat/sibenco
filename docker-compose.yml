@@ -1,35 +1,120 @@
+# Перед деплоем закрыть все порты кроме фронта и auth
 services:
+  # Настройка монго
   mongo:
-    image: mongo:latest
+    image: mongo # Instead of build you can use 'image: mongo'
+    restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: T279KQNGSQGBEI56T54XRA0RTIT20EX9VP78D
+      MONGO_INITDB_DATABASE: maindb
     ports:
-      - ${MONGO_PORT}:${MONGO_PORT}
+      - 27017:27017
     volumes:
-      - mongodb_data_container:/data/db
-  geoword:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongo-volume:/data/db
+  # Настройка Redis
+  cache:
+    image: redis:alpine
+    restart: always
+    command: redis-server --loglevel warning --requirepass ${REDIS_PASSWORD}
+    ports:
+      - 6379:6379
+  # Настройка Postgress
+  postgres:
+    image: postgres:latest
+    container_name: vanger_db
     environment:
-      - PORT=${PORT}
-      - DATABASE=${DATABASE}
-    image: docker.io/bigcubecat/wordgeocode:latest
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_DB=${PG_DATABASE}
     ports:
-      - ${PORT}:${PORT}
+      - ${PG_PORT}:${PG_PORT}
     volumes:
-      - mongodb_data_container:/data/db
-  backend:
+      - pg_data_container:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${PG_USER} -d ${PG_DATABASE}"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+
+  # OSRM настройка
+  osrm:
+    build: ./osrm
+    restart: always
+    ports:
+      - ${OSRM_EXTERNAL_PORT}:${OSRM_INTERNAL_PORT}
+    command: ${OSRM_COMMAND}
+  # Настройка сервисов
+  vangers:
+    depends_on:
+      - postgres
+    build: ./drivers
+    container_name: vangers
+    restart: always
+    ports:
+      - ${VANGERS_EXTERNAL_PORT}:${VANGERS_INTERNAL_PORT}
+    environment:
+      - PORT=${VANGERS_EXTERNAL_PORT}
+      - USERNAME=${PG_USER}
+      - PASSWORD=${PG_PASSWORD}
+      - PORT_DB=${PG_PORT}
+      - DATABASE=${PG_DATABASE}
+
+  
+  migrations:
+    depends_on:
+      - postgres
+    build: ./drivers
+    command: "yarn automigrate"
+    environment:
+      - PORT=${VANGERS_EXTERNAL_PORT}
+      - USERNAME=${PG_USER}
+      - PASSWORD=${PG_PASSWORD}
+      - PORT_DB=${PG_PORT}
+      - DATABASE=${PG_DATABASE}
+
+  
+  auth_service:
+    depends_on:
+      - search_engine
+    build: ./auth
+    restart: always
+    ports:
+      - ${AUTH_PORT}:${AUTH_PORT}
+    environment:
+      - PORT=${AUTH_PORT}
+      - ROUTE_ADDRESS=http://@search_engine:${ENGINE_PORT}
+  search_engine:
     depends_on:
       - mongo
-      - geoword
+      - vangers
     build: ./backend
     restart: always
     ports:
-      - ${USER_PORT}:${USER_PORT}
+      - ${ENGINE_PORT}:${ENGINE_PORT}
     environment:
-      - USER_PORT=${USER_PORT}
-      - JWT_KEY=${JWT_KEY}
-      - MONGO_URL=mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:${MONGO_PORT}
-    stdin_open: true
+      - PORT=${ENGINE_PORT}
+      - MONGO_URL=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB}
+      - OSRM_URL=http://@osrm:${OSRM_INTERNAL_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_URI=redis://@cache:${REDIS_PORT}
+      - VANGERS_URL=http://@vangers:${VANGERS_EXTERNAL_PORT}
     tty: true
+
 volumes:
-  mongodb_data_container:
+  mongo-volume:
+  pg_data_container:
+
+
