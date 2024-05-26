@@ -1,3 +1,6 @@
+import { TFreightDTO } from "./freight.dto";
+import { TPassengerDTO } from "./passenger.dto";
+
 /**
  * @openapi
  * components:
@@ -6,16 +9,17 @@
  *          type: object
  *          required:
  *              - unit
- *              - count
+ *              - numberOfPassengersInCar
+ *              - amountOfCargoInCar
  *              - description
- *              - price
  *          properties:
  *              unit:
  *                  type: string
- *                  description: "Тип перевозки.\npeople - человек\ngood - товар"
+ *                  description: "Тип перевозки.\nhuman - человек\ncargo - товар\nall-и люди, и товар"
  *                  enum:
- *                    - people
- *                    - good
+ *                    - human
+ *                    - cargo
+ *                    - all
  *              numberOfPassengersInCar:
  *                  type: number
  *                  description: "Число пассажиров"
@@ -24,25 +28,34 @@
  *                  type: number
  *                  description: "Число груза"
  *                  format: float
+ *              passengers:
+ *                  type: array
+ *                  description: "Пассажиры"
+ *                  items:
+ *                      $ref: '#components/schemas/'
+ *              department:
+ *                  type: string
+ *                  description: "Стуктурное подразделение"
  *              description:
  *                  type: string
- *                  description: "Просто описание"
- *              price:
- *                  type: number
- *                  description: "Цена груза"
+ *                  description: "Описание"
  */
 export type TCargoDTO = {
   unit: 'human' | 'cargo' | 'all';
   numberOfPassengersInCar: number;
   amountOfCargoInCar: number;
+  passengers: Array<TPassengerDTO>;
+  freights: Array<TFreightDTO>;
+  department: string; 
   description: string;
-  price: number;
 };
 
 export const defaultCargo: TCargoDTO = {
   unit: 'all',
   numberOfPassengersInCar: 0,
   amountOfCargoInCar: 0,
-  description: '',
-  price: 0
+  passengers: [],
+  freights: [],
+  department: 'отсутсвует',
+  description: ''
 };

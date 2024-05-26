@@ -1,6 +1,5 @@
 import RouteDb from '../../db/route.db';
 import OrderDb from '../../db/order.db';
-
 import RouteModel from './route.model';
 import OrderModel from '../order/order.model';
 import * as orderFunctions from '../order/order.functions';
@@ -12,10 +11,16 @@ import {
   mergeWaypoints
 } from '../../../sdk/algo/way_processors';
 import {TDeadline, getDeadlineIntersection} from '../../dto/deadline.dto';
-import {TNaiveCmp} from "../../../sdk/algo/compare";
+import {TNaiveCmp, naiveCompareBoxes} from "../../../sdk/algo/compare";
 import {IRouteView} from "./route.interface";
 import { TOrderDTO } from '../../dto/order.dto';
-export type TSearchRes = { object: IRouteView | null, match: TNaiveCmp };
+import { TCargoDTO } from '../../dto/cargo.dto';
+import { TVangerDTO } from '../../dto/vanger.dto';
+import { getSuitableVanger } from '../../../conn/vangers/vangers.conn';
+import { convertToOSM, getPointsCoords, recoverAddress } from '../../dto/address.dto';
+import { makeOptimalRoute } from '../../../sdk/route_machine_api';
+import { createCoords } from '../../../sdk/algo/coords';
+export type TSearchRes = { route: IRouteView | null, match: TNaiveCmp };
 
 
 export const getAllRoutes = async (page: number, pageSize: number, done: string, active: string, vanger: string) => {
@@ -71,7 +76,7 @@ export const findRoutes = async (page: number, pageSize: number, request: object
   return results;
 };
 
-export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO) => {
+export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO, cargo: TCargoDTO) => {
   const orders: TOrderDTO[] = [];
   for (let i = 0; i < ids.length; ++i) {
     const order = new OrderModel();
@@ -87,15 +92,38 @@ export const manualCreateRoute = async (ids: string[], waypoints: TWaypointsDTO)
     currentDeadline = getDeadlineIntersection(currentDeadline, orders[i].deadline);
   }
 
+  // определяем водителя
+
+  const location: string | undefined = waypoints.points[0].address;
+
+  if (!location) {
+    const resultModel = new RouteModel();
+    resultModel.setInvalid = true;
+    return resultModel;
+  }
+
+  console.log(cargo);
+  console.log(currentDeadline);
+  console.log(location);
+
+  const vanger: TVangerDTO | undefined = await getSuitableVanger(cargo, currentDeadline, location);
+  let vangerId: string;
+
+  if (!vanger) {
+      vangerId = "0";
+  } else {
+    vangerId = vanger.id;
+  }
+
   const resultRouteDTO: TRouteDTO = {
     orders: orders,
     waypoints: waypoints,
     deadline: currentDeadline,
     clients: orders.map(order => { return order.clientId}),
-    vangerId: "Кожанов Александр Иванович" // пока так, вообще тут должен быть выбор через сервис вангеров 
+    vangerId: vangerId
   }
   const resultModel = new RouteModel();
-  await resultModel.createFromDTO(resultRouteDTO);
+  await resultModel.createFromDTO(resultRouteDTO);    
   return resultModel;
 }
 
@@ -134,11 +162,11 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     }
     //Первый маршрут лежит на втором, делаем слияние
     const resultRouteDTO: TRouteDTO = {
-      orders: [...secondParentRoute.orders || [], ...firstParentRoute.orders || []],
+      orders: [],
       waypoints: mergeWaypoints(secondRouteCoords, secondRouteWaypoints, firstRouteWaypoints),
       deadline: getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
       clients: [...secondParentRoute.outDTO?.clients || [], ...firstParentRoute.outDTO?.clients || []],
-      vangerId: secondParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // TODO пока так, вообще это из-за того что outDTO может вернуть null надо это исправить
+      vangerId: secondParentRoute.outDTO?.vanger || "Кожанов Александр Иванович" // TODO Надо проверить вангера, что ему места хватает, если не хватает, то искать другого
     }
     const resultModel = new RouteModel();
     await resultModel.createFromDTO(resultRouteDTO);
@@ -146,7 +174,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
   } else {
     //Второй маршрут лежит на первом
     const resultRouteDTO: TRouteDTO = {
-      orders: [...firstParentRoute.orders || [], ...secondParentRoute.orders || []],
+      orders: [],
       waypoints: mergeWaypoints(firstRouteCoords, firstRouteWaypoints, secondRouteWaypoints),
       deadline: getDeadlineIntersection(firstParentRoute.deadline, secondParentRoute.deadline),
       clients: [...firstParentRoute.outDTO?.clients || [], ...secondParentRoute.outDTO?.clients || []],
@@ -154,6 +182,7 @@ export const autoMergeRoutes = async (firstId: string, secondId: string): Promis
     }
     const resultModel = new RouteModel();
     await resultModel.createFromDTO(resultRouteDTO);
+    resultModel.ordersIds = [...firstParentRoute.ordersIds, ...secondParentRoute.ordersIds];
     return resultModel;
   }
 
@@ -175,7 +204,7 @@ export const pinOrders = async (route: RouteModel) => {
 /*
 В теории должно работать, не тестил
  */
-export const getSimilarRoutes = async (id: string, matchPercent = 0.5) => {
+export const getSimilarRoutes = async (id: string, matchPercent = 0.5, ordersMatchPercent = 0.5) => {
   const route = new RouteModel();
   await route.fromId(id);
   if (route.invalid) return [];
@@ -187,14 +216,53 @@ export const getSimilarRoutes = async (id: string, matchPercent = 0.5) => {
 
   for (let i = 0; i < route.orders.length; ++i) {
     const id = route.orders[i].routeId;
-    const ids = await orderFunctions.getSimilarOrders(id, matchPercent);
+    const ids = await orderFunctions.getSimilarOrders(id, ordersMatchPercent); 
     for (let j = 0; j < ids.length; ++j) {
       const order = ids[j].order;
       if (!order) continue;
       answerSet.add(order.routeId);
     }
   }
-  return Array.from(answerSet);
+  
+  //Здесь надо сделать как с заявками: строим маршруты по waypoints и сверяем их с помощью нужного метода, определяем процент совпадения и возможность автомёрджа
+
+  const routesIds = Array.from(answerSet);
+  routesIds.push(id);
+  const routesCoords = await routesIds.map(
+    async id => {
+      const currentRoute = new RouteModel();
+      await currentRoute.fromId(id);
+
+      currentRoute.waypoints.points = currentRoute.waypoints.points.map(
+        point => recoverAddress(point)
+      );
+      
+      const optimalRoute = await makeOptimalRoute(
+        currentRoute.waypoints.points.map(
+          point => convertToOSM(point)
+        )
+      );
+
+      return createCoords(
+          optimalRoute?.coords || [],
+          currentRoute.waypoints.points.map(point => getPointsCoords(point))
+        );
+    }
+  );
+
+  const results: TSearchRes[] = [];
+
+  for (let i = 0; i < routesCoords.length - 1; ++i){
+    const compareResult = naiveCompareBoxes(await routesCoords[i], await routesCoords[routesCoords.length - 1]);
+    
+    if (compareResult.match > matchPercent) {
+      const resRoute = new RouteModel();
+      await resRoute.fromId(routesIds[i]);
+      results.push({route: resRoute.outDTO, match: compareResult});
+    }
+  }
+
+  return results;
 };
 
 

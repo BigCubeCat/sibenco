@@ -18,7 +18,7 @@ export const getAllDeals = createAbstractController(
     
     const active: string = typeof req.query.active == 'string' ? req.query.active : '';
     const vanger: string = typeof req.query.vanger == 'string' ? req.query.vanger : '';
-    if (typeof req.query.type == 'string') {
+    if (typeof req.query.type == "string") {
         if (req.query.type === "order") {
             return {
                 code: 200, body: {
@@ -43,3 +43,31 @@ export const getAllDeals = createAbstractController(
     };
   },
 );
+
+
+export const getSimilarDeals = createAbstractController(
+    async (req: Request) => {
+        if (!req.params.id) {
+            return {code: 400, body: getErrorMessage(new Error(config.errors.BadId))};
+        }   
+        const matchPercent = Number(req.query.match) || 0.5;
+        
+        if (req.query.type === "order") {
+            return {
+                code: 200, body: {
+                    orders: await orderService.getSimilar(req.params.id, matchPercent),
+                    routes: []
+                }
+            }
+        } else if (req.query.type === "route") {
+            return {
+                code: 200, body: {
+                    orders: [],
+                    routes: await routeService.getSimilar(req.params.id, matchPercent)
+                }
+            }; 
+        } else {
+            return {code: 400, body: getErrorMessage(new Error(config.errors.NotFound))};
+        }
+    }
+)

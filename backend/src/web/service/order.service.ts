@@ -7,6 +7,9 @@ import {countOrders as count} from "../model/order/order.functions";
 import RouteModel from "../model/route/route.model";
 import {getSuitableVanger} from "../../conn/vangers/vangers.conn";
 import {createWithOrderID} from './route.service';
+import { TLocationDTO } from '../dto/location.dto';
+import { pinOrders } from '../model/route/route.function';
+
 
 
 /*
@@ -15,27 +18,42 @@ import {createWithOrderID} from './route.service';
 export const create = async (orderDto: TOrderDTO) => {
   const order = new OrderModel();
   await order.fromDTO(orderDto);
-  await order.dump();
-
-  if (!order.deadline.noDeadline) {
+  if (order.deadline.noDeadline) {
+    await order.dump();
+  } else {
     // Создаем маршрут автоматически
+
+    const latitude: string | undefined = order.points[0].latitude;
+    const longitude: string | undefined = order.points[0].longitude;
+
+    if (!latitude || !longitude) {
+      console.log("Can not create route automatically, latitude or longitude is invalid");
+      return;
+    }
+
+    const location: TLocationDTO = {
+      latitude: latitude,
+      longitude: longitude
+    };
+    
     const vanger = await getSuitableVanger(
       order.cargo,
       order.deadline,
-      order.points[0].address || 'ru'
+      location
     );
     const route = new RouteModel();
     const orders = order.orderData ? [order.orderData] : [];
     await route.createFromDTO({
       orders: orders,
-      waypoints: {points: order.points},
+      waypoints: {points: order.points, times: order.times},
       deadline: order.deadline,
       clients: [order.orderData?.clientId || ''],
       vangerId: vanger?.id || ""
     });
     await route.dump();
+    await pinOrders(route);
+    await order.fromId(route.ordersIds[0]);
   }
-  
   return order.ID;
 };
 

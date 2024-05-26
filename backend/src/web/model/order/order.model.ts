@@ -24,6 +24,7 @@ class OrderModel {
     // По сути это создание нашего заказа. Все остальные - from... -
     // Восстановление данных из другого формата.
     // Восстанавливаем адреса.
+    console.log(dto.cargo);
     const recoveredDto = recoverOrderDTO(dto);
     // Вот тут this.data остается null
     this.optimalRoute = await makeOptimalRoute(
@@ -40,6 +41,7 @@ class OrderModel {
       deadline: dto.deadline,
       waypoints: {
         points: dto.waypoints.points,
+        times: dto.waypoints.times,
         nodes: this.optimalRoute?.nodes || [],
         coords: createCoords(
           this.optimalRoute?.coords || [],
@@ -64,7 +66,7 @@ class OrderModel {
     return {
       time: this.data?.deadline || {noDeadline: true},
       route: {
-        waypoints: {points: this.data?.waypoints.points || []},
+        waypoints: {points: this.data?.waypoints.points || [], times: this.data?.waypoints.times || []},
         distance: this.data?.distance || 0,
         duration: this.data?.duration || 0,
         nodes: this.data?.waypoints.nodes || [],
@@ -97,6 +99,7 @@ class OrderModel {
       deadline: doc.time,
       waypoints: {
         points: doc.route.waypoints.points,
+        times: doc.route.waypoints.times,
         nodes: doc.route.nodes,
         coords: doc.route.coords,
       },
@@ -219,6 +222,10 @@ class OrderModel {
 
   get points(): TAddressDTO[] {
     return this.data?.waypoints.points || [];
+  }
+
+  get times(): number[] {
+    return this.data?.waypoints.times || [];
   }
 
   set done(value: boolean) {
